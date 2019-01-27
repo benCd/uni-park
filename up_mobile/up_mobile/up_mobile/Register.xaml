@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="up_mobile.Register"
+             Title="Register"> <!--This is what is displayed at top of page in the app -->
+    
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Username" />
+            <Entry x:Name="Register_User" 
+                   Placeholder="Username" />
+
+            <Label Text="Password" />
+            <Entry x:Name="Register_Pass" 
+                   Placeholder="Password" />
+
+            <Button x:Name="Register_Button" 
+                    Text="Register" 
+                    HorizontalOptions="Center" /> <!-- add Clicked="Register_Attempt" -->
+
+        </StackLayout>
+    </ContentPage.Content>
+    
+</ContentPage>

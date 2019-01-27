@@ -10,8 +10,7 @@ namespace up_mobile
         public App()
         {
             InitializeComponent();
-
-            MainPage = new MainPage();
+            MainPage = new NavigationPage(new MainPage());
         }
 
         protected override void OnStart()
@@ -30,3 +29,4 @@ namespace up_mobile
         }
     }
 }
+

@@ -2,13 +2,31 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:up_mobile"
-             x:Class="up_mobile.MainPage">
+             x:Class="up_mobile.MainPage"
+             Title="Home"> <!--This is what is displayed at top of page in the app -->
 
     <StackLayout>
-        <!-- Place new controls here -->
-        <Label Text="Welcome to Xamarin.Forms!" 
-           HorizontalOptions="Center"
-           VerticalOptions="CenterAndExpand" />
+        <Label Text="Logo Placeholder"
+               Font="Large"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
+
+        <Label Text="Welcome to Uni Park!"
+               Font="Large"
+               HorizontalOptions="Center" />
+
+        <Button Text="Log In"
+                HorizontalOptions="Center"
+                Clicked="Login_Page"/>
+
+        <Label Text="New user? Create an account below"
+               Font="Small"
+               HorizontalOptions="Center"/>
+
+        <Button Text="Register"
+                HorizontalOptions="Center" 
+                Clicked="Register_Page"/>
+
     </StackLayout>
 
 </ContentPage>

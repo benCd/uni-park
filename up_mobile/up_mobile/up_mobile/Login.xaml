@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="up_mobile.Login"
+             Title="Log In"> <!--This is what is displayed at top of page in the app -->
+    
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Username" />
+            <Entry x:Name="Login_User"
+                   Placeholder="Username" />
+
+            <Label Text="Password" />
+            <Entry x:Name="Login_Pass" 
+                   Placeholder="Password" />
+
+            <Button x:Name="Login_Button" 
+                    Text="Log In" 
+                    HorizontalOptions="Center" /> <!-- add Clicked="Login_Attempt" -->
+
+        </StackLayout>
+    </ContentPage.Content>
+    
+</ContentPage>

@@ -13,5 +13,18 @@ namespace up_mobile
         {
             InitializeComponent();
         }
+
+        async void Login_Page(object sender, EventArgs args)
+        {
+            Button button = (Button)sender;
+            await Navigation.PushAsync(new Login());
+        }
+
+        async void Register_Page(object sender, EventArgs args)
+        {
+            Button button = (Button)sender;
+            await Navigation.PushAsync(new Register());
+        }
+
     }
 }
