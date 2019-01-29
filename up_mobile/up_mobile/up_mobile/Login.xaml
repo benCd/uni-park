@@ -20,8 +20,9 @@
             
             <!--Entry field for the user's Password-->
             <Entry x:Name="LoginPassword" 
-                   Placeholder="Password" />
-            
+                   Placeholder="Password"
+                   IsPassword="true" /> <!--Hides the password as it is typed with black dots-->
+
             <!--Button for the user to Log In-->
             <Button x:Name="LoginButton" 
                     Text="Log In" 
