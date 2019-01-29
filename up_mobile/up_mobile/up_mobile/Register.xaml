@@ -22,6 +22,20 @@
                    Placeholder="Password" 
                    IsPassword="true" /> <!--Hides the password as it is typed with black dots-->
 
+            <!--Drop down list to select which University Campus to start out with-->
+            <Picker x:Name="UniversityPicker" 
+                    Title="Select your University Campus"
+                    VerticalOptions="Center">
+                
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Oakland University</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+                
+            </Picker>
+
             <!--Button for the user to Register-->
             <Button x:Name="RegisterButton" 
                     Text="Register" 
