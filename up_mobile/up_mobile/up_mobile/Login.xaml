@@ -5,16 +5,25 @@
              Title="Log In"> <!--This is what is displayed at top of page in the app -->
     
     <ContentPage.Content>
+        
         <StackLayout>
-            <Label Text="Username" />
-            <Entry x:Name="Login_User"
-                   Placeholder="Username" />
+            
+            <!--Label that goes above the E-mail entry field-->
+            <Label Text="E-mail" />
+            
+            <!--Entry field for the user's E-mail address-->
+            <Entry x:Name="LoginEmail"
+                   Placeholder="RealPerson@gmail.com" />
 
+            <!--Label that goes above the Password entry field-->
             <Label Text="Password" />
-            <Entry x:Name="Login_Pass" 
+            
+            <!--Entry field for the user's Password-->
+            <Entry x:Name="LoginPassword" 
                    Placeholder="Password" />
-
-            <Button x:Name="Login_Button" 
+            
+            <!--Button for the user to Log In-->
+            <Button x:Name="LoginButton" 
                     Text="Log In" 
                     HorizontalOptions="Center" /> <!-- add Clicked="Login_Attempt" -->
 

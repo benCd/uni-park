@@ -12,6 +12,7 @@ namespace up_mobile
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Login : ContentPage
     {
+        // Constructor for Login class - Initializes the page on load
         public Login()
         {
             InitializeComponent();

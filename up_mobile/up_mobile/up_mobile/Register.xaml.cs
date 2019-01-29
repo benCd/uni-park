@@ -12,6 +12,7 @@ namespace up_mobile
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Register : ContentPage
     {
+        // Constructor for Register class - Initializes the page on load
         public Register()
         {
             InitializeComponent();
