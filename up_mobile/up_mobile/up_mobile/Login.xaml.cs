@@ -18,7 +18,7 @@ namespace up_mobile
             InitializeComponent();
         }
 
-        //  void Login_Attempt(object sender, EventArgs args)
+        //  void LoginAttempt(object sender, EventArgs args)
         //  {
         //     
         //  }

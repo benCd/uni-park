@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="up_mobile.ParkingSurvey"
+             Title="New User Survey"> <!--This is what is displayed at top of page in the app -->
+
+
+    <ContentPage.Content>
+        <StackLayout>
+
+            <!--Label asking where the user parks this term-->
+            <Label Text="Which lots do you park in this semester?"
+                   Font="Medium"
+                   HorizontalOptions="Center" />
+
+            <!--Label telling them to select all options which apply to them-->
+            <Label Text="Select all that apply:"
+                   Font="Medium"
+                   HorizontalOptions="Center" />
+
+            <!--Grid Layout containing switch buttons for all the different Parking lots-->
+            <!--If a user switches one on, it will generate fields for them to enter day & time info about when they park there-->
+            <!--Using the logic in ParkingSurvey.xaml.cs SwitchToggled function-->
+            <Grid x:Name="SurveyGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Text="P-1" />
+                <Switch Grid.Row="0" x:Name="P1" IsToggled="{Binding RememberLastUser}" Toggled="SwitchToggled"></Switch>
+
+                <Label x:Name="P1Label" Grid.Row="1" Text="hello there" IsVisible="False" />
+
+                <Label Grid.Row="2" Text="P-2" />
+                <Switch Grid.Row="2" x:Name="P2" IsToggled="{Binding RememberLastUser}" Toggled="SwitchToggled"></Switch>
+
+                <Label Grid.Row="4" Text="P-3" />
+                <Switch Grid.Row="4" x:Name="P3" IsToggled="{Binding RememberLastUser}" Toggled="SwitchToggled"></Switch>
+            </Grid>
+            
+            <!--Button to submit their New User Survey information-->
+            <Button x:Name="SubmitButton"
+                    Text="Submit"
+                    HorizontalOptions="Center" /> <!-- add Clicked="Submission" -->
+
+        </StackLayout>
+    </ContentPage.Content>
+    
+</ContentPage>

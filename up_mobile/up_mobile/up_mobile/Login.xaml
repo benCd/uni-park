@@ -26,7 +26,7 @@
             <!--Button for the user to Log In-->
             <Button x:Name="LoginButton" 
                     Text="Log In" 
-                    HorizontalOptions="Center" /> <!-- add Clicked="Login_Attempt" -->
+                    HorizontalOptions="Center" /> <!-- add Clicked="LoginAttempt" -->
 
         </StackLayout>
     </ContentPage.Content>

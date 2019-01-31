@@ -18,9 +18,13 @@ namespace up_mobile
             InitializeComponent();
         }
 
-        // void Register_Attempt(object sender, EventArgs args)
-        // {
-        //     
-        // }
+        // RegisterAttempt function - When the Register button in Register.xaml is clicked this function 
+        // checks that the email and password meet the requirements for registration, then registers the user, (NOT DONE YET)
+        // after which it navigates them to the ParkingSurvey.xaml page. (FOR NOW IT JUST GOES THERE WHEN YOU PRESS IT)
+        async void RegisterAttempt(object sender, EventArgs args)
+        {
+            Button button = (Button)sender;
+            await Navigation.PushAsync(new ParkingSurvey());
+        }
     }
 }

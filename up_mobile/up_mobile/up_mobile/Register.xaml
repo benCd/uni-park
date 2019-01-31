@@ -39,7 +39,8 @@
             <!--Button for the user to Register-->
             <Button x:Name="RegisterButton" 
                     Text="Register" 
-                    HorizontalOptions="Center" /> <!-- add Clicked="Register_Attempt" -->
+                    HorizontalOptions="Center"
+                    Clicked="RegisterAttempt" />
 
         </StackLayout>
     </ContentPage.Content>
