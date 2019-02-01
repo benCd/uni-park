@@ -57,6 +57,7 @@
     <PackageReference Include="Xamarin.Android.Support.v7.MediaRouter" Version="28.0.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExecuteScheduleService.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,6 +93,10 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\BackgroundTasks\BackgroundTasks.csproj">
+      <Project>{00ca2420-7273-43e9-aeab-75789bd25fdd}</Project>
+      <Name>BackgroundTasks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\up_mobile\up_mobile.csproj">
       <Project>{25F67136-8BE1-4AB0-9CD8-2B6A050744DF}</Project>
       <Name>up_mobile</Name>

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BackgroundTasks;
+using Xamarin.Forms;
 
 using Foundation;
 using UIKit;
@@ -24,6 +26,19 @@ namespace up_mobile.iOS
         {
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
+
+            iOSExecuteSchedule executeSchedulerTask = new iOSExecuteSchedule();
+
+            MessagingCenter.Subscribe<BackgroundTasks.Messages.ExecuteScheduleMessage>(this, "ExecuteScheduleMessage", async message =>
+            {
+               executeSchedulerTask = new iOSExecuteSchedule();
+               executeSchedulerTask.Start();
+            });
+
+            MessagingCenter.Subscribe<BackgroundTasks.Messages.CancelExecuteScheduleMessage>(this, "CancelExecuteScheduleMessage", async message =>
+            {
+                executeSchedulerTask.Stop();
+            });
 
             return base.FinishedLaunching(app, options);
         }
