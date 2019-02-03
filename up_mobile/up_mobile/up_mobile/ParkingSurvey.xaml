@@ -171,6 +171,401 @@
 
             <!--Time picker for Tuesday End Time 3-->
             <TimePicker x:Name="TuesdayEndTime3" Time="{Binding SelectedTime}" />
+			
+			<!--Wednesday starts here-->
+
+            <Label Text="Wednesday" Font="Large" />
+
+            <!--Drop down list for the first Wednesday parking lot selection-->
+            <Picker x:Name="WednesdaySurvey1" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Wednesday Start Time 1-->
+            <TimePicker x:Name="WednesdayStartTime1" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Wednesday End Time 1-->
+            <TimePicker x:Name="WednesdayEndTime1" Time="{Binding SelectedTime}" />
+
+            <!--Drop down list for the second Wednesday parking lot selection-->
+            <Picker x:Name="WednesdaySurvey2" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Wednesday Start Time 2-->
+            <TimePicker x:Name="WednesdayStartTime2" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Wednesday End Time 2-->
+            <TimePicker x:Name="WednesdayEndTime2" Time="{Binding SelectedTime}" />
+
+            <!--Drop down list for the third Wednesday parking lot selection-->
+            <Picker x:Name="WednesdaySurvey3" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Wednesday Start Time 3-->
+            <TimePicker x:Name="WednesdayStartTime3" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Wednesday End Time 3-->
+            <TimePicker x:Name="WednesdayEndTime3" Time="{Binding SelectedTime}" />
+			
+			<!--Thursday starts here-->
+
+            <Label Text="Thursday" Font="Large" />
+
+            <!--Drop down list for the first Thursday parking lot selection-->
+            <Picker x:Name="ThursdaySurvey1" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Thursday Start Time 1-->
+            <TimePicker x:Name="ThursdayStartTime1" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Thursday End Time 1-->
+            <TimePicker x:Name="ThursdayEndTime1" Time="{Binding SelectedTime}" />
+
+            <!--Drop down list for the second Thursday parking lot selection-->
+            <Picker x:Name="ThursdaySurvey2" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Thursday Start Time 2-->
+            <TimePicker x:Name="ThursdayStartTime2" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Thursday End Time 2-->
+            <TimePicker x:Name="ThursdayEndTime2" Time="{Binding SelectedTime}" />
+
+            <!--Drop down list for the third Thursday parking lot selection-->
+            <Picker x:Name="ThursdaySurvey3" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Thursday Start Time 3-->
+            <TimePicker x:Name="ThursdayStartTime3" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Thursday End Time 3-->
+            <TimePicker x:Name="ThursdayEndTime3" Time="{Binding SelectedTime}" />
+			
+			<!--Friday starts here-->
+
+            <Label Text="Friday" Font="Large" />
+
+            <!--Drop down list for the first Friday parking lot selection-->
+            <Picker x:Name="FridaySurvey1" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Friday Start Time 1-->
+            <TimePicker x:Name="FridayStartTime1" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Friday End Time 1-->
+            <TimePicker x:Name="FridayEndTime1" Time="{Binding SelectedTime}" />
+
+            <!--Drop down list for the second Friday parking lot selection-->
+            <Picker x:Name="FridaySurvey2" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Friday Start Time 2-->
+            <TimePicker x:Name="FridayStartTime2" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Friday End Time 2-->
+            <TimePicker x:Name="FridayEndTime2" Time="{Binding SelectedTime}" />
+
+            <!--Drop down list for the third Friday parking lot selection-->
+            <Picker x:Name="FridaySurvey3" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Friday Start Time 3-->
+            <TimePicker x:Name="FridayStartTime3" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Friday End Time 3-->
+            <TimePicker x:Name="FridayEndTime3" Time="{Binding SelectedTime}" />
+			
+			<!--Saturday starts here-->
+
+            <Label Text="Saturday" Font="Large" />
+
+            <!--Drop down list for the first Saturday parking lot selection-->
+            <Picker x:Name="SaturdaySurvey1" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Saturday Start Time 1-->
+            <TimePicker x:Name="SaturdayStartTime1" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Saturday End Time 1-->
+            <TimePicker x:Name="SaturdayEndTime1" Time="{Binding SelectedTime}" />
+
+            <!--Drop down list for the second Saturday parking lot selection-->
+            <Picker x:Name="SaturdaySurvey2" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Saturday Start Time 2-->
+            <TimePicker x:Name="SaturdayStartTime2" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Saturday End Time 2-->
+            <TimePicker x:Name="SaturdayEndTime2" Time="{Binding SelectedTime}" />
+
+            <!--Drop down list for the third Saturday parking lot selection-->
+            <Picker x:Name="SaturdaySurvey3" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Saturday Start Time 3-->
+            <TimePicker x:Name="SaturdayStartTime3" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Saturday End Time 3-->
+            <TimePicker x:Name="SaturdayEndTime3" Time="{Binding SelectedTime}" />
+			
+			<!--Sunday starts here-->
+
+            <Label Text="Sunday" Font="Large" />
+
+            <!--Drop down list for the first Sunday parking lot selection-->
+            <Picker x:Name="SundaySurvey1" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Sunday Start Time 1-->
+            <TimePicker x:Name="SundayStartTime1" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Sunday End Time 1-->
+            <TimePicker x:Name="SundayEndTime1" Time="{Binding SelectedTime}" />
+
+            <!--Drop down list for the second Sunday parking lot selection-->
+            <Picker x:Name="SundaySurvey2" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Sunday Start Time 2-->
+            <TimePicker x:Name="SundayStartTime2" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Sunday End Time 2-->
+            <TimePicker x:Name="SundayEndTime2" Time="{Binding SelectedTime}" />
+
+            <!--Drop down list for the third Sunday parking lot selection-->
+            <Picker x:Name="SundaySurvey3" 
+                    Title="Select a parking lot"
+                    VerticalOptions="Center">
+
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>P-1</x:String>
+                        <x:String>P-2</x:String>
+                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                    </x:Array>
+                </Picker.ItemsSource>
+
+            </Picker>
+
+            <Label Text="From" Font="Large" />
+
+            <!--Time picker for Sunday Start Time 3-->
+            <TimePicker x:Name="SundayStartTime3" Time="{Binding SelectedTime}" />
+
+            <Label Text="To" Font="Large" />
+
+            <!--Time picker for Sunday End Time 3-->
+            <TimePicker x:Name="SundayEndTime3" Time="{Binding SelectedTime}" />
 
             <!--Button to submit their New User Survey information-->
             <Button x:Name="SubmitButton"
