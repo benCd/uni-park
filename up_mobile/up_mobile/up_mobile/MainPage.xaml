@@ -5,6 +5,7 @@
              x:Class="up_mobile.MainPage"
              Title="Home"> <!--This Title is what is displayed at top of page in the app -->
 
+    <ScrollView>
     <StackLayout>
         
         <!--Where the Logo for the app goes-->
@@ -34,5 +35,6 @@
                 Clicked="RegisterPage"/> <!--Connects to the RegisterPage function in MainPage.xaml.cs when clicked-->
 
     </StackLayout>
+    </ScrollView>
 
 </ContentPage>

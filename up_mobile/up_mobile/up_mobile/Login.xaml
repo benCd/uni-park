@@ -5,7 +5,7 @@
              Title="Log In"> <!--This is what is displayed at top of page in the app -->
     
     <ContentPage.Content>
-        
+        <ScrollView>
         <StackLayout>
             
             <!--Label that goes above the E-mail entry field-->
@@ -29,6 +29,7 @@
                     HorizontalOptions="Center" /> <!-- add Clicked="LoginAttempt" -->
 
         </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
     
 </ContentPage>
