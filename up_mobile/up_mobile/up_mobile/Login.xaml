@@ -6,29 +6,30 @@
     
     <ContentPage.Content>
         <ScrollView>
-        <StackLayout>
+            <StackLayout>
             
-            <!--Label that goes above the E-mail entry field-->
-            <Label Text="E-mail" />
+                <!--Label that goes above the E-mail entry field-->
+                <Label Text="E-mail" />
             
-            <!--Entry field for the user's E-mail address-->
-            <Entry x:Name="LoginEmail"
-                   Placeholder="RealPerson@gmail.com" />
+                <!--Entry field for the user's E-mail address-->
+                <Entry x:Name="LoginEmail"
+                        Placeholder="RealPerson@gmail.com" />
 
-            <!--Label that goes above the Password entry field-->
-            <Label Text="Password" />
+                <!--Label that goes above the Password entry field-->
+                <Label Text="Password" />
             
-            <!--Entry field for the user's Password-->
-            <Entry x:Name="LoginPassword" 
-                   Placeholder="Password"
-                   IsPassword="true" /> <!--Hides the password as it is typed with black dots-->
+                <!--Entry field for the user's Password-->
+                <Entry x:Name="LoginPassword" 
+                        Placeholder="Password"
+                        IsPassword="true" /> <!--Hides the password as it is typed with black dots-->
 
-            <!--Button for the user to Log In-->
-            <Button x:Name="LoginButton" 
-                    Text="Log In" 
-                    HorizontalOptions="Center" /> <!-- add Clicked="LoginAttempt" -->
+                <!--Button for the user to Log In-->
+                <Button x:Name="LoginButton" 
+                        Text="Log In" 
+                        HorizontalOptions="Center" 
+                        Clicked="LoginAttempt" />
 
-        </StackLayout>
+            </StackLayout>
         </ScrollView>
     </ContentPage.Content>
     

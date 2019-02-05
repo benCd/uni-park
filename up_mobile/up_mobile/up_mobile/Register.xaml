@@ -6,44 +6,44 @@
     
     <ContentPage.Content>
         <ScrollView>
-        <StackLayout>
+            <StackLayout>
 
-            <!--Label that goes above the E-mail entry field-->
-            <Label Text="E-mail" />
+                <!--Label that goes above the E-mail entry field-->
+                <Label Text="E-mail" />
 
-            <!--Entry field for the user's E-mail address-->
-            <Entry x:Name="RegisterEmail"
-                   Placeholder="RealPerson@gmail.com" />
+                <!--Entry field for the user's E-mail address-->
+                <Entry x:Name="RegisterEmail"
+                        Placeholder="RealPerson@gmail.com" />
 
-            <!--Label that goes above the Password entry field-->
-            <Label Text="Password" />
+                <!--Label that goes above the Password entry field-->
+                <Label Text="Password" />
 
-            <!--Entry field for the user's Password-->
-            <Entry x:Name="RegisterPassword" 
-                   Placeholder="Password" 
-                   IsPassword="true" /> <!--Hides the password as it is typed with black dots-->
+                <!--Entry field for the user's Password-->
+                <Entry x:Name="RegisterPassword" 
+                        Placeholder="Password" 
+                        IsPassword="true" /> <!--Hides the password as it is typed with black dots-->
 
-            <!--Drop down list to select which University Campus to start out with-->
-            <Picker x:Name="UniversityPicker" 
-                    Title="Select your University Campus"
-                    VerticalOptions="Center">
+                <!--Drop down list to select which University Campus to start out with-->
+                <Picker x:Name="UniversityPicker" 
+                        Title="Select your University Campus"
+                        VerticalOptions="Center">
                 
-                <Picker.ItemsSource>
-                    <x:Array Type="{x:Type x:String}">
-                        <x:String>Oakland University</x:String>
-                        <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
-                    </x:Array>
-                </Picker.ItemsSource>
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Oakland University</x:String>
+                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                        </x:Array>
+                    </Picker.ItemsSource>
                 
-            </Picker>
+                </Picker>
 
-            <!--Button for the user to Register-->
-            <Button x:Name="RegisterButton" 
+                <!--Button for the user to Register-->
+                <Button x:Name="RegisterButton" 
                     Text="Register" 
                     HorizontalOptions="Center"
                     Clicked="RegisterAttempt" />
 
-        </StackLayout>
+            </StackLayout>
         </ScrollView>
     </ContentPage.Content>
     

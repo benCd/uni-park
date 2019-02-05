@@ -6,35 +6,35 @@
              Title="Home"> <!--This Title is what is displayed at top of page in the app -->
 
     <ScrollView>
-    <StackLayout>
+        <StackLayout>
         
-        <!--Where the Logo for the app goes-->
-        <Label Text="Logo Placeholder"
-               Font="Large"
-               HorizontalOptions="Center"
-               VerticalOptions="CenterAndExpand" />
+            <!--Where the Logo for the app goes-->
+            <Label Text="Logo Placeholder"
+                    Font="Large"
+                    HorizontalOptions="Center"
+                    VerticalOptions="CenterAndExpand" />
 
-        <!--Welcome message-->
-        <Label Text="Welcome to Uni Park!"
-               Font="Large"
-               HorizontalOptions="Center" />
+            <!--Welcome message-->
+            <Label Text="Welcome to Uni Park!"
+                    Font="Large"
+                    HorizontalOptions="Center" />
 
-        <!--Button to take you to the Log In page-->
-        <Button Text="Log In"
-                HorizontalOptions="Center"
-                Clicked="LoginPage"/> <!--Connects to the LoginPage function in MainPage.xaml.cs when clicked-->
+            <!--Button to take you to the Log In page-->
+            <Button Text="Log In"
+                    HorizontalOptions="Center"
+                    Clicked="LoginPage"/> <!--Connects to the LoginPage function in MainPage.xaml.cs when clicked-->
 
-        <!--Text instructing new users to create an account-->
-        <Label Text="New user? Create an account below"
-               Font="Small"
-               HorizontalOptions="Center"/>
+            <!--Text instructing new users to create an account-->
+            <Label Text="New user? Create an account below"
+                    Font="Small"
+                    HorizontalOptions="Center"/>
 
-        <!--Button to take you to the Register page-->
-        <Button Text="Register"
-                HorizontalOptions="Center" 
-                Clicked="RegisterPage"/> <!--Connects to the RegisterPage function in MainPage.xaml.cs when clicked-->
+            <!--Button to take you to the Register page-->
+            <Button Text="Register"
+                    HorizontalOptions="Center" 
+                    Clicked="RegisterPage"/> <!--Connects to the RegisterPage function in MainPage.xaml.cs when clicked-->
 
-    </StackLayout>
+        </StackLayout>
     </ScrollView>
 
 </ContentPage>
