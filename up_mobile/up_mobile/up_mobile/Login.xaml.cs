@@ -24,7 +24,7 @@ namespace up_mobile
         async void LoginAttempt(object sender, EventArgs args)
         {
             Button button = (Button)sender;
-            await Navigation.PushAsync(new ParkingSurvey());
+            await Navigation.PushAsync(new MondaySurvey());
         }
     }
 }

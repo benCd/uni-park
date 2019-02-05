@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="up_mobile.FridaySurvey"
+             Title="New User Survey"> <!--This is what is displayed at top of page in the app -->
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+
+                <!--Label asking where the user parks this term-->
+                <Label Text="Please enter your parking data for this semester. If a field isn't needed, leave it blank."
+                        Font="Large"
+                        HorizontalOptions="Center" />
+
+                <Label Text="Friday" 
+                       Font="Large" />
+
+                <!--Drop down list for the first Friday parking lot selection-->
+                <Picker x:Name="FridaySurvey1" 
+                        Title="Select a parking lot"
+                        VerticalOptions="Center">
+
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>P-1</x:String>
+                            <x:String>P-2</x:String>
+                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                        </x:Array>
+                    </Picker.ItemsSource>
+
+                </Picker>
+
+                <Label Text="From" 
+                       Font="Large" />
+
+                <!--Time picker for Friday Start Time 1-->
+                <TimePicker x:Name="FridayStartTime1" 
+                            Time="{Binding SelectedTime}" />
+
+                <Label Text="To" 
+                       Font="Large" />
+
+                <!--Time picker for Friday End Time 1-->
+                <TimePicker x:Name="FridayEndTime1" 
+                            Time="{Binding SelectedTime}" />
+
+                <!--Drop down list for the second Friday parking lot selection-->
+                <Picker x:Name="FridaySurvey2" 
+                        Title="Select a parking lot"
+                        VerticalOptions="Center">
+
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>P-1</x:String>
+                            <x:String>P-2</x:String>
+                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                        </x:Array>
+                    </Picker.ItemsSource>
+
+                </Picker>
+
+                <Label Text="From" 
+                       Font="Large" />
+
+                <!--Time picker for Friday Start Time 2-->
+                <TimePicker x:Name="FridayStartTime2" 
+                            Time="{Binding SelectedTime}" />
+
+                <Label Text="To" 
+                       Font="Large" />
+
+                <!--Time picker for Friday End Time 2-->
+                <TimePicker x:Name="FridayEndTime2" 
+                            Time="{Binding SelectedTime}" />
+
+                <!--Drop down list for the third Friday parking lot selection-->
+                <Picker x:Name="FridaySurvey3" 
+                        Title="Select a parking lot"
+                        VerticalOptions="Center">
+
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>P-1</x:String>
+                            <x:String>P-2</x:String>
+                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                        </x:Array>
+                    </Picker.ItemsSource>
+
+                </Picker>
+
+                <Label Text="From" 
+                       Font="Large" />
+
+                <!--Time picker for Friday Start Time 3-->
+                <TimePicker x:Name="FridayStartTime3" 
+                            Time="{Binding SelectedTime}" />
+
+                <Label Text="To" 
+                       Font="Large" />
+
+                <!--Time picker for Friday End Time 3-->
+                <TimePicker x:Name="FridayEndTime3" 
+                            Time="{Binding SelectedTime}" />
+
+                <!--Button to go to the next page of their New User Survey information-->
+                <Button x:Name="SaturdaySurveyButton"
+                        Text="Next Page"
+                        HorizontalOptions="Center" 
+                        Clicked="SaturdaySurveyPage"/>
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+
+</ContentPage>
