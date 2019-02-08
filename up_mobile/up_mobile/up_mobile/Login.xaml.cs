@@ -19,12 +19,12 @@ namespace up_mobile
         }
 
         // LoginAttempt function - When the Login button in Login.xaml is clicked this function 
-        // attempts to log the user in. If it is their first time logging in, it takes them to the new user survey 
+        // attempts to log the user in. If it is their first time logging in, it takes them to the NewUserSurvey.xaml page
         // FOR NOW IT JUST GOES THERE WHEN YOU PRESS LOGIN
         async void LoginAttempt(object sender, EventArgs args)
         {
             Button button = (Button)sender;
-            await Navigation.PushAsync(new MondaySurvey());
+            await Navigation.PushAsync(new NewUserSurvey());
         }
     }
 }

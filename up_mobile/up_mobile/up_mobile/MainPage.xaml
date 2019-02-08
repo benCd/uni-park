@@ -6,16 +6,15 @@
              Title="Home"> <!--This Title is what is displayed at top of page in the app -->
 
     <ScrollView>
-        <StackLayout>
-        
+        <StackLayout Padding="0,10,0,10">
+            
             <!--Where the Logo for the app goes-->
             <Label Text="Logo Placeholder"
                     Font="Large"
-                    HorizontalOptions="Center"
-                    VerticalOptions="CenterAndExpand" />
+                    HorizontalOptions="Center" />
 
             <!--Welcome message-->
-            <Label Text="Welcome to Uni Park!"
+            <Label Text="Welcome to Uni-Park!"
                     Font="Large"
                     HorizontalOptions="Center" />
 

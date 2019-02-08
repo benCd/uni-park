@@ -6,15 +6,11 @@
 
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout>
-
-                <!--Label asking where the user parks this term-->
-                <Label Text="Please enter your parking data for this semester. If a field isn't needed, leave it blank."
-                        Font="Large"
-                        HorizontalOptions="Center" />
+            <StackLayout Padding="0,10,0,10">
 
                 <Label Text="Tuesday" 
-                       Font="Large" />
+                       Font="Large" 
+                       HorizontalTextAlignment="Center" />
 
                 <!--Drop down list for the first Tuesday parking lot selection-->
                 <Picker x:Name="TuesdaySurvey1" 

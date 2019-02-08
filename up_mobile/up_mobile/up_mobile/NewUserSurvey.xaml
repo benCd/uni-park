@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="up_mobile.NewUserSurvey"
+             Title="New User Survey">
+
+    <ContentPage.Content>
+        <StackLayout Padding="0,10,0,10">
+
+            <!--Label asking the user to take the New User Survey-->
+            <Label Text="We require that first time users of our app take our new user survey. Please enter your parking information from the previous week. This will help us improve the efficiency of Uni-Park. If a field isn't needed, leave it blank."
+                        Font="Large"
+                        HorizontalOptions="Center" />
+
+            <!--Button to begin the New User Survey-->
+            <Button x:Name="NewUserSurveyButton"
+                        Text="Begin Survey"
+                        HorizontalOptions="Center" 
+                        Clicked="NewUserSurveyClicked"/>
+
+
+        </StackLayout>
+    </ContentPage.Content>
+    
+</ContentPage>
