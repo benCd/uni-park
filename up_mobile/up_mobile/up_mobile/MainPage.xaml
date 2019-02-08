@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:up_mobile"
              x:Class="up_mobile.MainPage"
-             Title="Home"> <!--This Title is what is displayed at top of page in the app -->
+             Title="Home">
 
     <ScrollView>
         <StackLayout Padding="0,10,0,10">

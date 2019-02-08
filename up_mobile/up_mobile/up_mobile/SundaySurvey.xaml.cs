@@ -18,11 +18,11 @@ namespace up_mobile
 			InitializeComponent ();
 		}
 
-        // SubmitNewUserSurvey function - Submits the user's New User Survey and navigates them to ???
-        //async void SubmitNewUserSurvey(object sender, EventArgs args)
-        //{
-        //    Button button = (Button)sender;
-        //    await Navigation.PushAsync(new DestinationPage());
-        //}
+        // SubmitNewUserSurvey function - Submits the user's New User Survey and navigates them to FinishedSurvey page
+        async void SubmitNewUserSurvey(object sender, EventArgs args)
+        {
+            Button button = (Button)sender;
+            await Navigation.PushAsync(new FinishedSurvey());
+        }
     }
 }

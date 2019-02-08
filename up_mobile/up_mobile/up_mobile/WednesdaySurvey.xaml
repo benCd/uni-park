@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="up_mobile.WednesdaySurvey"
-             Title="New User Survey"> <!--This is what is displayed at top of page in the app -->
+             Title="New User Survey">
 
     <ContentPage.Content>
         <ScrollView>

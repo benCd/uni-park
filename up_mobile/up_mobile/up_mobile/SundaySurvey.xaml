@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="up_mobile.SundaySurvey"
-             Title="New User Survey"> <!--This is what is displayed at top of page in the app -->
+             Title="New User Survey">
 
     <ContentPage.Content>
         <ScrollView>
@@ -102,8 +102,8 @@
                 <!--Button to submit their New User Survey information-->
                 <Button x:Name="SubmitNewUserSurveyButton"
                         Text="Submit"
-                        HorizontalOptions="Center" />
-                    <!--Clicked="SubmitNewUserSurvey"/>-->
+                        HorizontalOptions="Center"
+                        Clicked="SubmitNewUserSurvey" />
 
             </StackLayout>
         </ScrollView>
