@@ -9,16 +9,24 @@ using Xamarin.Forms.Xaml;
 
 namespace up_mobile
 {
+    /// <summary>
+    /// WednesdaySurvey page
+    /// </summary>
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class WednesdaySurvey : ContentPage
 	{
-        // Constructor for WednesdaySurvey class - Initializes the page on load
+        /// <summary>
+        /// Loads WednesdaySurvey page
+        /// </summary>
         public WednesdaySurvey ()
 		{
 			InitializeComponent ();
 		}
 
-        // ThursdaySurveyPage function - takes the user to the Thursday page of the New User Survey
+        /// <summary>
+        /// When the Next Page button on WednesdaySurvey page <see cref="WednesdaySurvey.xaml"/> is pressed it 
+        /// will navigate to the ThursdaySurvey page <see cref="ThursdaySurvey.xaml"/>
+        /// </summary>
         async void ThursdaySurveyPage(object sender, EventArgs args)
         {
             Button button = (Button)sender;

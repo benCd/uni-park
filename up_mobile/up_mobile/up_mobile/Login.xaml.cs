@@ -9,18 +9,28 @@ using Xamarin.Forms.Xaml;
 
 namespace up_mobile
 {
+    /// <summary>
+    /// Login page
+    /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Login : ContentPage
     {
-        // Constructor for Login class - Initializes the page on load
+        /// <summary>
+        /// Loads the Login page <see cref="Login.xaml"/>
+        /// </summary>
         public Login()
         {
             InitializeComponent();
         }
-
-        // LoginAttempt function - When the Login button in Login.xaml is clicked this function 
-        // attempts to log the user in. If it is their first time logging in, it takes them to the NewUserSurvey.xaml page
-        // FOR NOW IT JUST GOES THERE WHEN YOU PRESS LOGIN
+        /// <summary>
+        /// When Login button on the Login page <see cref="Login.xaml"/> is pressed
+        /// it attempts to log the user in. If it is their first time logging in they 
+        /// are redirected to the New User Survey <see cref="NewUserSurvey.xaml"/>
+        /// 
+        /// FOR NOW IT JUST GOES TO THE NEW USER SURVEY PAGE
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         async void LoginAttempt(object sender, EventArgs args)
         {
             Button button = (Button)sender;

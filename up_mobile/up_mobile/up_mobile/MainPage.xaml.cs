@@ -7,22 +7,35 @@ using Xamarin.Forms;
 
 namespace up_mobile
 {
+    /// <summary>
+    /// MainPage page
+    /// </summary>
     public partial class MainPage : ContentPage
     {
-        // Constructor for MainPage class - Initializes the page on load
+        /// <summary>
+        /// Loads the MainPage page <see cref="MainPage.xaml"/>
+        /// </summary>
         public MainPage()
         {
             InitializeComponent();
         }
 
-        // LoginPage function - When the Log In button in MainPage.xaml is clicked this function navigates the user to the Log In page
+        /// <summary>
+        /// When the Log In button in <see cref="MainPage.xaml"/> is pressed, navigates to the Log In page <see cref="Login.xaml"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         async void LoginPage(object sender, EventArgs args)
         {
             Button button = (Button)sender;
             await Navigation.PushAsync(new Login());
         }
 
-        // RegisterPage function - When the Register button in MainPage.xaml is clicked this function navigates the user to the Register page
+        /// <summary>
+        /// When the Register button in <see cref="MainPage.xaml"/> is pressed, navigates to the Register page <see cref="Register.xaml"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         async void RegisterPage(object sender, EventArgs args)
         {
             Button button = (Button)sender;

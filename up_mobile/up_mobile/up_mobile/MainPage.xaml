@@ -21,7 +21,7 @@
             <!--Button to take you to the Log In page-->
             <Button Text="Log In"
                     HorizontalOptions="Center"
-                    Clicked="LoginPage"/> <!--Connects to the LoginPage function in MainPage.xaml.cs when clicked-->
+                    Clicked="LoginPage"/>
 
             <!--Text instructing new users to create an account-->
             <Label Text="New user? Create an account below"
@@ -31,7 +31,7 @@
             <!--Button to take you to the Register page-->
             <Button Text="Register"
                     HorizontalOptions="Center" 
-                    Clicked="RegisterPage"/> <!--Connects to the RegisterPage function in MainPage.xaml.cs when clicked-->
+                    Clicked="RegisterPage"/>
 
         </StackLayout>
     </ScrollView>

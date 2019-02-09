@@ -9,19 +9,29 @@ using Xamarin.Forms.Xaml;
 
 namespace up_mobile
 {
+    /// <summary>
+    /// Register page
+    /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Register : ContentPage
     {
-        // Constructor for Register class - Initializes the page on load
+        /// <summary>
+        /// Loads the Register page <see cref="Register.xaml"/>
+        /// </summary>
         public Register()
         {
             InitializeComponent();
         }
 
-        // RegisterAttempt function - When the Register button in Register.xaml is clicked this function 
-        // checks that the email and password meet the requirements for registration, then registers the user
-        // while sending them a confirmation e-mail, then it redirects them to the Login page
-        // FOR NOW IT JUST GOES TO THE LOGIN PAGE
+        /// <summary>
+        /// When the Register button on the Register page <see cref="Register.xaml"/> is clicked it
+        /// checks that the email and password entered meet requirements for registration, then registers
+        /// the user, sends them a confirmation email, and then navigates to the Login page <see cref="Login.xaml"/>
+        /// 
+        /// FOR NOW IT JUST GOES TO THE LOGIN PAGE
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         async void RegisterAttempt(object sender, EventArgs args)
         {
             Button button = (Button)sender;

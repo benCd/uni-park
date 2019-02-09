@@ -9,16 +9,24 @@ using Xamarin.Forms.Xaml;
 
 namespace up_mobile
 {
+    /// <summary>
+    /// SundaySurvey page
+    /// </summary>
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class SundaySurvey : ContentPage
 	{
-        // Constructor for SundaySurvey class - Initializes the page on load
+        /// <summary>
+        /// Loads SundaySurvey page
+        /// </summary>
         public SundaySurvey ()
 		{
 			InitializeComponent ();
 		}
 
-        // SubmitNewUserSurvey function - Submits the user's New User Survey and navigates them to FinishedSurvey page
+        /// <summary>
+        /// When the Next Page button on SundaySurvey page <see cref="SundaySurvey.xaml"/> is pressed it 
+        /// will navigate to the FinishedSurvey page <see cref="FinishedSurvey.xaml"/>
+        /// </summary>
         async void SubmitNewUserSurvey(object sender, EventArgs args)
         {
             Button button = (Button)sender;
