@@ -27,7 +27,7 @@ namespace BackgroundTasks
     public static class TaskScheduler
     {
         /// <summary>
-        /// 
+        /// Class wrapper for scheduled functions
         /// </summary>
         private class ScheduledFunction : IComparable
         {
@@ -76,7 +76,14 @@ namespace BackgroundTasks
             }
         }
 
+        /// <summary>
+        /// Tasklist containing <see cref="ScheduledFunction"/> objects
+        /// </summary>
         private static LinkedList<ScheduledFunction> taskList = new LinkedList<ScheduledFunction>();
+
+        /// <summary>
+        /// Counter, keeping track of the number of <see cref="ScheduledFunction"/>s in the <see cref="taskList"/>
+        /// </summary>
         private static int count = 0;
 
         /// <summary>
@@ -197,15 +204,28 @@ namespace BackgroundTasks
         /// <summary>
         /// Is triggered by the ExecuteSchedule task when the next task is supposed to be run.
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async static Task ExecuteNextTask(CancellationToken token)
         {
+            //Asynchronously run a scheduled task
             await Task.Run(async () => {
+
+                //TODO: check return value
                 taskList.Last.Value.Func();
-                taskList.Last.Value.ExecCounter--;
-                taskList.AddBefore(taskList.First, taskList.Last);
+
+                //Decrement the execution counter
+                taskList.Last.Value.ExecCounter++;
+
+                //Check if any more executions are scheduled if so enqueue again
+                if (taskList.Last.Value.ExecCounter < taskList.Last.Value.MaxExecs)
+                {
+                    taskList.AddBefore(taskList.First, taskList.Last);
+                    count++;
+                }
+                //Remove task from end of list
                 taskList.Remove(taskList.Last);
+                count--;
             });
         }
 
