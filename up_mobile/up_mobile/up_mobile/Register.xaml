@@ -13,29 +13,32 @@
 
                 <!--Entry field for the user's E-mail address-->
                 <Entry x:Name="RegisterEmail"
-                        Placeholder="RealPerson@gmail.com" />
+                        Placeholder="RealPerson@gmail.com" 
+                        TextColor="Blue"/>
 
                 <!--Label that goes above the Password entry field-->
                 <Label Text="Password" />
 
                 <!--Entry field for the user's Password-->
+                <!--IsPassword modifier hides the password as black dots while it is typed-->
                 <Entry x:Name="RegisterPassword" 
                         Placeholder="Password" 
-                        IsPassword="true" /> <!--Hides the password as it is typed with black dots-->
+                        IsPassword="true" 
+                        TextColor="Blue" /> 
 
+                <!--Commented out for now until we have at least 2 options for them to choose from-->
                 <!--Drop down list to select which University Campus to start out with-->
-                <Picker x:Name="UniversityPicker" 
+                <!--<Picker x:Name="UniversityPicker" 
                         Title="Select your University Campus"
                         VerticalOptions="Center">
                 
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
                             <x:String>Oakland University</x:String>
-                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
                         </x:Array>
                     </Picker.ItemsSource>
                 
-                </Picker>
+                </Picker>-->
 
                 <!--Button for the user to Register-->
                 <Button x:Name="RegisterButton" 
