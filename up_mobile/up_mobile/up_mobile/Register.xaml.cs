@@ -25,6 +25,10 @@ namespace up_mobile
         async void RegisterAttempt(object sender, EventArgs args)
         {
             Button button = (Button)sender;
+
+            var RegEmail = RegisterEmail.Text;
+            var RegPassword = RegisterPassword.Text;
+
             await Navigation.PushAsync(new Login());
         }
     }

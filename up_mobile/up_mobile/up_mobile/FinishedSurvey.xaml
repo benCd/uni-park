@@ -7,10 +7,10 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="0,10,0,10">
-            
+
                 <Label Text="Thank you for submitting your survey. We appreciate it."
                        Font="Large" />
-            
+
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

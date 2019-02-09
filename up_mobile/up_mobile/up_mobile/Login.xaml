@@ -13,15 +13,18 @@
             
                 <!--Entry field for the user's E-mail address-->
                 <Entry x:Name="LoginEmail"
-                        Placeholder="RealPerson@gmail.com" />
+                        Placeholder="RealPerson@gmail.com"
+                        TextColor="Blue" />
 
                 <!--Label that goes above the Password entry field-->
                 <Label Text="Password" />
             
                 <!--Entry field for the user's Password-->
+                <!--IsPassword modifier hides the password as black dots while it is typed-->
                 <Entry x:Name="LoginPassword" 
                         Placeholder="Password"
-                        IsPassword="true" /> <!--Hides the password as it is typed with black dots-->
+                        IsPassword="true" 
+                        TextColor="Blue" />
 
                 <!--Button for the user to Log In-->
                 <Button x:Name="LoginButton" 

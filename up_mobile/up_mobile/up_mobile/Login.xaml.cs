@@ -24,6 +24,10 @@ namespace up_mobile
         async void LoginAttempt(object sender, EventArgs args)
         {
             Button button = (Button)sender;
+
+            var LogEmail = LoginEmail.Text;
+            var LogPassword = LoginPassword.Text;
+
             await Navigation.PushAsync(new NewUserSurvey());
         }
     }

@@ -17,7 +17,6 @@ namespace up_mobile
 		{
 			InitializeComponent ();
 		}
-
-
+        
 	}
 }
