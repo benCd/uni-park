@@ -79,14 +79,17 @@ namespace up_mobile.Data_Sending
         /// <param name="item">object to be sent. only required param</param>
         /// <param name="isNewItem">bool determining if object is new. If no, 
         /// use PUT. If yes, use POST.</param>
-        /// <param name="id">id of object to be sent</param>/// 
+        /// <param name="uriFragment">string for referencing part of a web api.
+        /// allows us to reference different parts of the default web api.
+        /// for example, if we have "http ://webapi/x" and "http: //webapi/y"
+        /// we can get at both by setting uriFragment "x" or "y"</param>
         /// <param name="url">url of web API</param>       
         /// <returns>true if object was sent successfully, false if not</returns>
         public async Task<bool> PostItemAsync(object item, bool isNewItem = true, 
-            string id = "", string url = defaultUrl)
+            string uriFragment = "", string url = defaultUrl)
         {
             url += "{0}";
-            var uri = new Uri(string.Format(url, id));
+            var uri = new Uri(string.Format(url, uriFragment));
 
             try
             {
