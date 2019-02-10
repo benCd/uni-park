@@ -7,7 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace up_mobile
+namespace up_mobile.Data_Sending
 {
     /// <summary>
     /// the main class for consuming RESTful web services
@@ -17,11 +17,16 @@ namespace up_mobile
     /// main web API, so methods do not have to explicity state 
     /// a url unless they require a different API
     /// </summary>
-    class RestRequester
+    public class RestRequester
     {
         HttpClient client;
         const string defaultUrl = "https://";
 
+        /// <summary>
+        /// IMPORTANT NOTE: RestRequester currently contains
+        /// placeholder user information. Needs to be replaced
+        /// with proper user credentials
+        /// </summary>
         public RestRequester()
         {
             var auth = string.Format("{0}:{1}", "Username", "Password");

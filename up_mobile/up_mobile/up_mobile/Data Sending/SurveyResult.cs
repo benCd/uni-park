@@ -4,7 +4,7 @@ using System.Text;
 
 namespace up_mobile.Data_Sending
 {
-    class SurveyResult
+    public class SurveyResult
     {
         String dummyValue1;
         String dummyValue2;
