@@ -6,6 +6,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Plugin.Geolocator.Abstractions;
+using up_mobile.GPS;
+using up_mobile.Helpers;
 
 namespace up_mobile.Data_Sending
 {
@@ -22,14 +25,11 @@ namespace up_mobile.Data_Sending
         HttpClient client;
         const string defaultUrl = "https://";
 
-        /// <summary>
-        /// IMPORTANT NOTE: RestRequester currently contains
-        /// placeholder user information. Needs to be replaced
-        /// with proper user credentials
-        /// </summary>
         public RestRequester()
         {
-            var auth = string.Format("{0}:{1}", "Username", "Password");
+            var username = Settings.Username;
+            var password = Settings.Password;
+            var auth = string.Format("{0}:{1}", username, password);
             var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(auth));
 
             client = new HttpClient();
@@ -110,6 +110,16 @@ namespace up_mobile.Data_Sending
                 Debug.WriteLine("ERROR {0}", ex.Message);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Simple method for sending current position via HTTP POST
+        /// </summary>
+        /// <returns>bool indicating success/failure of HTTP POST</returns>
+        public async Task<bool> PostCurrentPositionAsync()
+        {
+            Position position = await GeoService.GetCurrentPositionAsync();
+            return await PostItemAsync(position);
         }
     }
 }
