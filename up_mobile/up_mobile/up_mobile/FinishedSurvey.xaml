@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="up_mobile.FinishedSurvey"
              Title="Survey Finished">
-
+    
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="0,10,0,10">
