@@ -153,9 +153,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\BackgroundTasks\BackgroundTasks.csproj">
-      <Project>{00ca2420-7273-43e9-aeab-75789bd25fdd}</Project>
-      <Name>BackgroundTasks</Name>
+    <ProjectReference Include="..\..\Background\Background.csproj">
+      <Project>{84ac24f2-098c-4a19-8514-05157bd44a0e}</Project>
+      <Name>Background</Name>
     </ProjectReference>
     <ProjectReference Include="..\up_mobile\up_mobile.csproj">
       <Project>{25F67136-8BE1-4AB0-9CD8-2B6A050744DF}</Project>

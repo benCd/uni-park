@@ -23,13 +23,13 @@ namespace up_mobile.iOS
 
             try
             {
-                await BackgroundTasks.TaskScheduler.ExecuteSchedule(_cts.Token);
+                await Background.TaskScheduler.ExecuteSchedule(_cts.Token);
             } catch(OperationCanceledException)
             {
-                var message = new BackgroundTasks.Messages.CancelExecuteScheduleMessage();
+                var message = new Background.Messages.CancelExecuteScheduleMessage();
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    MessagingCenter.Send<BackgroundTasks.Messages.CancelExecuteScheduleMessage>(message, "CancelExecuteScheduleMessage");
+                    MessagingCenter.Send<Background.Messages.CancelExecuteScheduleMessage>(message, "CancelExecuteScheduleMessage");
                 });
                 
             }
@@ -37,10 +37,10 @@ namespace up_mobile.iOS
             {
                 if(_cts.IsCancellationRequested)
                 {
-                    var message = new BackgroundTasks.Messages.CancelExecuteScheduleMessage();
+                    var message = new Background.Messages.CancelExecuteScheduleMessage();
                     Device.BeginInvokeOnMainThread(() =>
                     {
-                        MessagingCenter.Send<BackgroundTasks.Messages.CancelExecuteScheduleMessage>(message, "CancelExecuteScheduleMessage");
+                        MessagingCenter.Send<Background.Messages.CancelExecuteScheduleMessage>(message, "CancelExecuteScheduleMessage");
                     });
                 }
             }
@@ -48,10 +48,10 @@ namespace up_mobile.iOS
 
         private void OnExperiation()
         {
-            var message = new BackgroundTasks.Messages.CancelExecuteScheduleMessage();
+            var message = new Background.Messages.CancelExecuteScheduleMessage();
             Device.BeginInvokeOnMainThread(() =>
             {
-                MessagingCenter.Send<BackgroundTasks.Messages.CancelExecuteScheduleMessage>(message, "CancelExecuteScheduleMessage");
+                MessagingCenter.Send<Background.Messages.CancelExecuteScheduleMessage>(message, "CancelExecuteScheduleMessage");
             });
         }
 

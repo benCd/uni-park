@@ -17,12 +17,12 @@ namespace up_mobile.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
 
-            MessagingCenter.Subscribe<BackgroundTasks.Messages.ExecuteScheduleMessage>(this, "ExecuteScheduleMessage", message => {
+            MessagingCenter.Subscribe<Background.Messages.ExecuteScheduleMessage>(this, "ExecuteScheduleMessage", message => {
                 var intent = new Intent(this, typeof(ExecuteScheduleService));
                 StartService(intent);
             });
 
-            MessagingCenter.Subscribe<BackgroundTasks.Messages.CancelExecuteScheduleMessage>(this, "CancelExecuteScheduleMessage", message => {
+            MessagingCenter.Subscribe<Background.Messages.CancelExecuteScheduleMessage>(this, "CancelExecuteScheduleMessage", message => {
                 var intent = new Intent(this, typeof(ExecuteScheduleService));
                 StopService(intent);
             });

@@ -33,14 +33,14 @@ namespace up_mobile.Droid
             {
                 try
                 {
-                    BackgroundTasks.TaskScheduler.ExecuteSchedule(_cts.Token).Wait();
+                    Background.TaskScheduler.ExecuteSchedule(_cts.Token).Wait();
                 }
                 catch (System.OperationCanceledException)
                 {
-                    var message = new BackgroundTasks.Messages.CancelExecuteScheduleMessage();
+                    var message = new Background.Messages.CancelExecuteScheduleMessage();
                     Device.BeginInvokeOnMainThread(() =>
                     {
-                        MessagingCenter.Send<BackgroundTasks.Messages.CancelExecuteScheduleMessage>(message, "CancelExecuteScheduleMessage");
+                        MessagingCenter.Send<Background.Messages.CancelExecuteScheduleMessage>(message, "CancelExecuteScheduleMessage");
                     });
 
                 }
@@ -48,10 +48,10 @@ namespace up_mobile.Droid
                 {
                     if (_cts.IsCancellationRequested)
                     {
-                        var message = new BackgroundTasks.Messages.CancelExecuteScheduleMessage();
+                        var message = new Background.Messages.CancelExecuteScheduleMessage();
                         Device.BeginInvokeOnMainThread(() =>
                         {
-                            MessagingCenter.Send<BackgroundTasks.Messages.CancelExecuteScheduleMessage>(message, "CancelExecuteScheduleMessage");
+                            MessagingCenter.Send<Background.Messages.CancelExecuteScheduleMessage>(message, "CancelExecuteScheduleMessage");
                         });
                     }
                 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using BackgroundTasks;
+using Background;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace up_mobile
@@ -13,7 +13,7 @@ namespace up_mobile
             InitializeComponent();
 
             //Change execution scheduler specific property upon cancellation
-            MessagingCenter.Subscribe<BackgroundTasks.Messages.CancelExecuteScheduleMessage>(this, "CancelExecuteScheduleMessage", async message =>
+            MessagingCenter.Subscribe<Background.Messages.CancelExecuteScheduleMessage>(this, "CancelExecuteScheduleMessage", async message =>
             {
                 Application.Current.Properties["execution_schedule_running"] = false;
             });
