@@ -25,12 +25,13 @@ namespace up_mobile
 
         /// <summary>
         /// When the Next Page button on SundaySurvey page <see cref="SundaySurvey.xaml"/> is pressed it 
-        /// will navigate to the FinishedSurvey page <see cref="FinishedSurvey.xaml"/>
+        /// will thank the user via a pop up, then navigate to the Home page <see cref="Home.xaml"/>
         /// </summary>
         async void SubmitNewUserSurvey(object sender, EventArgs args)
         {
             Button button = (Button)sender;
-            await Navigation.PushAsync(new FinishedSurvey());
+            await DisplayAlert("Thanks!", "This information really helps us", "OK");
+            await Navigation.PushAsync(new MainPage());
         }
     }
 }
