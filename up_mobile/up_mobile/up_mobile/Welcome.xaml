@@ -19,7 +19,7 @@
                         HorizontalOptions="Center" />
 
                 <Label Text="Already have an account?"
-                        Font="Large"
+                        Font="Small"
                         HorizontalOptions="Center" />
 
                 <!--Button to take you to the Log In page-->

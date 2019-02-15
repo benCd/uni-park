@@ -10,7 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace up_mobile
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class User : ContentPage
+	public partial class User : TabbedPage
 	{
 		public User ()
 		{

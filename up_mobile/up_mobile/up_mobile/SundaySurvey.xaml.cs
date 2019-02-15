@@ -31,7 +31,7 @@ namespace up_mobile
         {
             Button button = (Button)sender;
             await DisplayAlert("Thanks!", "This information really helps us", "OK");
-            await Navigation.PushAsync(new MainPage());
+            await Navigation.PushAsync(new User());
         }
     }
 }
