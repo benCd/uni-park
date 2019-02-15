@@ -7,26 +7,15 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="0,10,0,10">
-                
-                <!--Displays telling the user they are not currently signed into an account-->
-                <Label Text="You are not currently logged in." 
-                        Font="Medium"
-                        HorizontalOptions="Center"/>
-
-                <!--Button to take you to the Log In page-->
-                <Button Text="Log In"
-                        HorizontalOptions="Center"
-                        Clicked="LoginPage"/>
-
-                <!--Text instructing new users to create an account-->
-                <Label Text="New user? Create an account below"
+               
+                <Label Text="Here are your account details:"
                         Font="Small"
                         HorizontalOptions="Center"/>
 
-                <!--Button to take you to the Register page-->
-                <Button Text="Register"
+                <!--Button to log the user out-->
+                <Button Text="Log Out"
                         HorizontalOptions="Center" 
-                        Clicked="RegisterPage"/>
+                        Clicked="LogOutAttempt"/>
 
             </StackLayout>
         </ScrollView>

@@ -23,26 +23,18 @@ namespace up_mobile
 			InitializeComponent ();
 		}
 
-        /// <summary>
-        /// When the Log In button in <see cref="Account.xaml"/> is pressed, navigates to the Log In page <see cref="Login.xaml"/>
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        async void LoginPage(object sender, EventArgs args)
-        {
-            Button button = (Button)sender;
-            await Navigation.PushAsync(new Login());
-        }
+
 
         /// <summary>
-        /// When the Register button in <see cref="Account.xaml"/> is pressed, navigates to the Register page <see cref="Register.xaml"/>
+        /// When the Log Out button in <see cref="Account.xaml"/> is pressed, logs the user out and navigates them to 
+        /// the Welcome page <see cref="Welcome.xaml"/> which is housed within the tabbed page <see cref="Guest.xaml"/>
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        async void RegisterPage(object sender, EventArgs args)
+        async void LogOutAttempt(object sender, EventArgs args)
         {
             Button button = (Button)sender;
-            await Navigation.PushAsync(new Register());
+            await Navigation.PushAsync(new Guest());
         }
 
     }

@@ -9,16 +9,10 @@ using Xamarin.Forms.Xaml;
 
 namespace up_mobile
 {
-    /// <summary>
-    /// Home page for logged in users
-    /// </summary>
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class Home : ContentPage
+	public partial class User : ContentPage
 	{
-        /// <summary>
-        /// Loads the Home page <see cref="Home.xaml"/>
-        /// </summary>
-		public Home ()
+		public User ()
 		{
 			InitializeComponent ();
 		}

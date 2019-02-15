@@ -8,32 +8,12 @@
         <ScrollView>
             <StackLayout Padding="0,10,0,10">
 
-                <!--Where the Logo for the app goes-->
-                <Label Text="Logo Placeholder"
+                <Label Text="Thanks for logging in!"
                         Font="Large"
                         HorizontalOptions="Center" />
-
-                <!--Welcome message-->
-                <Label Text="Welcome to Uni-Park!"
-                        Font="Large"
-                        HorizontalOptions="Center" />
-
-                <!--Button to take you to the Log In page-->
-                <Button Text="Log In"
-                        HorizontalOptions="Center"
-                        Clicked="LoginPage"/>
-
-                <!--Text instructing new users to create an account-->
-                <Label Text="New user? Create an account below"
-                        Font="Small"
-                        HorizontalOptions="Center"/>
-
-                <!--Button to take you to the Register page-->
-                <Button Text="Register"
-                        HorizontalOptions="Center" 
-                        Clicked="RegisterPage"/>
-
+                
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
+
 </ContentPage>
