@@ -7,25 +7,26 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Plugin.Geolocator.Abstractions;
-using up_mobile.GPS;
 using up_mobile.Helpers;
+using System.Net;
+using up_mobile.Models;
 
-namespace up_mobile.Data_Sending
+namespace up_mobile.Backend
 {
     /// <summary>
     /// the main class for consuming RESTful web services
-    /// and generating HTTP requests. Contains a reference to 
+    /// and generating HTTPS requests. Contains a reference to 
     /// one http client object through which all requests are 
-    /// generated. defaultUrl is used to refer to the url of the 
+    /// generated. DefaultBaseUri is used to refer to the url of the 
     /// main web API, so methods do not have to explicity state 
-    /// a url unless they require a different API
+    /// the full url unless they require a different API
     /// </summary>
-    public class RestRequester
+    public class RestService
     {
         HttpClient client;
-        const string defaultUrl = "https://";
+        const string defaultBaseUri = "http://10.0.2.2:3000";
 
-        public RestRequester()
+        public RestService()
         {
             var username = Settings.Username;
             var password = Settings.Password;
@@ -34,7 +35,33 @@ namespace up_mobile.Data_Sending
 
             client = new HttpClient();
             client.MaxResponseContentBufferSize = 256000;
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
+
+            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
+        }
+
+        public async Task<PinHolder> GetPinsAsync(string serviceUri = "/pins" , string baseUri = defaultBaseUri)
+        {
+            PinHolder ph = new PinHolder();
+            baseUri += "{0}";
+            var uri = new Uri(string.Format(baseUri, serviceUri));
+            Debug.Write(uri);
+
+            try
+            {
+                var response = await client.GetAsync(uri);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    Debug.Write("HERE IS THE RESPONSE" + content);
+                    ph = JsonConvert.DeserializeObject<PinHolder>(content);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ERROR {0}", ex.Message);
+            }
+
+            return ph;
         }
 
         /// <summary>
@@ -46,7 +73,7 @@ namespace up_mobile.Data_Sending
         /// <param name="id">id of object to be acquired</param>
         /// <param name="url">url of web API</param>
         /// <returns>dictionary of varnames and values representing an object</returns>
-        public async Task<Dictionary<string, object>> GetItemValuesAsync(string id = "", string url = defaultUrl)
+        public async Task<Dictionary<string, object>> GetItemValuesAsync(string id = "", string url = defaultBaseUri)
         {
             Dictionary<string, object> itemValues = new Dictionary<string, object>();
 
@@ -81,7 +108,7 @@ namespace up_mobile.Data_Sending
         /// use PUT. If yes, use POST.</param>
         /// <param name="url">url of web API</param>       
         /// <returns>true if object was sent successfully, false if not</returns>
-        public async Task<bool> PostItemAsync(object item, bool isNewItem = true, string uri = defaultUrl)
+        public async Task<bool> PostItemAsync(object item, string uri = defaultBaseUri)
         {
             try
             {
@@ -89,14 +116,7 @@ namespace up_mobile.Data_Sending
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 HttpResponseMessage response = null;
-                if (isNewItem)
-                {
-                    response = await client.PostAsync(uri, content);
-                }
-                else
-                {
-                    response = await client.PutAsync(uri, content);
-                }
+                response = await client.PostAsync(uri, content);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -116,10 +136,10 @@ namespace up_mobile.Data_Sending
         /// Simple method for sending current position via HTTP POST
         /// </summary>
         /// <returns>bool indicating success/failure of HTTP POST</returns>
-        public async Task<bool> PostCurrentPositionAsync()
-        {
-            Position position = await GeoService.GetCurrentPositionAsync();
-            return await PostItemAsync(position);
-        }
+        //public async Task<bool> PostCurrentPositionAsync()
+        //{
+            //Position position = await GeoProvider.GetCurrentPositionAsync();
+            //return await PostItemAsync(position);
+        //}
     }
 }
