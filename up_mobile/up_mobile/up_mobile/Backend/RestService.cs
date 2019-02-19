@@ -10,6 +10,7 @@ using Plugin.Geolocator.Abstractions;
 using up_mobile.Helpers;
 using System.Net;
 using up_mobile.Models;
+using Plugin.Geolocator;
 
 namespace up_mobile.Backend
 {
@@ -62,6 +63,36 @@ namespace up_mobile.Backend
             }
 
             return ph;
+        }
+
+        public async Task<bool> PostPinAsync(string serviceUri = "/pins", string baseUri = defaultBaseUri)
+        {
+            Position p = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10), null, true);
+            ParkingPin pin = new ParkingPin(p.Latitude, p.Longitude, p.Accuracy);
+
+            baseUri += "{0}";
+            var uri = new Uri(string.Format(baseUri, serviceUri)); 
+
+            try
+            {
+                var json = JsonConvert.SerializeObject(pin);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = null;
+                response = await client.PostAsync(uri, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else return false;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ERROR {0}", ex.Message);
+                return false;
+            }
         }
 
         /// <summary>
