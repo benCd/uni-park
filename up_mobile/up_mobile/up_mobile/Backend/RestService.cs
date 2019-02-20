@@ -36,10 +36,20 @@ namespace up_mobile.Backend
 
             client = new HttpClient();
             client.MaxResponseContentBufferSize = 256000;
-
+            //for authenetication. still exploring other options
             //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
         }
 
+        /// <summary>
+        /// Method for getting all parking pins from a mysql database using a baseUri
+        /// and a serviceUri to form a full url which points to a web api. Generates an 
+        /// HTTP GET request and parses parking pin object from JSON sent by the web api.
+        /// Check project settings for both android/iOS to ensure current 
+        /// http client implementation is capable of supporting TLS 1.2+
+        /// </summary>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <param name="baseUri">uri of main web api</param>
+        /// <returns>A pinholder object containing an array of parking pins</returns>
         public async Task<PinHolder> GetPinsAsync(string serviceUri = "/pins" , string baseUri = defaultBaseUri)
         {
             PinHolder ph = new PinHolder();
@@ -65,6 +75,17 @@ namespace up_mobile.Backend
             return ph;
         }
 
+        /// <summary>
+        /// Method for posting a parking pin to a mysql database given a baseUri
+        /// and a serviceUri which together form the url of a web api. Generates 
+        /// A HTTP POST request after using the geolocator plugin to create a new
+        /// parking pin instance, which is translated to json before being sent.
+        /// Check project settings for both android/iOS to ensure current 
+        /// http client implementation is capable of supporting TLS 1.2+
+        /// </summary>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <param name="baseUri">uri of main web api</param>
+        /// <returns>a bool indicating success of the POST</returns>
         public async Task<bool> PostPinAsync(string serviceUri = "/pins", string baseUri = defaultBaseUri)
         {
             Position p = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10), null, true);
@@ -94,83 +115,5 @@ namespace up_mobile.Backend
                 return false;
             }
         }
-
-        /// <summary>
-        /// Generic method for getting a dictionary representation of an
-        /// object from a web service using a url and object id. Uses HTTP GET.
-        /// Check project settings for both android/iOS to ensure current 
-        /// http client implementation is capable of supporting TLS 1.2+
-        /// </summary>
-        /// <param name="id">id of object to be acquired</param>
-        /// <param name="url">url of web API</param>
-        /// <returns>dictionary of varnames and values representing an object</returns>
-        public async Task<Dictionary<string, object>> GetItemValuesAsync(string id = "", string url = defaultBaseUri)
-        {
-            Dictionary<string, object> itemValues = new Dictionary<string, object>();
-
-            url += "{0}";
-            var uri = new Uri(string.Format(url, id));
-
-            try
-            {
-                var response = await client.GetAsync(uri);
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    itemValues = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("ERROR {0}", ex.Message);
-            }
-
-            return itemValues;
-        }
-
-        /// <summary>
-        /// Generic method for sending a single object as its vars in
-        /// json. Uses HTTP POST, or HTTP PUT in case of existing objects.
-        /// Check project settings for both android/iOS to ensure current 
-        /// http client implementation is capable of supporting TLS 1.2+
-        /// </summary>
-        /// <param name="item">object to be sent. only required param</param>
-        /// <param name="isNewItem">bool determining if object is new. If no, 
-        /// use PUT. If yes, use POST.</param>
-        /// <param name="url">url of web API</param>       
-        /// <returns>true if object was sent successfully, false if not</returns>
-        public async Task<bool> PostItemAsync(object item, string uri = defaultBaseUri)
-        {
-            try
-            {
-                var json = JsonConvert.SerializeObject(item);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = null;
-                response = await client.PostAsync(uri, content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return true;
-                }
-                else return false;
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("ERROR {0}", ex.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Simple method for sending current position via HTTP POST
-        /// </summary>
-        /// <returns>bool indicating success/failure of HTTP POST</returns>
-        //public async Task<bool> PostCurrentPositionAsync()
-        //{
-            //Position position = await GeoProvider.GetCurrentPositionAsync();
-            //return await PostItemAsync(position);
-        //}
     }
 }

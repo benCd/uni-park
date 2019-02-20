@@ -9,19 +9,19 @@ namespace up_mobile.Models
         public double Latitude { get; set; }
         public double Longtitude { get; set; }
         public double Accuracy { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
 
         public ParkingPin(double latitude, double longtitude, double accurracy)
         {
             Latitude = latitude;
             Longtitude = longtitude;
             Accuracy = accurracy;
-            Date = DateTime.Now;
+            Date = DateTime.Now.ToString();
         }
 
         public string GetPrettyFormat()
         {
-            return String.Format("lat: {0} /// long: {1} /// acc: {2} /// time: {3}", Latitude, Longtitude, Accuracy, Date);
+            return string.Format("lat: {0} /// long: {1} /// acc: {2} /// time: {3}", Latitude, Longtitude, Accuracy, Date);
         }
     }
 }

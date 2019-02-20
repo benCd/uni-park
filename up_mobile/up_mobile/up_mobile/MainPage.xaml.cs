@@ -39,11 +39,11 @@ namespace up_mobile
 
         private async void Button2_ClickedAsync(object sender, EventArgs e)
         {
-            //await requests.PostPinAsync();
+            await requests.PostPinAsync();
             Position p = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10), null, true);
             ParkingPin pin = new ParkingPin(p.Latitude, p.Longitude, p.Accuracy);
 
-            //Debug.Write(DateTime.Now);
+            //Debug.Write(DateTime.Now.ToString());
            // Debug.Write(DateTime.Now.ToString());
         }
     }
