@@ -1,0 +1,14 @@
+{
+  "name": "nodejs-https-server",
+  "version": "1.0.0",
+  "description": "simple https server, connects to mysql",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.16.0"
+  }
+}
