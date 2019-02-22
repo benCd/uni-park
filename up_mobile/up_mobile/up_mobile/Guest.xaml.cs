@@ -20,7 +20,6 @@ namespace up_mobile
     public partial class Guest : TabbedPage
     {
         RestService requests = new RestService();
-        public MainPage()
         /// <summary>
         /// Loads the Guest page <see cref="Guest.xaml"/>
         /// </summary>

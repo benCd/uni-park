@@ -13,10 +13,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="Xam.Plugin.Geolocator" Version="4.5.0.6" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
-    <PackageReference Include="Xamarin.Forms" Version="3.5.0.129452" />
+    <PackageReference Include="Xamarin.Forms" Version="3.5.0.169047" />
   </ItemGroup>
 
-  <ItemGroup
+  <ItemGroup>
     <ProjectReference Include="..\..\Background\Background.csproj" />
     <Compile Update="Guest.xaml.cs">
       <DependentUpon>Guest.xaml</DependentUpon>
@@ -30,7 +30,7 @@
     <EmbeddedResource Update="Account.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="FridaySurvey.xaml">
+    <EmbeddedResource Update="Survey\FridaySurvey.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Home.xaml">
@@ -42,31 +42,31 @@
     <EmbeddedResource Update="Login.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="MondaySurvey.xaml">
+    <EmbeddedResource Update="Survey\MondaySurvey.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="NewUserSurvey.xaml">
+    <EmbeddedResource Update="Survey\NewUserSurvey.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Register.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="SaturdaySurvey.xaml">
+    <EmbeddedResource Update="Survey\SaturdaySurvey.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="SundaySurvey.xaml">
+    <EmbeddedResource Update="Survey\SundaySurvey.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="ThursdaySurvey.xaml">
+    <EmbeddedResource Update="Survey\ThursdaySurvey.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="TuesdaySurvey.xaml">
+    <EmbeddedResource Update="Survey\TuesdaySurvey.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="User.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="WednesdaySurvey.xaml">
+    <EmbeddedResource Update="Survey\WednesdaySurvey.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
