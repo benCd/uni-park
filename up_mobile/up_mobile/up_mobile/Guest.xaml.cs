@@ -7,9 +7,15 @@ using Xamarin.Forms;
 
 namespace up_mobile
 {
-    public partial class MainPage : ContentPage
+    /// <summary>
+    /// Guest page
+    /// </summary>
+    public partial class Guest : TabbedPage
     {
-        public MainPage()
+        /// <summary>
+        /// Loads the Guest page <see cref="Guest.xaml"/>
+        /// </summary>
+        public Guest()
         {
             InitializeComponent();
         }

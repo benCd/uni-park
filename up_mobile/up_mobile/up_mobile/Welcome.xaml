@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="up_mobile.Welcome"
+             Title="Welcome">
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="0,10,0,10">
+
+                <!--Where the Logo for the app goes-->
+                <Label Text="Logo Placeholder"
+                        Font="Large"
+                        HorizontalOptions="Center" />
+
+                <!--Welcome message-->
+                <Label Text="Welcome to Uni-Park!"
+                        Font="Large"
+                        HorizontalOptions="Center" />
+
+                <Label Text="Already have an account?"
+                        Font="Small"
+                        HorizontalOptions="Center" />
+
+                <!--Button to take you to the Log In page-->
+                <Button Text="Log In"
+                        HorizontalOptions="Center"
+                        Clicked="LoginPage"/>
+
+                <Label Text="New user? Create an account below"
+                        Font="Small"
+                        HorizontalOptions="Center"/>
+
+                <!--Button to take you to the Register page-->
+                <Button Text="Register"
+                        HorizontalOptions="Center" 
+                        Clicked="RegisterPage"/>
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+    
+</ContentPage>
