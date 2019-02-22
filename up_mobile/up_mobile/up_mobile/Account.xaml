@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="up_mobile.Account"
+             Title="Account">
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="0,10,0,10">
+               
+                <Label Text="Here are your account details:"
+                        Font="Small"
+                        HorizontalOptions="Center"/>
+
+                <!--Button to log the user out-->
+                <Button Text="Log Out"
+                        HorizontalOptions="Center" 
+                        Clicked="LogOutAttempt"/>
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+
+</ContentPage>

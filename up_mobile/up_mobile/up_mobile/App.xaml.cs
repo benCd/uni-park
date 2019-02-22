@@ -11,7 +11,15 @@ namespace up_mobile
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            //need to make if statement based on if logged in or not to pick which page to start the app with for each user
+            //User is for logged in users of our app
+            //Guest is for non logged in users of our app
+
+            //CURRENTLY IT IS JUST SET TO GUEST
+
+            MainPage = new NavigationPage(new Guest());
+
+            //MainPage = new NavigationPage(new User());
         }
 
         protected override void OnStart()
@@ -30,3 +38,4 @@ namespace up_mobile
         }
     }
 }
+

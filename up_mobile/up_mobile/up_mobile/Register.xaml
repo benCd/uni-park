@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="up_mobile.Register"
+             Title="Register">
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="0,10,0,10">
+
+                <!--Label that goes above the E-mail entry field-->
+                <Label Text="E-mail" />
+
+                <!--Entry field for the user's E-mail address-->
+                <Entry x:Name="RegisterEmail"
+                        Placeholder="RealPerson@gmail.com" 
+                        TextColor="Blue"/>
+
+                <!--Label that goes above the Password entry field-->
+                <Label Text="Password" />
+
+                <!--Entry field for the user's Password-->
+                <!--IsPassword modifier hides the password as black dots while it is typed-->
+                <Entry x:Name="RegisterPassword" 
+                        Placeholder="Password" 
+                        IsPassword="true" 
+                        TextColor="Blue" /> 
+
+                <!--Commented out for now until we have at least 2 options for them to choose from-->
+                <!--Drop down list to select which University Campus to start out with-->
+                <!--<Picker x:Name="UniversityPicker" 
+                        Title="Select your University Campus"
+                        VerticalOptions="Center">
+                
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Oakland University</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                
+                </Picker>-->
+
+                <!--Button for the user to Register-->
+                <Button x:Name="RegisterButton" 
+                    Text="Register" 
+                    HorizontalOptions="Center"
+                    Clicked="RegisterAttempt" />
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+    
+</ContentPage>
