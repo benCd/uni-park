@@ -8,6 +8,8 @@ using Android.Widget;
 using Android.OS;
 using Plugin.CurrentActivity;
 using Plugin.Permissions;
+using Xamarin.Forms;
+using Android.Content;
 
 namespace up_mobile.Droid
 {
@@ -16,6 +18,17 @@ namespace up_mobile.Droid
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
+
+            MessagingCenter.Subscribe<Background.Messages.ExecuteScheduleMessage>(this, "ExecuteScheduleMessage", message => {
+                var intent = new Intent(this, typeof(ExecuteScheduleService));
+                StartService(intent);
+            });
+
+            MessagingCenter.Subscribe<Background.Messages.CancelExecuteScheduleMessage>(this, "CancelExecuteScheduleMessage", message => {
+                var intent = new Intent(this, typeof(ExecuteScheduleService));
+                StopService(intent);
+            });
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 

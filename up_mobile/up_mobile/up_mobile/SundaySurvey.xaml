@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="up_mobile.SundaySurvey"
+             Title="New User Survey">
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="0,10,0,10">
+
+                <Label Text="Sunday" 
+                       Font="Large"
+                       HorizontalTextAlignment="Center" />
+
+                <!--Drop down list for the first Sunday parking lot selection-->
+                <Picker x:Name="SundaySurvey1" 
+                        Title="Select a parking lot"
+                        VerticalOptions="Center">
+
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>P-1</x:String>
+                            <x:String>P-2</x:String>
+                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                        </x:Array>
+                    </Picker.ItemsSource>
+
+                </Picker>
+
+                <Label Text="From" 
+                       Font="Large" />
+
+                <!--Time picker for Sunday Start Time 1-->
+                <TimePicker x:Name="SundayStartTime1" 
+                            Time="{Binding SelectedTime}" />
+
+                <Label Text="To" 
+                       Font="Large" />
+
+                <!--Time picker for Sunday End Time 1-->
+                <TimePicker x:Name="SundayEndTime1" 
+                            Time="{Binding SelectedTime}" />
+
+                <!--Drop down list for the second Sunday parking lot selection-->
+                <Picker x:Name="SundaySurvey2" 
+                        Title="Select a parking lot"
+                        VerticalOptions="Center">
+
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>P-1</x:String>
+                            <x:String>P-2</x:String>
+                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                        </x:Array>
+                    </Picker.ItemsSource>
+
+                </Picker>
+
+                <Label Text="From" 
+                       Font="Large" />
+
+                <!--Time picker for Sunday Start Time 2-->
+                <TimePicker x:Name="SundayStartTime2" 
+                            Time="{Binding SelectedTime}" />
+
+                <Label Text="To" 
+                       Font="Large" />
+
+                <!--Time picker for Sunday End Time 2-->
+                <TimePicker x:Name="SundayEndTime2" 
+                            Time="{Binding SelectedTime}" />
+
+                <!--Drop down list for the third Sunday parking lot selection-->
+                <Picker x:Name="SundaySurvey3" 
+                        Title="Select a parking lot"
+                        VerticalOptions="Center">
+
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>P-1</x:String>
+                            <x:String>P-2</x:String>
+                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                        </x:Array>
+                    </Picker.ItemsSource>
+
+                </Picker>
+
+                <Label Text="From" 
+                       Font="Large" />
+
+                <!--Time picker for Sunday Start Time 3-->
+                <TimePicker x:Name="SundayStartTime3" 
+                            Time="{Binding SelectedTime}" />
+
+                <Label Text="To" 
+                       Font="Large" />
+
+                <!--Time picker for Sunday End Time 3-->
+                <TimePicker x:Name="SundayEndTime3" 
+                            Time="{Binding SelectedTime}" />
+
+                <!--Button to submit their New User Survey information-->
+                <Button x:Name="SubmitNewUserSurveyButton"
+                        Text="Submit"
+                        HorizontalOptions="Center"
+                        Clicked="SubmitNewUserSurvey" />
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+    
+</ContentPage>
