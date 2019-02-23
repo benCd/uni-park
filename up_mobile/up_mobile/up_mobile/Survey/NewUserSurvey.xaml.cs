@@ -10,7 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace up_mobile
 {
     /// <summary>
-    /// NewUserSurvey page
+    /// NewUserSurvey page - Intermediary page shown before the user takes their survey
     /// </summary>
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class NewUserSurvey : ContentPage
@@ -24,8 +24,9 @@ namespace up_mobile
 		}
 
         /// <summary>
-        /// When the Begin Survey button on NewUserSurvey page <see cref="NewUserSurvey.xaml"/> is pressed it 
-        /// will navigate to the MondaySurvey page <see cref="MondaySurvey.xaml"/>
+        /// When the Begin Survey button on NewUserSurvey page 
+        /// <see cref="NewUserSurvey.xaml"/> is pressed it navigates 
+        /// to the MondaySurvey page <see cref="MondaySurvey.xaml"/>
         /// </summary>
         async void NewUserSurveyClicked(object sender, EventArgs args)
         {

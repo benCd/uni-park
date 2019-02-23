@@ -15,11 +15,12 @@ using System.Diagnostics;
 namespace up_mobile
 {
     /// <summary>
-    /// Guest page
+    /// Guest page - Tabbed page containing the pages for non logged in users
     /// </summary>
     public partial class Guest : TabbedPage
     {
         RestService requests = new RestService();
+
         /// <summary>
         /// Loads the Guest page <see cref="Guest.xaml"/>
         /// </summary>

@@ -19,7 +19,7 @@ namespace up_mobile
             });
 
             /// <summary>
-            /// Decides which page to load the app on using the value of IsLoggedIn <see cref="Settings.cs"/> 
+            /// Decides which page to load the app on using the value of IsLoggedIn in <see cref="Settings.cs"/> 
             /// <see cref="User.xaml"/> is for logged in users
             /// <see cref="Guest.xaml"/> is for non logged in users
             /// </summary>

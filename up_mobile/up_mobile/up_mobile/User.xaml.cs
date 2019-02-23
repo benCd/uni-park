@@ -12,12 +12,12 @@ namespace up_mobile
 	[XamlCompilation(XamlCompilationOptions.Compile)]
     
     /// <summary>
-    /// User page
+    /// User page - Tabbed page containing the pages for logged in users
     /// </summary>
 	public partial class User : TabbedPage
 	{
         /// <summary>
-        /// Loads the Guest page <see cref="Guest.xaml"/>
+        /// Loads the User page <see cref="User.xaml"/>
         /// </summary>
 		public User ()
 		{

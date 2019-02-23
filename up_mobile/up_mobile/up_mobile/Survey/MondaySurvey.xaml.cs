@@ -24,8 +24,9 @@ namespace up_mobile
 		}
 
         /// <summary>
-        /// When the Next Page button on MondaySurvey page <see cref="MondaySurvey.xaml"/> is pressed it 
-        /// will navigate to the TuesdaySurvey page <see cref="TuesdaySurvey.xaml"/>
+        /// When the Next Page button on MondaySurvey page 
+        /// <see cref="MondaySurvey.xaml"/> is pressed it navigates 
+        /// to the TuesdaySurvey page <see cref="TuesdaySurvey.xaml"/>
         /// </summary>
         async void TuesdaySurveyPage(object sender, EventArgs args)
         {

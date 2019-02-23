@@ -9,7 +9,7 @@
              x:Class="up_mobile.Guest"
              Title="Uni-Park">
     <!--the xmlns:local="clr-namespace:up_mobile" line is important to being a tabbed page which displays other pages-->
-    <!--the two lines below it are for moving the Tabs to the bottom of the page-->
+    <!--the 4 lines below it are for moving the Tabs to the bottom of the page and their styling-->
 
 
     <!--Pages displayed on the tabs-->

@@ -24,8 +24,8 @@ namespace up_mobile
 		}
 
         /// <summary>
-        /// When the Next Page button on SundaySurvey page <see cref="SundaySurvey.xaml"/> is pressed it 
-        /// will thank the user via a pop up, then navigate to the Home page <see cref="Home.xaml"/>
+        /// When Next Page button on SundaySurvey page <see cref="SundaySurvey.xaml"/> 
+        /// is pressed it thanks the user via a pop up, and navigates to Home page <see cref="Home.xaml"/>
         /// </summary>
         async void SubmitNewUserSurvey(object sender, EventArgs args)
         {

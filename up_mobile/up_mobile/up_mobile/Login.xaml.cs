@@ -27,7 +27,7 @@ namespace up_mobile
         /// it attempts to log the user in. If it is their first time logging in they 
         /// are redirected to the New User Survey <see cref="NewUserSurvey.xaml"/>
         /// 
-        /// FOR NOW IT JUST GOES TO THE NEW USER SURVEY PAGE
+        /// FOR NOW IT JUST GOES TO THE NEW USER SURVEY PAGE EITHER WAY
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
