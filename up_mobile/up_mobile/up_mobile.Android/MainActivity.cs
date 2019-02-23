@@ -9,6 +9,7 @@ using Android.OS;
 using Plugin.CurrentActivity;
 using Plugin.Permissions;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using Android.Content;
 
 namespace up_mobile.Droid
@@ -16,9 +17,14 @@ namespace up_mobile.Droid
     [Activity(Label = "up_mobile", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+        
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            //Init for Xamarin.Forms.Maps 
+            Xamarin.FormsMaps.Init(this, savedInstanceState);
 
+            //Subscribing to the necessary messages for scheduling background tasks
             MessagingCenter.Subscribe<Background.Messages.ExecuteScheduleMessage>(this, "ExecuteScheduleMessage", message => {
                 var intent = new Intent(this, typeof(ExecuteScheduleService));
                 StartService(intent);

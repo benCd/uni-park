@@ -38,7 +38,8 @@ namespace up_mobile
             var LogEmail = LoginEmail.Text;
             var LogPassword = LoginPassword.Text;
 
-            await Navigation.PushAsync(new NewUserSurvey());
+            //await Navigation.PushAsync(new NewUserSurvey());
+            await Navigation.PushAsync(new Map.MapView());
         }
     }
 }
