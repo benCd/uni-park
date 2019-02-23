@@ -35,8 +35,12 @@ namespace up_mobile
         {
             Button button = (Button)sender;
 
-            var LogEmail = LoginEmail.Text;
-            var LogPassword = LoginPassword.Text;
+            /// <remarks>
+            /// Storing these values in <see cref="Settings.cs"/>
+            /// </remarks>
+            Helpers.Settings.Email = LoginEmail.Text;
+            Helpers.Settings.Password = LoginPassword.Text;
+            Helpers.Settings.IsLoggedIn = true;
 
             await Navigation.PushAsync(new NewUserSurvey());
         }

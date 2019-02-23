@@ -15,17 +15,25 @@ namespace up_mobile.Helpers
                 return CrossSettings.Current;
             }
         }
-        public static string Username
+
+        /// <summary>
+        /// Storage for Email string value input by user when logging in on <see cref="Login.xaml"/> page
+        /// </summary>
+        public static string Email
         {
             get
             {
-                return AppSettings.GetValueOrDefault("Username", "");
+                return AppSettings.GetValueOrDefault("Email", "");
             }
             set
             {
-                AppSettings.AddOrUpdateValue("Username", value);
+                AppSettings.AddOrUpdateValue("Email", value);
             }
         }
+
+        /// <summary>
+        /// Storage for Password string value input by user when logging in on <see cref="Login.xaml"/> page
+        /// </summary>
         public static string Password
         {
             get
@@ -37,5 +45,21 @@ namespace up_mobile.Helpers
                 AppSettings.AddOrUpdateValue("Password", value);
             }
         }
+
+        /// <summary>
+        /// Storage for IsLoggedIn boolean value to determine if the user is still logged in or should be sent back to <see cref="Guest.xaml"/>
+        /// </summary>
+        public static bool IsLoggedIn
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault("IsLoggedIn", false);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue("IsLoggedIn", value);
+            }
+        }
+
     }
 }

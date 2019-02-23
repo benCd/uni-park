@@ -34,6 +34,12 @@ namespace up_mobile
         async void LogOutAttempt(object sender, EventArgs args)
         {
             Button button = (Button)sender;
+
+            /// <remarks>
+            /// Updating logged in status in <see cref="Settings.cs"/>
+            /// </remarks>
+            Helpers.Settings.IsLoggedIn = false;
+
             await Navigation.PushAsync(new Guest());
         }
 
