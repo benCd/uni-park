@@ -2,10 +2,14 @@
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:up_mobile"
+             xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+             android:TabbedPage.ToolbarPlacement="Bottom"
+             BarBackgroundColor="#2196F3"
+             BarTextColor="White"
              x:Class="up_mobile.User"
              Title="Uni-Park">
-    
     <!--the xmlns:local="clr-namespace:up_mobile" line is important to being a tabbed page which displays other pages-->
+    <!--the two lines below it are for moving the Tabs to the bottom of the page-->
 
     <!--Pages displayed on the tabs-->
     <local:Home></local:Home>

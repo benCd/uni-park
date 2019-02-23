@@ -29,7 +29,7 @@ namespace up_mobile.Backend
 
         public RestService()
         {
-            var username = Settings.Email;
+            var username = Settings.Username;
             var password = Settings.Password;
             var auth = string.Format("{0}:{1}", username, password);
             var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(auth));

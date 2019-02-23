@@ -6,7 +6,7 @@
 
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout Padding="0,10,0,10">
+            <StackLayout Padding="10,10,10,10">
 
                 <!--Label that goes above the E-mail entry field-->
                 <Label Text="E-mail" 
