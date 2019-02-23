@@ -23,7 +23,6 @@ namespace up_mobile
             /// <see cref="User.xaml"/> is for logged in users
             /// <see cref="Guest.xaml"/> is for non logged in users
             /// </summary>
-           
             if (Helpers.Settings.IsLoggedIn == true)
             {
                 MainPage = new NavigationPage(new User());

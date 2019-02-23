@@ -26,6 +26,9 @@ namespace up_mobile
         public Guest()
         {
             InitializeComponent();
+
+            // Suppresses the back button at the top of the page
+            NavigationPage.SetHasBackButton(this, false);
         }
 
         private async void Button_ClickedAsync(object sender, EventArgs e)

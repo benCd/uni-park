@@ -36,8 +36,9 @@ namespace up_mobile
         {
             Button button = (Button)sender;
 
-            var RegEmail = RegisterEmail.Text;
-            var RegPassword = RegisterPassword.Text;
+            // How to get the information from those fields to Register with
+            // RegisterEmail.Text;
+            // RegisterPassword.Text;
 
             await Navigation.PushAsync(new Login());
         }

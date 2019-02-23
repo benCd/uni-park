@@ -38,7 +38,7 @@ namespace up_mobile
             /// <remarks>
             /// Storing these values in <see cref="Settings.cs"/>
             /// </remarks>
-            Helpers.Settings.Email = LoginEmail.Text;
+            Helpers.Settings.Username = LoginEmail.Text;
             Helpers.Settings.Password = LoginPassword.Text;
             Helpers.Settings.IsLoggedIn = true;
 

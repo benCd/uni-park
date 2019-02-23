@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:up_mobile"
              x:Class="up_mobile.User"
              Title="Uni-Park">
+    
     <!--the xmlns:local="clr-namespace:up_mobile" line is important to being a tabbed page which displays other pages-->
 
     <!--Pages displayed on the tabs-->

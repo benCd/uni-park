@@ -7,7 +7,7 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="0,10,0,10">
-               
+
                 <Label Text="Here are your account details:"
                         FontSize="14"
                         HorizontalOptions="Center"/>

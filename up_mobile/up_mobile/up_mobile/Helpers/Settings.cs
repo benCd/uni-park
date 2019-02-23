@@ -17,17 +17,17 @@ namespace up_mobile.Helpers
         }
 
         /// <summary>
-        /// Storage for Email string value input by user when logging in on <see cref="Login.xaml"/> page
+        /// Storage for Username string value input by user when logging in on <see cref="Login.xaml"/> page
         /// </summary>
-        public static string Email
+        public static string Username
         {
             get
             {
-                return AppSettings.GetValueOrDefault("Email", "");
+                return AppSettings.GetValueOrDefault("Username", "");
             }
             set
             {
-                AppSettings.AddOrUpdateValue("Email", value);
+                AppSettings.AddOrUpdateValue("Username", value);
             }
         }
 
