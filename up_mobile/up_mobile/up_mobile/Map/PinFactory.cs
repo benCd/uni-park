@@ -18,14 +18,15 @@ namespace up_mobile.Map
 
             var Pins = new List<Pin>();
 
-            foreach(ParkingPin Pin in RawPins.Pins)
-            {
-                Pins.Add(new Pin()
+            if(RawPins != null)
+                foreach(ParkingPin Pin in RawPins.Pins)
                 {
-                    Position = new Position(Pin.Latitude, Pin.Longtitude),
-                    Label = Pin.User + "\n@" + Pin.Date + "\n" + Pin.Percentage
-                });
-            }
+                    Pins.Add(new Pin()
+                    {
+                        Position = new Position(Pin.Latitude, Pin.Longtitude),
+                        Label = Pin.User + "\n@" + Pin.Date + "\n" + Pin.Percentage
+                    });
+                }
             return Pins;
         }
     }
