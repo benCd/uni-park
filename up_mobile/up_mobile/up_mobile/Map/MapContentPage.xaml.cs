@@ -20,10 +20,11 @@ namespace up_mobile.Map
         /// <param name="LotId">ID for the parking lot to load</param>
 		public MapContentPage(int LotId)
 		{
+            this.Title = "Lot XYZ";
             //TODO IMPLEMENT MAP REST REQUEST!
             var map = new Xamarin.Forms.Maps.Map(
                        MapSpan.FromCenterAndRadius(
-                           new Position(37, -122), Distance.FromKilometers(0.3)))
+                           new Position(42.671133, -83.214928), Distance.FromKilometers(0.1)))
             {
                 IsShowingUser = true,
                 VerticalOptions = LayoutOptions.FillAndExpand,
@@ -38,8 +39,15 @@ namespace up_mobile.Map
             Content = stack;
         }
 
+        /// <summary>
+        /// Clears and sets new Pins for the pass <see cref="Xamarin.Forms.Maps.Map"/> instance.
+        /// </summary>
+        /// <param name="map"><see cref="Xamarin.Forms.Maps.Map"/> instance to which the pins are added</param>
+        /// <param name="LotId"> The ID for the parking lot, whose information should be loaded</param>
         private async void SetPins(Xamarin.Forms.Maps.Map map, int LotId)
         {
+            map.Pins.Clear();
+
             var pins = await PinFactory.GetPinsFor(LotId);
 
             foreach (Pin p in pins)
