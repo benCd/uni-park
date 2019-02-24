@@ -21,7 +21,21 @@ namespace up_mobile
         public NewUserSurvey ()
 		{
 			InitializeComponent ();
-		}
+
+            // Suppresses the back button at the top of the page
+            NavigationPage.SetHasBackButton(this, false);
+        }
+
+        /// <summary>
+        /// Override for OnBackButtonPressed - Preventing Android Hardware Back Button from 
+        /// going back to the Login page <see cref="Login.xaml"/> after logging in successfully 
+        /// and being prompted with the survey
+        /// </summary>
+        /// <returns></returns>
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+        }
 
         /// <summary>
         /// When the Begin Survey button on NewUserSurvey page 
