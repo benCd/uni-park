@@ -67,5 +67,21 @@ namespace up_mobile.Helpers
             }
         }
 
+        /// <summary>
+        /// Storage for TookNewUserSurvey boolean value to determine if the 
+        /// user has taken the New User Survey <see cref="NewUserSurvey.xaml"/> yet
+        /// </summary>
+        public static bool TookNewUserSurvey
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault("TookNewUserSurvey", false);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue("TookNewUserSurvey", value);
+            }
+        }
+
     }
 }

@@ -31,6 +31,12 @@ namespace up_mobile
         {
             Button button = (Button)sender;
             await DisplayAlert("Thanks!", "This information really helps us", "OK");
+
+            /// <remarks>
+            /// Storing this value in <see cref="Settings.cs"/> so it does not give them the survey for future log ins
+            /// </remarks>
+            Helpers.Settings.TookNewUserSurvey = true;
+
             await Navigation.PushAsync(new User());
         }
     }
