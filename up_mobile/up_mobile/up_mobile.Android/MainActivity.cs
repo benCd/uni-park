@@ -24,6 +24,9 @@ namespace up_mobile.Droid
             //Init for Xamarin.Forms.Maps 
             Xamarin.FormsMaps.Init(this, savedInstanceState);
 
+            //Init for Xamarin.Essentials
+            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+
             //Subscribing to the necessary messages for scheduling background tasks
             MessagingCenter.Subscribe<Background.Messages.ExecuteScheduleMessage>(this, "ExecuteScheduleMessage", message => {
                 var intent = new Intent(this, typeof(ExecuteScheduleService));
