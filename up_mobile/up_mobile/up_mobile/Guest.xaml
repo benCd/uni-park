@@ -1,18 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:up_mobile"
-             xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
-             android:TabbedPage.ToolbarPlacement="Bottom"
-             BarBackgroundColor="#2196F3"
-             BarTextColor="White"
              x:Class="up_mobile.Guest"
              Title="Uni-Park">
-    <!--the xmlns:local="clr-namespace:up_mobile" line is important to being a tabbed page which displays other pages-->
-    <!--the 4 lines below it are for moving the Tabs to the bottom of the page and their styling-->
 
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="0,10,0,10">
 
-    <!--Pages displayed on the tabs-->
-    <local:Welcome></local:Welcome>
+                <!--Where the Logo for the app goes-->
+                <Label Text="Logo Placeholder"
+                        Font="Large"
+                        HorizontalOptions="Center" />
 
-</TabbedPage>
+                <!--Welcome message-->
+                <Label Text="Welcome to Uni-Park!"
+                        Font="Large"
+                        HorizontalOptions="Center" />
+
+                <Label Text="Already have an account?"
+                        FontSize="14"
+                        HorizontalOptions="Center" />
+
+                <!--Button to take you to the Log In page-->
+                <Button Text="Log In"
+                        HorizontalOptions="Center"
+                        Clicked="LoginPage"/>
+
+                <Label Text="New user? Create an account below"
+                        FontSize="14"
+                        HorizontalOptions="Center"/>
+
+                <!--Button to take you to the Register page-->
+                <Button Text="Register"
+                        HorizontalOptions="Center" 
+                        Clicked="RegisterPage"/>
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+
+</ContentPage>

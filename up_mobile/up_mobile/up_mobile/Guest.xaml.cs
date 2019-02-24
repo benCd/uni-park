@@ -15,9 +15,9 @@ using System.Diagnostics;
 namespace up_mobile
 {
     /// <summary>
-    /// Guest page - Tabbed page containing the pages for non logged in users
+    /// Guest page - Landing page for non logged in users
     /// </summary>
-    public partial class Guest : TabbedPage
+    public partial class Guest : ContentPage
     {
         RestService requests = new RestService();
 
@@ -30,6 +30,40 @@ namespace up_mobile
 
             // Suppresses the back button at the top of the page
             NavigationPage.SetHasBackButton(this, false);
+        }
+
+        /// <summary>
+        /// When the Log In button in <see cref="Guest.xaml"/> is pressed
+        /// navigates to the Log In page <see cref="Login.xaml"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        async void LoginPage(object sender, EventArgs args)
+        {
+            Button button = (Button)sender;
+            await Navigation.PushAsync(new Login());
+        }
+
+        /// <summary>
+        /// When the Register button in <see cref="Guest.xaml"/> is pressed
+        /// navigates to the Register page <see cref="Register.xaml"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        async void RegisterPage(object sender, EventArgs args)
+        {
+            Button button = (Button)sender;
+            await Navigation.PushAsync(new Register());
+        }
+
+        /// <summary>
+        /// Override for OnBackButtonPressed - Preventing Android Hardware Back Button from 
+        /// going back to User page <see cref="User.xaml"/> after logging out
+        /// </summary>
+        /// <returns></returns>
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
         }
 
         private async void Button_ClickedAsync(object sender, EventArgs e)
