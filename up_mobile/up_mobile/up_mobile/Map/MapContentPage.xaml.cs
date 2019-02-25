@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Forms.Maps;
+using System.Diagnostics;
 
 namespace up_mobile.Map
 {
@@ -78,6 +79,23 @@ namespace up_mobile.Map
             
             var position = new Position(42.671133, -83.2149);
             var radius = Distance.FromKilometers(0.1);
+
+            switch (LotId)
+            {
+                case 0:
+                    position = new Position(42.671133, -83.2149);
+                    radius = Distance.FromKilometers(0.1);
+                    break;
+                case 1:
+                    position = new Position(42.671133, -83.25);
+                    radius = Distance.FromKilometers(0.5);
+                    break;
+                case 2:
+                    position = new Position(42.671133, -83.214928);
+                    radius = Distance.FromKilometers(0.7);
+                    break;
+            }
+            Debug.Print("Button: " + LotId);
             var span = MapSpan.FromCenterAndRadius(position, radius);
             map.MoveToRegion(span);
         }
