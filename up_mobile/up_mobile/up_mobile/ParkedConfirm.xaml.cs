@@ -47,7 +47,7 @@ namespace up_mobile
         async void DenyPressed(object sender, EventArgs args)
         {
             Button button = (Button)sender;
-            await Navigation.PushAsync(new ParkedButton());
+            await Navigation.PopAsync();
         }
 
         /// <summary>
