@@ -11,7 +11,11 @@
                 <!--Button to take you to the ParkedConfirm page-->
                 <Button Text="I Parked"
                         HorizontalOptions="Center"
-                        Clicked="ParkedButtonPressed"/>
+                        VerticalOptions="CenterAndExpand"
+                        Clicked="ParkedButtonPressed"
+                        HeightRequest="200"
+                        WidthRequest="200"
+                        BorderRadius="100"/>
 
             </StackLayout>
         </ScrollView>
