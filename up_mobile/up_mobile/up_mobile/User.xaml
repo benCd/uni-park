@@ -13,6 +13,7 @@
 
     <!--Pages displayed on the tabs-->
     <local:Home></local:Home>
+    <local:ParkedButton></local:ParkedButton>
     <local:Account></local:Account>
 
 </TabbedPage>
