@@ -8,9 +8,30 @@
         <ScrollView>
             <StackLayout Padding="0,10,0,10">
 
-                <Label Text="Thanks for logging in!"
-                        FontSize="14"
-                        HorizontalOptions="Center" />
+                <Label Text="LOT"
+                       FontSize="24"
+                       HorizontalOptions="Center"/>
+
+                <Label x:Name="displayLabel"
+                        Text="Lot Fullness:"
+                        HorizontalOptions="Center"/>
+
+                <!---Slider for observation of Lot fullness-->
+                <Slider Minimum="0"
+                        Maximum="100"
+                        ValueChanged="SliderUpdated"
+                        BackgroundColor="#2196F3"
+                        ThumbColor="White"/>
+
+                <!--Confirmation button-->
+                <Button Text="Confirm"
+                        HorizontalOptions="Center"
+                        Clicked="ConfirmPressed"/>
+
+                <!--Denial button-->
+                <Button Text="Deny"
+                        HorizontalOptions="Center"
+                        Clicked="DenyPressed"/>
 
             </StackLayout>
         </ScrollView>
