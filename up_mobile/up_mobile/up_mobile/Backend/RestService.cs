@@ -24,7 +24,7 @@ namespace up_mobile.Backend
     /// </summary>
     public class RestService
     {
-        HttpClient client;
+        static HttpClient client;
         const string defaultBaseUri = "http://10.0.2.2:3000";
 
         public RestService()
