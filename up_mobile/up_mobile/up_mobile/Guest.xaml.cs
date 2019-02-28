@@ -28,6 +28,8 @@ namespace up_mobile
             InitializeComponent();
         }
 
+
+        //DELETE ALL THIS LATER VVVV
         private async void Button_ClickedAsync(object sender, EventArgs e)
         {
             /*Position p = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10), null, true);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using up_mobile.Backend;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -37,6 +38,8 @@ namespace up_mobile
 
             var LogEmail = LoginEmail.Text;
             var LogPassword = LoginPassword.Text;
+
+            await RestService.LoginUser(LogEmail, LogPassword);
 
             await Navigation.PushAsync(new NewUserSurvey());
         }

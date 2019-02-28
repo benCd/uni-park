@@ -11,6 +11,7 @@ using up_mobile.Helpers;
 using System.Net;
 using up_mobile.Models;
 using Plugin.Geolocator;
+using System.Linq;
 
 namespace up_mobile.Backend
 {
@@ -24,20 +25,66 @@ namespace up_mobile.Backend
     /// </summary>
     public class RestService
     {
-        static HttpClient client;
+        static CookieContainer cookies = new CookieContainer();
+        static HttpClient client = new HttpClient();
         const string defaultBaseUri = "http://10.0.2.2:3000";
 
+        //IGNORE CONSTRUCTOR, WILL BE REMOVED LATER
         public RestService()
         {
-            var username = Settings.Username;
+            /*var username = Settings.Username;
             var password = Settings.Password;
             var auth = string.Format("{0}:{1}", username, password);
-            var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(auth));
+            var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(auth));*/
 
-            client = new HttpClient();
+            //client = new HttpClient();
             client.MaxResponseContentBufferSize = 256000;
             //for authenetication. still exploring other options
             //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
+        }
+
+        /// <summary>
+        /// Logs a user in given their email and password. Creates a new unique session and saves necessary
+        /// session info inside a cookie which is added to the static httpclient instance of this class. All
+        /// requests after this method is called contain this cookie, allowing access to user restricted routes
+        /// </summary>
+        /// <param name="email">user email login information</param>
+        /// <param name="password">user password login information</param>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <param name="baseUri">uri of main web api</param>
+        /// <returns>a task</returns>
+        public static async Task LoginUser(string email, string password, string serviceUri = "/login", string baseUri = defaultBaseUri)
+        {
+            //must create a new client with a handler and a blank cookiecontainer set to get cookies later
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.CookieContainer = cookies;
+            client = new HttpClient(handler);
+
+            baseUri += "{0}";
+            var uri = new Uri(string.Format(baseUri, serviceUri));
+            string json = string.Format("{{ \"email\" : \"{0}\", \"password\" : \"{1}\" }}", email, password);
+            Debug.Write(json);
+
+            try
+            {
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = null;
+                response = await client.PostAsync(uri, content);
+                //get cookies
+                IEnumerable<Cookie> resCookies = cookies.GetCookies(uri).Cast<Cookie>();
+                Cookie myCookie = resCookies.First();
+                //save cookie
+                cookies.Add(myCookie);
+
+                //testing authentication
+                //HttpResponseMessage response2 = await client.GetAsync(new Uri(defaultBaseUri + "/auth"));
+                //Debug.Write(myCookie.ToString());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         /// <summary>
@@ -69,7 +116,7 @@ namespace up_mobile.Backend
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("ERROR {0}", ex.Message);
+                Debug.WriteLine(ex.Message);
             }
 
             return ph;
@@ -111,7 +158,7 @@ namespace up_mobile.Backend
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("ERROR {0}", ex.Message);
+                Debug.WriteLine(ex.Message);
                 return false;
             }
         }
