@@ -86,7 +86,7 @@ namespace up_mobile.Backend
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <param name="baseUri">uri of main web api</param>
         /// <returns>a task</returns>
-        public static async Task LoginUser(string email, string password, string serviceUri = "/login", string baseUri = defaultBaseUri)
+        public static async Task<bool> LoginUser(string email, string password, string serviceUri = "/login", string baseUri = defaultBaseUri)
         {
             //must create a new client with a handler and a blank cookiecontainer set to get cookies later
             HttpClientHandler handler = new HttpClientHandler();
@@ -115,10 +115,16 @@ namespace up_mobile.Backend
                 //testing authentication
                 //HttpResponseMessage response2 = await client.GetAsync(new Uri(defaultBaseUri + "/auth"));
                 //Debug.Write(myCookie.ToString());
+
+                if (myCookie != null)
+                    return true;
+                else
+                    return false;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                return false;
             }
         }
 

@@ -39,9 +39,12 @@ namespace up_mobile
             var LogEmail = LoginEmail.Text;
             var LogPassword = LoginPassword.Text;
 
-            await RestService.LoginUser(LogEmail, LogPassword);
+            bool authenticated = await RestService.LoginUser(LogEmail, LogPassword);
 
-            await Navigation.PushAsync(new NewUserSurvey());
+            if (authenticated == true)
+                await Navigation.PushAsync(new NewUserSurvey());
+            else
+                await DisplayAlert("Login failed", "Please try again", "OK");
         }
     }
 }

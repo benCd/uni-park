@@ -26,8 +26,8 @@ var dbconnection = mysql.createConnection({
 });
 dbconnection.connect();
 
-//custom function for translating mysql's rowdatapacket results into js objects
-function rdpToJson(rowObject) {
+//custom function for translating mysql's rowdatapacket results into standard js objects
+function rdpToObj(rowObject) {
   var result = {};
   Object.keys(rowObject).forEach(function(key, index) {
     result[key] = rowObject[key];
@@ -43,7 +43,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, function (email, pass
     if (error) return done(error); //return error object if mysql error
     if (results.length == 0) return done(null, false); //return nothing if no results
     //else we have a result with matching credentials, let's return it
-    const user = rdpToJson(results[0]); //convert result rowdatapacket to js object
+    const user = rdpToObj(results[0]); //convert result rowdatapacket to js object
     return done(null, user); //return said js object
   });
 }));
@@ -60,7 +60,7 @@ passport.deserializeUser((id, done) => {
     if (error) return done(error);
     if (results.length == 0) return done(null, false);
 
-    const user = rdpToJson(results[0]);
+    const user = rdpToObj(results[0]);
     return done(null, user);
   });
 });
@@ -90,20 +90,19 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-
 //routing for web services starts here!
 //register
 app.post('/register', function (req, res, next) {
   var newuser = req.body;
 
   dbconnection.query('SELECT * FROM `users` WHERE `name` = ?', newuser.email, function (error, results, fields) { //checks if this email already exists in db
-    if (error) throw error;
+    if (error) return next(error);
     if (results.length !=0 ) { //if we get a result, it does
       res.status(409).send('Email already registered'); //don't proceed to creating new row, stop here
     } else {
       dbconnection.query({sql: 'INSERT INTO `users`(name,pass,university_id,credibility) VALUES(?,?,?,?)', //create new rot for new user
       values: [newuser.email, newuser.password, 1, 10]}, function (error, results, fields) {
-        if (error) throw error;
+        if (error) return next(error);
         res.send('User created');
       });
     }
@@ -134,7 +133,7 @@ app.get('/logout', function (req, res) {
 //testing authentication
 app.get('/auth', function (req, res) {
   if(req.isAuthenticated()) {
-    console.log("omg yes");
+    //console.log("omg yes");
     res.send('success');
   } else {
     res.send('failure');
@@ -142,31 +141,30 @@ app.get('/auth', function (req, res) {
 });
 
 //get all gps pins
-app.get('/pins', requireAuth, function (req, res) {
+app.get('/pins', requireAuth, function (req, res, next) {
   dbconnection.query('SELECT * FROM `gpsdata`', function (error, results, fields) {
-    if (error) throw error;
+    if (error) return next(error);
 
     var jsonobj = {
       pins: []
     };
 
     for (var i = 0; i < results.length; i++) {
-      var pin = rdpToJson(results[i]);
+      var pin = rdpToObj(results[i]);
       jsonobj.pins.push(pin);
     }
 
     res.json(jsonobj);
-    console.log(jsonobj);
   });
 });
 
 //may not be working
 //send a new gps pin to db
-app.post('/pins', function (req, res) {
+app.post('/pins', function (req, res, next) {
    var pin = req.body;
    dbconnection.query({sql: 'INSERT INTO `gpsdata`(timestamp,longtitude,latitude) VALUES(?,?,?)', //create new rot for new user
    values: [pin.date, pin.longtitude, pin.latitude]}, function (error, results, fields) {
-     if (error) throw error;
+     if (error) return next(error);
    });
    res.json({requestBody: req.body});
 });
