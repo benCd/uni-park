@@ -1,17 +1,15 @@
 ﻿using Newtonsoft.Json;
+using Plugin.Geolocator;
+using Plugin.Geolocator.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Plugin.Geolocator.Abstractions;
-using up_mobile.Helpers;
-using System.Net;
 using up_mobile.Models;
-using Plugin.Geolocator;
-using System.Linq;
 
 namespace up_mobile.Backend
 {
@@ -44,6 +42,41 @@ namespace up_mobile.Backend
         }
 
         /// <summary>
+        /// Registers a new user with the given email and password. Posts the fields to the server 
+        /// and creates a new user to log in as provided that the request goes through successfully
+        /// and no users already exist with the same email.
+        /// </summary>
+        /// <param name="email">new user email</param>
+        /// <param name="password">new user password</param>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <param name="baseUri">uri of main web api</param>
+        /// <returns>A bool indicating if a new user was successfully created</returns>
+        public static async Task<bool> RegisterUser(string email, string password, string serviceUri = "/register", string baseUri = defaultBaseUri)
+        {
+            baseUri += "{0}";
+            var uri = new Uri(string.Format(baseUri, serviceUri));
+            string json = string.Format("{{ \"email\" : \"{0}\", \"password\" : \"{1}\" }}", email, password);
+
+            try
+            {
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = null;
+                response = await client.PostAsync(uri, content);
+                Debug.Write(response.Content.ToString());
+                if (response.IsSuccessStatusCode)
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Logs a user in given their email and password. Creates a new unique session and saves necessary
         /// session info inside a cookie which is added to the static httpclient instance of this class. All
         /// requests after this method is called contain this cookie, allowing access to user restricted routes
@@ -63,7 +96,9 @@ namespace up_mobile.Backend
             baseUri += "{0}";
             var uri = new Uri(string.Format(baseUri, serviceUri));
             string json = string.Format("{{ \"email\" : \"{0}\", \"password\" : \"{1}\" }}", email, password);
-            Debug.Write(json);
+
+            //testing purposes only
+            //Debug.Write(json);
 
             try
             {
@@ -86,6 +121,9 @@ namespace up_mobile.Backend
                 Debug.WriteLine(ex.Message);
             }
         }
+
+
+        //the rest of the methods may not be functional, they are preexisting testing methods
 
         /// <summary>
         /// Method for getting all parking pins from a mysql database using a baseUri

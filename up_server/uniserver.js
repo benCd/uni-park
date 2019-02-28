@@ -97,8 +97,9 @@ app.post('/register', function (req, res, next) {
   var newuser = req.body;
 
   dbconnection.query('SELECT * FROM `users` WHERE `name` = ?', newuser.email, function (error, results, fields) { //checks if this email already exists in db
+    if (error) throw error;
     if (results.length !=0 ) { //if we get a result, it does
-      res.send('Email already registered'); //don't proceed to creating new row, stop here
+      res.status(409).send('Email already registered'); //don't proceed to creating new row, stop here
     } else {
       dbconnection.query({sql: 'INSERT INTO `users`(name,pass,university_id,credibility) VALUES(?,?,?,?)', //create new rot for new user
       values: [newuser.email, newuser.password, 1, 10]}, function (error, results, fields) {

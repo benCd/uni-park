@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using up_mobile.Backend;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -39,7 +39,12 @@ namespace up_mobile
             var RegEmail = RegisterEmail.Text;
             var RegPassword = RegisterPassword.Text;
 
-            await Navigation.PushAsync(new Login());
+            var created = await RestService.RegisterUser(RegEmail, RegPassword); 
+
+            if (created == true)
+                await Navigation.PushAsync(new Login());
+            else
+                await DisplayAlert("Email Already Registered", "Please enter a different email", "OK");
         }
     }
 }
