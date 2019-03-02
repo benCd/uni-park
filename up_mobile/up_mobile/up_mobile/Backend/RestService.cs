@@ -129,7 +129,17 @@ namespace up_mobile.Backend
             }
         }
 
-        //new
+        /// <summary>
+        /// Determines the current lot based on the latitude, longtitude, and accuracy of a given GPS measurement.
+        /// All parameters are passed into a json string which is used to make an http post request to the server.
+        /// </summary>
+        /// <param name="latitude">gps latitude</param>
+        /// <param name="longtitude">gps longtitude</param>
+        /// <param name="accuracy">the radius of a circle indicating potential error in given GPS measurement.
+        /// 0 == perfect accuracy.</param>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <param name="baseUri">uri of main web api</param>
+        /// <returns>The parking lot object corresponding to the lot the user is in, or null if no lot was found</returns>
         public static async Task<ParkingLot> GetLotFromGPS(double latitude, double longtitude, double accuracy, string serviceUri = "/findlot", string baseUri = defaultBaseUri)
         {
             ParkingLot pl = null;
@@ -156,7 +166,14 @@ namespace up_mobile.Backend
             return pl;
         }
 
-        //new
+        /// <summary>
+        /// Returns a pinholder object containing all the gps pins for a given lot_id. Makes an http post
+        /// request to the user with json contanining the lot_id passed into this function.
+        /// </summary>
+        /// <param name="lot_id">lot id for the lot that pins are wanted from</param>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <param name="baseUri">uri of main web api</param>
+        /// <returns>A pinholder object</returns>
         public async Task<PinHolder> GetLotPinsAsync(int lot_id, string serviceUri = "/lotpins", string baseUri = defaultBaseUri)
         {
             PinHolder ph = new PinHolder();
@@ -185,6 +202,8 @@ namespace up_mobile.Backend
         }
 
         //NOTE: the rest of the methods may not be functional, they are preexisting testing methods
+        //the rest will most likely be refactored or removed
+
         /// <summary>
         /// Method for getting all parking pins from a mysql database using a baseUri
         /// and a serviceUri to form a full url which points to a web api. Generates an 
