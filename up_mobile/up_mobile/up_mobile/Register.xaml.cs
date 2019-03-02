@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Plugin.Geolocator;
+using Plugin.Geolocator.Abstractions;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using up_mobile.Backend;
+using up_mobile.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -38,6 +42,12 @@ namespace up_mobile
 
             var RegEmail = RegisterEmail.Text;
             var RegPassword = RegisterPassword.Text;
+
+            //to test getting lot from gps... 
+            /*
+            Position p = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10), null, true);
+            ParkingLot pl = await RestService.GetLotFromGPS(p.Latitude, p.Longitude);
+            Debug.WriteLine(pl.GetPrettyFormat());*/
 
             var created = await RestService.RegisterUser(RegEmail, RegPassword); 
 

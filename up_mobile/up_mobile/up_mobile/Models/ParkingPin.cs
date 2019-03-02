@@ -6,6 +6,7 @@ namespace up_mobile.Models
 {
     public class ParkingPin
     {
+        //CURRENTLY DOES NOT MATCH DB!!!
         public double Latitude { get; set; }
         public double Longtitude { get; set; }
         public double Accuracy { get; set; }

@@ -85,7 +85,8 @@ namespace up_mobile.Backend
         /// <param name="password">user password login information</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <param name="baseUri">uri of main web api</param>
-        /// <returns>a task</returns>
+        /// <returns>bool indicating registration success</returns>
+        /// 
         public static async Task<bool> LoginUser(string email, string password, string serviceUri = "/login", string baseUri = defaultBaseUri)
         {
             //must create a new client with a handler and a blank cookiecontainer set to get cookies later
@@ -128,9 +129,62 @@ namespace up_mobile.Backend
             }
         }
 
+        //new
+        public static async Task<ParkingLot> GetLotFromGPS(double latitude, double longtitude, double accuracy, string serviceUri = "/findlot", string baseUri = defaultBaseUri)
+        {
+            ParkingLot pl = null;
+            baseUri += "{0}";
+            var uri = new Uri(string.Format(baseUri, serviceUri));
+            string json = string.Format("{{ \"latitude\" : \"{0}\", \"longtitude\" : \"{1}\"," +
+                " \"accuracy\" : \"{1}\" }}", latitude, longtitude, accuracy);
 
-        //the rest of the methods may not be functional, they are preexisting testing methods
+            try
+            {
+                var reqcontent = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(uri, reqcontent);
 
+                if (response.IsSuccessStatusCode)
+                {
+                    var rescontent = await response.Content.ReadAsStringAsync();
+                    pl = JsonConvert.DeserializeObject<ParkingLot>(rescontent);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return pl;
+        }
+
+        //new
+        public async Task<PinHolder> GetLotPinsAsync(int lot_id, string serviceUri = "/lotpins", string baseUri = defaultBaseUri)
+        {
+            PinHolder ph = new PinHolder();
+            baseUri += "{0}";
+            var uri = new Uri(string.Format(baseUri, serviceUri));
+            string json = string.Format("{{ \"lot_id\" : \"{0}\"}}", lot_id);
+
+            try
+            {
+                var reqcontent = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(uri, reqcontent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var rescontent = await response.Content.ReadAsStringAsync();
+                    Debug.Write("HERE IS THE RESPONSE" + rescontent);
+                    ph = JsonConvert.DeserializeObject<PinHolder>(rescontent);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return ph;
+        }
+
+        //NOTE: the rest of the methods may not be functional, they are preexisting testing methods
         /// <summary>
         /// Method for getting all parking pins from a mysql database using a baseUri
         /// and a serviceUri to form a full url which points to a web api. Generates an 
@@ -146,7 +200,6 @@ namespace up_mobile.Backend
             PinHolder ph = new PinHolder();
             baseUri += "{0}";
             var uri = new Uri(string.Format(baseUri, serviceUri));
-            Debug.Write(uri);
 
             try
             {

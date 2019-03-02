@@ -131,19 +131,24 @@ app.get('/logout', function (req, res) {
 });
 
 //testing authentication
+/*
 app.get('/auth', function (req, res) {
   if(req.isAuthenticated()) {
-    //console.log("omg yes");
+    console.log("omg yes");
     res.send('success');
   } else {
     res.send('failure');
   }
 });
+*/
 
-//get all gps pins
-app.get('/pins', requireAuth, function (req, res, next) {
-  dbconnection.query('SELECT * FROM `gpsdata`', function (error, results, fields) {
+//new and untested
+//get gps pins for given lot
+app.get('/lotpins', requireAuth, function (req, res, next) { //lot_id has not been added to db yet...
+  dbconnection.query('SELECT * FROM `gpsdata` WHERE `lot_id` = ?', req.body.lot_id, function (error, results, fields) {
     if (error) return next(error);
+
+    if (results.length == 0) return res.status(404).send('Lot contains no pins');
 
     var jsonobj = {
       pins: []
@@ -158,18 +163,68 @@ app.get('/pins', requireAuth, function (req, res, next) {
   });
 });
 
-//may not be working
+//new, make sure values match up with db and app model
 //send a new gps pin to db
-app.post('/pins', function (req, res, next) {
+app.post('/newpin', function (req, res, next) {
    var pin = req.body;
-   dbconnection.query({sql: 'INSERT INTO `gpsdata`(timestamp,longtitude,latitude) VALUES(?,?,?)', //create new rot for new user
-   values: [pin.date, pin.longtitude, pin.latitude]}, function (error, results, fields) {
+   dbconnection.query({sql: 'INSERT INTO `gpsdata`(userid,timestamp,longtitude,latitude,lotid) VALUES(?,?,?,?)', //create new rot for new user
+   values: [req.user.id, pin.date, pin.longtitude, pin.latitude, pin.lotid]}, function (error, results, fields) {
      if (error) return next(error);
    });
-   res.json({requestBody: req.body});
+   res.send('Pin added');
 });
 
+//new
+//determine current lot from gps data
+app.post('/findlot', function (req, res, next) {
+  var pos = req.body;
+  var acc = req.body.accuracy;
+  dbconnection.query('SELECT * FROM `lots`', function (error, results, fields) {
+    if (error) return next(error);
 
+    if (results.length == 0) return res.status(404).send('No lots');
+
+    for (var i = 0; i < results.length; i++) {
+      var lot = results[i];
+      if (pos.latitude >= (lot.min_lat-acc) && pos.latitude <= (lot.max_lat+acc)
+      && pos.longtitude >= (lot.min_long-acc) && pos.longtitude <= (lot.max_long+acc)){
+        return res.json(rdpToObj(lot));
+      }
+    }
+
+    res.status(404).send('Lot was not found');
+  });
+});
+
+//new
+//get university info for a specific user given their id
+app.post('/getuni', function (req, res, next) {
+  dbconnection.query('SELECT `university_id` FROM `users` WHERE `id` = ?', req.body.userid, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(404).send('No user with given id');
+
+    dbconnection.query('SELECT * FROM `universities` WHERE `id` = ?', results[0].university_id, function (error, results, fields) {
+      if (error) return next(error);
+
+      if (results.length == 0) return res.status(404).send('No uni associated with uni id in user');
+
+      res.json(rdpToObj(results[0]));
+    });
+  });
+});
+
+//new
+//get university info for current user
+app.get('/myuni', requireAuth, function (req, res, next) {
+  dbconnection.query('SELECT * FROM `universities` WHERE `id` = ?', req.user.university_id, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(404).send('No uni associated with uni id in user');
+
+    res.json(rdpToObj(results[0]));
+  });
+});
 
 //finally, make our https server and listen for requests
 http.createServer(app).listen(port, hostname, () => {
