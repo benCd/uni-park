@@ -15,6 +15,12 @@ namespace up_mobile
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ParkedButton : ContentPage
     {
+
+        async void ParkedButtonTimer()
+        {
+            await Task.Delay(2000);
+        }
+
         /// <summary>
         /// Loads ParkedButton page <see cref="ParkedButton.xaml"/>
         /// </summary>
@@ -26,6 +32,7 @@ namespace up_mobile
         /// <summary>
         /// When the I Parked button on <see cref="ParkedButton.xaml"/> is pressed
         /// navigates to the ParkedConfirm page <see cref="ParkedConfirm.xaml"/>
+        /// It locks the button from being pressed for 10 seconds
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
@@ -34,18 +41,15 @@ namespace up_mobile
             Button button = (Button)sender;
             await Navigation.PushAsync(new ParkedConfirm());
 
-            // Sets the button to be disabled
+            // Disables the button
             button.IsEnabled = false;
+             
+            // 10 seconds (in milliseconds)
+            await Task.Delay(10000);
 
-            // Stop watch for use in unlocking the button, unlocks after 10,000 ms (10 seconds)
-            System.Diagnostics.Stopwatch stopper = System.Diagnostics.Stopwatch.StartNew();
+            // Enables the button
+            button.IsEnabled = true;
 
-            if (stopper.ElapsedMilliseconds >= 10000) //600,000 for 10 minutes
-            {
-                
-                button.IsEnabled = true;
-                stopper.Stop();
-            }
         }
     }
 }
