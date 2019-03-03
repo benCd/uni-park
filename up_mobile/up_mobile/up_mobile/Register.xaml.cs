@@ -51,14 +51,15 @@ namespace up_mobile
             ParkingLot pl = await RestService.GetLotFromGPS(p.Latitude, p.Longitude);
             Debug.WriteLine(pl.GetPrettyFormat());*/
 
-            await RestService.PostNewPinAsync(72.2, 82.2, 1);
-
+            /*await RestService.PostNewPinAsync(72.2, 82.2, 1);
+            
             var created = await RestService.RegisterUser(RegEmail, RegPassword); 
 
-            if (created == true)
+            if (created)
                 await Navigation.PushAsync(new Login());
             else
                 await DisplayAlert("Email Already Registered", "Please enter a different email", "OK");
+                */
         }
     }
 }

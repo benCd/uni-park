@@ -36,8 +36,8 @@ namespace up_mobile.Map
                 {
                     Pins.Add(new Pin()
                     {
-                        Position = new Position(Pin.Latitude, Pin.Longtitude),
-                        Label = Pin.User + "\n@" + Pin.Date + "\n" + Pin.Percentage
+                        Position = new Position(Pin.Latitude, Pin.Longitude),
+                        Label = Pin.User_id + "\n@" + Pin.Timestamp + "\n" + Pin.Percentage
                     });
                 }
             return Pins;

@@ -5,12 +5,12 @@
 	<!-- GPS plugin requirement for iOS -->
   <key>NSLocationWhenInUseUsageDescription</key>
   <string>Can we use your location when you have the app open? You will be able to see all the data that we store on you in the INFO tab!</string>
-  
-  <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-  <string>We would like to use your location to check when you park. You will be able to see all the data that we store on you in the INFO tab!</string>
+
+  <key>NSLocationAlwaysUsageDescription</key>
+  <string>This app needs access to location when in the background.</string>
 
   <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-  <string>This app needs access to location when open and in the background.</string>
+  <string>We would like to use your location to check when you park. You will be able to see all the data that we store on you in the INFO tab!</string>
 
   <!-- end of GPS plugin requirements -->
 
@@ -46,7 +46,7 @@
     <string>up_mobile</string>
     <key>XSAppIconAssets</key>
     <string>Assets.xcassets/AppIcon.appiconset</string>
-  
+
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

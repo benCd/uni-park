@@ -7,7 +7,7 @@ namespace up_mobile.Models
         public int Id { get; set; }
         public int User_id { get; set; }
         public double Latitude { get; set; }    
-        public double Longtitude { get; set; }
+        public double Longitude { get; set; }
         public double Percentage { get; set; }
         public DateTime Timestamp { get; set; }
         public int Lot_id { get; set; }
@@ -22,7 +22,7 @@ namespace up_mobile.Models
 
         public string GetPrettyFormat()
         {
-            return string.Format("lat: {0} /// long: {1} /// time: {2}", Latitude, Longtitude, Date);
+            return string.Format("lat: {0} /// long: {1} /// time: {2}", Latitude, Longitude, Timestamp);
         }
     }
 }

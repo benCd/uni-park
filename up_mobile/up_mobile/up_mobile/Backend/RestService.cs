@@ -400,7 +400,7 @@ namespace up_mobile.Backend
         public async Task<bool> PostPinAsync(string serviceUri = "/pins", string baseUri = defaultBaseUri)
         {
             Position p = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10), null, true);
-            ParkingPin pin = new ParkingPin(p.Latitude, p.Longitude, p.Accuracy);
+            ParkingPin pin = new ParkingPin(p.Latitude, p.Longitude, DateTime.Now);
 
             baseUri += "{0}";
             var uri = new Uri(string.Format(baseUri, serviceUri)); 
