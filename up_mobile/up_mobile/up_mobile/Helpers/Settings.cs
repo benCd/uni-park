@@ -2,6 +2,7 @@
 using Plugin.Settings.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 
 namespace up_mobile.Helpers

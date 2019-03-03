@@ -66,6 +66,8 @@ namespace up_mobile
             return true;
         }
 
+
+        //DELETE ALL THIS LATER VVVV
         private async void Button_ClickedAsync(object sender, EventArgs e)
         {
             /*Position p = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10), null, true);
@@ -77,7 +79,7 @@ namespace up_mobile
             Debug.Write(ph.Pins.ToString());
             for (int i = 0; i < ph.Pins.Length; i += 1)
             {
-                Debug.Write(ph.Pins[i].GetPrettyFormat());
+                //Debug.Write(ph.Pins[i].GetPrettyFormat());
             }
         }
 
