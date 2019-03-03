@@ -17,15 +17,21 @@ namespace up_mobile
             {
                 Application.Current.Properties["execution_schedule_running"] = false;
             });
-            //need to make if statement based on if logged in or not to pick which page to start the app with for each user
-            //User is for logged in users of our app
-            //Guest is for non logged in users of our app
 
-            //CURRENTLY IT IS JUST SET TO GUEST
-
-            MainPage = new NavigationPage(new Guest());
-
-            //MainPage = new NavigationPage(new User());
+            /// <summary>
+            /// Decides which page to load the app on using the value of IsLoggedIn in <see cref="Settings.cs"/> 
+            /// <see cref="User.xaml"/> is for logged in users
+            /// <see cref="Guest.xaml"/> is for non logged in users
+            /// </summary>
+            if (Helpers.Settings.IsLoggedIn == true)
+            {
+                MainPage = new NavigationPage(new User());
+            }
+            
+            else if (Helpers.Settings.IsLoggedIn == false)
+            {
+                MainPage = new NavigationPage(new Guest());
+            }
         }
 
         protected override void OnStart()

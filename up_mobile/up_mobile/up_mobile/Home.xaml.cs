@@ -10,7 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace up_mobile
 {
     /// <summary>
-    /// Home page for logged in users
+    /// Home page - The first page logged in users (User) will see
     /// </summary>
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class Home : ContentPage
