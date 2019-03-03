@@ -22,7 +22,8 @@ var dbconnection = mysql.createConnection({
   host     : config.database.host,
   user     : config.database.user,
   password : config.database.password,
-  database : config.database.db
+  database : config.database.db,
+  typecast : false
 });
 dbconnection.connect();
 
@@ -92,7 +93,7 @@ app.use(passport.session());
 
 //routing for web services starts here!
 //register
-app.post('/register', function (req, res, next) {
+app.post('/register', function (req, res, next) { //need to dynamically set uni!!
   var newuser = req.body;
 
   dbconnection.query('SELECT * FROM `users` WHERE `name` = ?', newuser.email, function (error, results, fields) { //checks if this email already exists in db
@@ -130,21 +131,9 @@ app.get('/logout', function (req, res) {
   } else res.send('Not logged in!');
 });
 
-//testing authentication
-/*
-app.get('/auth', function (req, res) {
-  if(req.isAuthenticated()) {
-    console.log("omg yes");
-    res.send('success');
-  } else {
-    res.send('failure');
-  }
-});
-*/
-
 //new and untested
 //get gps pins for given lot
-app.get('/lotpins', requireAuth, function (req, res, next) { //lot_id has not been added to db yet...
+app.get('/lotpins', function (req, res, next) { //lot_id has not been added to db yet...
   dbconnection.query('SELECT * FROM `gpsdata` WHERE `lot_id` = ?', req.body.lot_id, function (error, results, fields) {
     if (error) return next(error);
 
@@ -163,18 +152,18 @@ app.get('/lotpins', requireAuth, function (req, res, next) { //lot_id has not be
   });
 });
 
-//new, make sure values match up with db and app model
+//working
 //send a new gps pin to db
-app.post('/newpin', function (req, res, next) {
+app.post('/newpin', requireAuth, function (req, res, next) {
    var pin = req.body;
-   dbconnection.query({sql: 'INSERT INTO `gpsdata`(userid,timestamp,longtitude,latitude,lotid) VALUES(?,?,?,?)', //create new rot for new user
-   values: [req.user.id, pin.date, pin.longtitude, pin.latitude, pin.lotid]}, function (error, results, fields) {
+   dbconnection.query({sql: 'INSERT INTO `gpsdata`(user_id,timestamp,longitude,latitude,lot_id) VALUES(?,?,?,?,?)',
+   values: [req.user.id, new Date(), pin.longitude, pin.latitude, pin.lot_id]}, function (error, results, fields) {
      if (error) return next(error);
    });
    res.send('Pin added');
 });
 
-//new
+//working
 //determine current lot from gps data
 app.post('/findlot', function (req, res, next) {
   var pos = req.body;
@@ -187,7 +176,7 @@ app.post('/findlot', function (req, res, next) {
     for (var i = 0; i < results.length; i++) {
       var lot = results[i];
       if (pos.latitude >= (lot.min_lat-acc) && pos.latitude <= (lot.max_lat+acc)
-      && pos.longtitude >= (lot.min_long-acc) && pos.longtitude <= (lot.max_long+acc)){
+      && pos.longitude >= (lot.min_long-acc) && pos.longitude <= (lot.max_long+acc)){
         return res.json(rdpToObj(lot));
       }
     }
@@ -196,10 +185,30 @@ app.post('/findlot', function (req, res, next) {
   });
 });
 
+//get lot reports from lot id
+app.post('/getlotinfo', function (req, res, next) {
+  dbconnection.query('SELECT * FROM `lotdata` WHERE `id` = ?', req.body.lot_id, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(404).send('Lot contains no reports');
+
+    var jsonobj = {
+      reports: []
+    };
+
+    for (var i = 0; i < results.length; i++) {
+      var report = rdpToObj(results[i]);
+      jsonobj.reports.push(report);
+    }
+
+    res.json(jsonobj);
+  });
+});
+
 //new
 //get university info for a specific user given their id
 app.post('/getuni', function (req, res, next) {
-  dbconnection.query('SELECT `university_id` FROM `users` WHERE `id` = ?', req.body.userid, function (error, results, fields) {
+  dbconnection.query('SELECT `university_id` FROM `users` WHERE `id` = ?', req.body.user_id, function (error, results, fields) {
     if (error) return next(error);
 
     if (results.length == 0) return res.status(404).send('No user with given id');

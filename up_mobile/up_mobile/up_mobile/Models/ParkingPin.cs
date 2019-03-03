@@ -1,28 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace up_mobile.Models
 {
-    public class ParkingPin
+    public class ParkingPin //represents one row in gps data
     {
-        //CURRENTLY DOES NOT MATCH DB!!!
+        public int Id { get; set; }
+        public int User_id { get; set; }
         public double Latitude { get; set; }
-        public double Longtitude { get; set; }
-        public double Accuracy { get; set; }
-        public string Date { get; set; }
+        public double Longitude { get; set; }
+        public DateTime Timestamp { get; set; }
+        public int Lot_id { get; set; }
 
-        public ParkingPin(double latitude, double longtitude, double accurracy)
+        //will remove later
+        public ParkingPin(double latitude, double longitude, double accurracy)
         {
             Latitude = latitude;
-            Longtitude = longtitude;
-            Accuracy = accurracy;
-            Date = DateTime.Now.ToString();
-        }
-
-        public string GetPrettyFormat()
-        {
-            return string.Format("lat: {0} /// long: {1} /// acc: {2} /// time: {3}", Latitude, Longtitude, Accuracy, Date);
+            Longitude = longitude;
+            //Accuracy = accurracy;
+            Timestamp = DateTime.Now;
         }
     }
 }

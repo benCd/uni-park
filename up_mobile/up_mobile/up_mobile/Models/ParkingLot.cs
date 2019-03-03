@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace up_mobile.Models
 {
-    public class ParkingLot
+    public class ParkingLot //represents one row in lots
     {
         public int Id { get; set; }
         public int University_Id { get; set; }

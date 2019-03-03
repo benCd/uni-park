@@ -41,7 +41,7 @@ namespace up_mobile
             Debug.Write(ph.Pins.ToString());
             for (int i = 0; i < ph.Pins.Length; i += 1)
             {
-                Debug.Write(ph.Pins[i].GetPrettyFormat());
+                //Debug.Write(ph.Pins[i].GetPrettyFormat());
             }
         }
 

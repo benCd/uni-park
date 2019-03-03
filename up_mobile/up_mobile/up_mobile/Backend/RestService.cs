@@ -14,12 +14,9 @@ using up_mobile.Models;
 namespace up_mobile.Backend
 {
     /// <summary>
-    /// the main class for consuming RESTful web services
-    /// and generating HTTPS requests. Contains a reference to 
-    /// one http client object through which all requests are 
-    /// generated. DefaultBaseUri is used to refer to the url of the 
-    /// main web API, so methods do not have to explicity state 
-    /// the full url unless they require a different API
+    /// the main class for consuming RESTful web services and generating HTTPS requests. 
+    /// Contains a reference to one http client object through which all requests are 
+    /// generated. 
     /// </summary>
     public class RestService
     {
@@ -27,8 +24,18 @@ namespace up_mobile.Backend
         static HttpClient client = new HttpClient();
         const string defaultBaseUri = "http://10.0.2.2:3000";
 
-        //IGNORE CONSTRUCTOR, WILL BE REMOVED LATER
-        public RestService()
+        public static RestService service = new RestService();
+
+        //Constructors will be altered when this class is converted to static
+        /*private RestService()
+        {
+            CookieContainer cookies = new CookieContainer();
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.CookieContainer = cookies;
+            HttpClient client = new HttpClient(handler);
+        }*/
+        
+        /*public RestService()
         {
             /*var username = Settings.Username;
             var password = Settings.Password;
@@ -36,11 +43,12 @@ namespace up_mobile.Backend
             var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(auth));*/
 
             //client = new HttpClient();
-            client.MaxResponseContentBufferSize = 256000;
+            //client.MaxResponseContentBufferSize = 256000;
             //for authenetication. still exploring other options
             //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
-        }
-
+        //}*/
+        
+    
         /// <summary>
         /// Registers a new user with the given email and password. Posts the fields to the server 
         /// and creates a new user to log in as provided that the request goes through successfully
@@ -49,31 +57,24 @@ namespace up_mobile.Backend
         /// <param name="email">new user email</param>
         /// <param name="password">new user password</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
-        /// <param name="baseUri">uri of main web api</param>
         /// <returns>A bool indicating if a new user was successfully created</returns>
-        public static async Task<bool> RegisterUser(string email, string password, string serviceUri = "/register", string baseUri = defaultBaseUri)
+        public static async Task<bool> RegisterUser(string in_email, string in_password, string serviceUri = "/register")
         {
-            baseUri += "{0}";
-            var uri = new Uri(string.Format(baseUri, serviceUri));
-            string json = string.Format("{{ \"email\" : \"{0}\", \"password\" : \"{1}\" }}", email, password);
-
-            try
+            string json = JsonConvert.SerializeObject(new
             {
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                email = in_email,
+                password = in_password
+            });
 
-                HttpResponseMessage response = null;
-                response = await client.PostAsync(uri, content);
-                Debug.Write(response.Content.ToString());
-                if (response.IsSuccessStatusCode)
-                    return true;
-                else
-                    return false;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            //debugging
+            Debug.Write(response.Content.ToString());
+            if (response.IsSuccessStatusCode)
+                return true;
+            else
                 return false;
-            }
         }
 
         /// <summary>
@@ -84,49 +85,102 @@ namespace up_mobile.Backend
         /// <param name="email">user email login information</param>
         /// <param name="password">user password login information</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
-        /// <param name="baseUri">uri of main web api</param>
         /// <returns>bool indicating registration success</returns>
         /// 
-        public static async Task<bool> LoginUser(string email, string password, string serviceUri = "/login", string baseUri = defaultBaseUri)
+        public static async Task<bool> LoginUser(string in_email, string in_password, string serviceUri = "/login")
         {
             //must create a new client with a handler and a blank cookiecontainer set to get cookies later
             HttpClientHandler handler = new HttpClientHandler();
             handler.CookieContainer = cookies;
             client = new HttpClient(handler);
 
-            baseUri += "{0}";
-            var uri = new Uri(string.Format(baseUri, serviceUri));
-            string json = string.Format("{{ \"email\" : \"{0}\", \"password\" : \"{1}\" }}", email, password);
-
-            //testing purposes only
-            //Debug.Write(json);
-
-            try
+            string json = JsonConvert.SerializeObject(new
             {
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                email = in_email,
+                password = in_password
+            });
 
-                HttpResponseMessage response = null;
-                response = await client.PostAsync(uri, content);
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.IsSuccessStatusCode){
                 //get cookies
                 IEnumerable<Cookie> resCookies = cookies.GetCookies(uri).Cast<Cookie>();
                 Cookie myCookie = resCookies.First();
                 //save cookie
                 cookies.Add(myCookie);
 
-                //testing authentication
-                //HttpResponseMessage response2 = await client.GetAsync(new Uri(defaultBaseUri + "/auth"));
-                //Debug.Write(myCookie.ToString());
-
                 if (myCookie != null)
                     return true;
-                else
-                    return false;
             }
-            catch (Exception ex)
+            return false;
+        }
+
+        /// <summary>
+        /// Deletes the current user's session server side by making an http get request. Invalidates
+        /// the client's current cookie, making routes which require authenticated users inaccesible.
+        /// </summary>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <returns></returns>
+        public static async Task LogoutUser(string serviceUri = "/logout")
+        {
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformGET(uri);
+        }
+
+        /// <summary>
+        /// Returns a pinholder object containing all the gps pins for a given lot_id. Makes an http post
+        /// request to the user with json contanining the lot_id passed into this function.
+        /// </summary>
+        /// <param name="lot_id">lot id for the lot that pins are wanted from</param>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <returns>A pinholder object</returns>
+        public async Task<PinHolder> GetLotPinsAsync(int in_lot_id, string serviceUri = "/lotpins") //MAKE STATIC!!
+        {
+            PinHolder ph = new PinHolder();
+
+            string json = JsonConvert.SerializeObject(new
             {
-                Debug.WriteLine(ex.Message);
-                return false;
+                lot_id = in_lot_id
+            });
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                ph = JsonConvert.DeserializeObject<PinHolder>(rescontent);
             }
+
+            return ph;
+        }
+
+        /// <summary>
+        /// Posts a new gps pin to the database with the given gps data and lot id. Requires a logged in user
+        /// to generate the associated user id for the new pin, will fail to post the new pin otherwise. 
+        /// </summary>
+        /// <param name="in_longitude">gps data input</param>
+        /// <param name="in_latitude">gpa data pinput</param>
+        /// <param name="in_lot_id">id of the lot the pin is in</param>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <returns>a bool indicating the success of posting the new pin</returns>
+        public static async Task<bool> PostNewPinAsync(double in_longitude, double in_latitude, int in_lot_id, string serviceUri = "/newpin")
+        {
+            string json = JsonConvert.SerializeObject(new
+            {
+                longitude = in_longitude,
+                latitude = in_latitude,
+                lot_id = in_lot_id
+            });
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.IsSuccessStatusCode)
+                return true;
+            else
+                return false;
         }
 
         /// <summary>
@@ -140,65 +194,159 @@ namespace up_mobile.Backend
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <param name="baseUri">uri of main web api</param>
         /// <returns>The parking lot object corresponding to the lot the user is in, or null if no lot was found</returns>
-        public static async Task<ParkingLot> GetLotFromGPS(double latitude, double longtitude, double accuracy, string serviceUri = "/findlot", string baseUri = defaultBaseUri)
+        public static async Task<ParkingLot> FindLot(double in_latitude, double in_longtitude, double in_accuracy, string serviceUri = "/findlot")
         {
             ParkingLot pl = null;
-            baseUri += "{0}";
-            var uri = new Uri(string.Format(baseUri, serviceUri));
-            string json = string.Format("{{ \"latitude\" : \"{0}\", \"longtitude\" : \"{1}\"," +
-                " \"accuracy\" : \"{1}\" }}", latitude, longtitude, accuracy);
 
-            try
+            string json = JsonConvert.SerializeObject(new
             {
-                var reqcontent = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(uri, reqcontent);
+                latitude = in_latitude,
+                longitude = in_longtitude,
+                accuracy = in_accuracy
+            });
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var rescontent = await response.Content.ReadAsStringAsync();
-                    pl = JsonConvert.DeserializeObject<ParkingLot>(rescontent);
-                }
-            }
-            catch (Exception ex)
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.IsSuccessStatusCode)
             {
-                Debug.WriteLine(ex.Message);
+                var rescontent = await response.Content.ReadAsStringAsync();
+                pl = JsonConvert.DeserializeObject<ParkingLot>(rescontent);
             }
+
             return pl;
         }
 
         /// <summary>
-        /// Returns a pinholder object containing all the gps pins for a given lot_id. Makes an http post
-        /// request to the user with json contanining the lot_id passed into this function.
+        /// Returns a reportholder containing all the parking reports for a lot with a given id. Performs an
+        /// http post and returns lotdata rows which match the lot id in the form of parkingreport objects
+        /// contained inside an array on the reportholder object.
         /// </summary>
-        /// <param name="lot_id">lot id for the lot that pins are wanted from</param>
+        /// <param name="in_lot_id">id of the lot where reports are wanted</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
-        /// <param name="baseUri">uri of main web api</param>
-        /// <returns>A pinholder object</returns>
-        public async Task<PinHolder> GetLotPinsAsync(int lot_id, string serviceUri = "/lotpins", string baseUri = defaultBaseUri)
+        /// <returns>a reportholder object</returns>
+        public async Task<ReportHolder> GetLotInfo(int in_lot_id, string serviceUri = "/getlotinfo")
         {
-            PinHolder ph = new PinHolder();
-            baseUri += "{0}";
-            var uri = new Uri(string.Format(baseUri, serviceUri));
-            string json = string.Format("{{ \"lot_id\" : \"{0}\"}}", lot_id);
+            ReportHolder rh = null;
 
+            string json = JsonConvert.SerializeObject(new
+            {
+                lot_id = in_lot_id
+            });
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                rh = JsonConvert.DeserializeObject<ReportHolder>(rescontent);
+            }
+
+            return rh;
+        }
+
+        /// <summary>
+        /// Returns a university object associated with the university for a user with a given
+        /// user id. Performs an http post request.
+        /// </summary>
+        /// <param name="in_user_id">id of the user where university information is wanted</param>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <returns>a university object</returns>
+        public async Task<University> GetUni(int in_user_id, string serviceUri = "/getuni")
+        {
+            University uni = null;
+
+            string json = JsonConvert.SerializeObject(new
+            {
+                user_id = in_user_id
+            });
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                uni = JsonConvert.DeserializeObject<University>(rescontent);
+            }
+
+            return uni;
+        }
+
+        /// <summary>
+        /// Returns a university object associated with the current user's university. Assumes a user is
+        /// currently logged in and will fail otherwise. Performs an http get.
+        /// </summary>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <returns>a university object</returns>
+        public async Task<University> GetMyUni(string serviceUri = "/myuni")
+        {
+            University uni = null;
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformGET(uri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                uni = JsonConvert.DeserializeObject<University>(rescontent);
+            }
+
+            return uni;
+        }
+
+        /// <summary>
+        /// Generic method for performing an http post.
+        /// </summary>
+        /// <param name="uri">uri to access</param>
+        /// <param name="json">json content to be sent</param>
+        /// <returns></returns>
+        private static async Task<HttpResponseMessage> PerformPOST(Uri uri, string json)
+        {
+            HttpResponseMessage response = null;
             try
             {
                 var reqcontent = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(uri, reqcontent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var rescontent = await response.Content.ReadAsStringAsync();
-                    Debug.Write("HERE IS THE RESPONSE" + rescontent);
-                    ph = JsonConvert.DeserializeObject<PinHolder>(rescontent);
-                }
+                response = await client.PostAsync(uri, reqcontent);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
+            return response;
+        }
 
-            return ph;
+        /// <summary>
+        /// Generic method for performing an http get.
+        /// </summary>
+        /// <param name="uri">uri to access</param>
+        /// <returns></returns>
+        private static async Task<HttpResponseMessage> PerformGET(Uri uri)
+        {
+            HttpResponseMessage response = null;
+            try
+            {
+                response = await client.GetAsync(uri);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return response;
+        }
+
+        /// <summary>
+        /// Takes two strings and forms a uri object for later web requests. Helpful for treating
+        /// the uri as nothing more than two strings which can be changed through this function.
+        /// </summary>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <param name="baseUri">url of a web api to be accessed</param>
+        /// <returns></returns>
+        public static Uri makeUri(string serviceUri, string baseUri = defaultBaseUri)
+        {
+            baseUri += "{0}";
+            return new Uri(string.Format(baseUri, serviceUri));
         }
 
         //NOTE: the rest of the methods may not be functional, they are preexisting testing methods
