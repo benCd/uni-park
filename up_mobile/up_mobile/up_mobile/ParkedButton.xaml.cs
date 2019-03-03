@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,12 +16,6 @@ namespace up_mobile
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ParkedButton : ContentPage
     {
-
-        async void ParkedButtonTimer()
-        {
-            await Task.Delay(2000);
-        }
-
         /// <summary>
         /// Loads ParkedButton page <see cref="ParkedButton.xaml"/>
         /// </summary>
@@ -32,24 +27,29 @@ namespace up_mobile
         /// <summary>
         /// When the I Parked button on <see cref="ParkedButton.xaml"/> is pressed
         /// navigates to the ParkedConfirm page <see cref="ParkedConfirm.xaml"/>
-        /// It locks the button from being pressed for 10 seconds
+        /// and it locks the button from being pressed for 10 seconds
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
         async void ParkedButtonPressed(object sender, EventArgs args)
         {
-            Button button = (Button)sender;
-            await Navigation.PushAsync(new ParkedConfirm());
-
             // Disables the button
-            button.IsEnabled = false;
-             
-            // 10 seconds (in milliseconds)
-            await Task.Delay(10000);
+            ((Button)sender).IsEnabled = false;
 
-            // Enables the button
-            button.IsEnabled = true;
+            Background.TaskScheduler.ScheduleFunctionForExecution("EnableButton", 99, DateTime.Now.AddSeconds(10), 
+                () => {
+                    Debug.Write("Enabling Button START!");
+                    Debug.Write(((Button)sender).Id);
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        // Enables the button
+                        ((Button)sender).IsEnabled = true;
+                    });
+                    Debug.Write("Enabling Button END!");
+                return 0; }
+                );
 
+            await Navigation.PushAsync(new ParkedConfirm((Button)sender));
         }
     }
 }

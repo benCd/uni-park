@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,25 +18,56 @@ namespace up_mobile
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class ParkedConfirm : ContentPage
 	{
+        private Button PButton;
+
         /// <summary>
         /// Loads the ParkedConfirm page <see cref="ParkedConfirm.xaml"/>
         /// </summary>
-		public ParkedConfirm ()
+        /// <param name="button"></param> Button from ParkedButton page
+		public ParkedConfirm (Button button)
 		{
+            PButton = button;
 			InitializeComponent ();
 		}
 
         /// <summary>
         /// When Confirm button on <see cref="ParkedConfirm.xaml"/> is pressed
         /// it sends the information to the server and locks the I Parked button
-        /// on <see cref="ParkedButton"/> page for 10 minutes, then navigates back to Home <see cref="Home.xaml"/>
+        /// on <see cref="ParkedButton"/> page for 10 minutes, then navigates back
+        /// one page to the User Tabbed Page <see cref="User.xaml"/>
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
         async void ConfirmPressed(object sender, EventArgs args)
         {
-            Button button = (Button)sender;
-            await Navigation.PushAsync(new User());
+            /// <remarks>
+            /// Removes Task scheduled in <see cref="ParkedButton.xaml.cs"/> when the button
+            /// on <see cref="ParkedButton.xaml"/> is pressed
+            /// </remarks>
+            Background.TaskScheduler.RemoveScheduledFunction("EnableButton");
+
+            /// <remarks>
+            /// Disables the button on <see cref="ParkedButton.xaml"/> page
+            /// </remarks>
+            PButton.IsEnabled = false;
+
+            Background.TaskScheduler.ScheduleFunctionForExecution("EnableButton5Min", 99, DateTime.Now.AddMinutes(5),
+                () => {
+                    Debug.Write("Enabling Button START!");
+                    
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        /// <remarks>
+                        /// Enables the button on <see cref="ParkedButton.xaml"/> page
+                        /// </remarks>
+                        PButton.IsEnabled = true;
+                    });
+                    Debug.Write("Enabling Button END!");
+                    return 0;
+                }
+                );
+
+            await Navigation.PopAsync();
         }
 
         /// <summary>
