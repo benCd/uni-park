@@ -10,12 +10,15 @@ namespace up_mobile.Models
         public double Longtitude { get; set; }
         public double Accuracy { get; set; }
         public string Date { get; set; }
+        public string Note { get; set; }
+        public string User { get; set; }
+        public double Percentage { get; set; }
 
-        public ParkingPin(double latitude, double longtitude, double accurracy)
+        public ParkingPin(double latitude, double longtitude, double accuracy)
         {
             Latitude = latitude;
             Longtitude = longtitude;
-            Accuracy = accurracy;
+            Accuracy = accuracy;
             Date = DateTime.Now.ToString();
         }
 
