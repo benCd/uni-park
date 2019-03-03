@@ -10,7 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace up_mobile
 {
     /// <summary>
-    /// Welcome page
+    /// Welcome page - The first page that the non logged in user (Guest) will see
     /// </summary>
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class Welcome : ContentPage
@@ -24,7 +24,8 @@ namespace up_mobile
 		}
 
         /// <summary>
-        /// When the Log In button in <see cref="Welcome.xaml"/> is pressed, navigates to the Log In page <see cref="Login.xaml"/>
+        /// When the Log In button in <see cref="Welcome.xaml"/> is pressed
+        /// navigates to the Log In page <see cref="Login.xaml"/>
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
@@ -35,7 +36,8 @@ namespace up_mobile
         }
 
         /// <summary>
-        /// When the Register button in <see cref="Welcome.xaml"/> is pressed, navigates to the Register page <see cref="Register.xaml"/>
+        /// When the Register button in <see cref="Welcome.xaml"/> is pressed
+        /// navigates to the Register page <see cref="Register.xaml"/>
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>

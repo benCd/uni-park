@@ -10,7 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace up_mobile
 {
     /// <summary>
-    /// NewUserSurvey page
+    /// NewUserSurvey page - Intermediary page shown before the user takes their survey
     /// </summary>
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class NewUserSurvey : ContentPage
@@ -21,11 +21,26 @@ namespace up_mobile
         public NewUserSurvey ()
 		{
 			InitializeComponent ();
-		}
+
+            // Suppresses the back button at the top of the page
+            NavigationPage.SetHasBackButton(this, false);
+        }
 
         /// <summary>
-        /// When the Begin Survey button on NewUserSurvey page <see cref="NewUserSurvey.xaml"/> is pressed it 
-        /// will navigate to the MondaySurvey page <see cref="MondaySurvey.xaml"/>
+        /// Override for OnBackButtonPressed - Preventing Android Hardware Back Button from 
+        /// going back to the Login page <see cref="Login.xaml"/> after logging in successfully 
+        /// and being prompted with the survey
+        /// </summary>
+        /// <returns></returns>
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// When the Begin Survey button on NewUserSurvey page 
+        /// <see cref="NewUserSurvey.xaml"/> is pressed it navigates 
+        /// to the MondaySurvey page <see cref="MondaySurvey.xaml"/>
         /// </summary>
         async void NewUserSurveyClicked(object sender, EventArgs args)
         {

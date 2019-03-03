@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -103,6 +104,13 @@ namespace Background
 
             var added = false;
 
+            if (count == 0)
+            {
+                taskList.AddLast(f);
+                count++;
+                return true;
+            }
+
             foreach (ScheduledFunction sf in taskList)
                 if (sf.Name == name)
                     return false;
@@ -115,13 +123,13 @@ namespace Background
                 {
                     n = sf;
                     added = true;
-                    return true;
                 }
                     
                 else if (taskList.Last.Value == sf)
                 {
                     taskList.AddAfter(taskList.Last, f);
                     count++;
+                    Debug.Write("Scheduled " + name + " for Execution at " + scheduledTime.ToLongTimeString());
                     return true;
                 }
                     
@@ -131,6 +139,7 @@ namespace Background
             {
                 count++;
                 taskList.AddBefore(taskList.Find(n), f);
+                Debug.Write("Scheduled " + name + " for Execution at " + scheduledTime.ToLongTimeString());
             }
             
 
@@ -171,6 +180,7 @@ namespace Background
         /// </summary>
         public async static Task ExecuteSchedule(CancellationToken token)
         {
+            Debug.Write("ExecuteSchedule is running!!\n\n");
             await Task.Run(async () =>
             {
                 while(true)
@@ -179,20 +189,24 @@ namespace Background
 
                     //Check in 1 second intervals what task is scheduled next
                     await Task.Delay(1000);
+                    Debug.Write("Checking for Tasks to execute!");
 
                     //Only check when the list is populated to avoid errors
                     if(count > 0)
                     {
                         //Check if the current time of day has passed the scheduled time
-                        if(taskList.Last.Value.Time.TimeOfDay <= DateTime.Now.TimeOfDay)
+                        if(taskList.Last.Value.Time.TimeOfDay.CompareTo(DateTime.Now.TimeOfDay) <= 0)
                         {
+                            Debug.Write("Found Tasks to be run!");
                             var message = new Messages.ExecuteNextTaskMessage();
                             Application.Current.Properties["execution_schedule_running"] = true;
+                            /*
                             Device.BeginInvokeOnMainThread(() =>
                             {
                                 //Send a message using the MessagingCenter to execute the next Function
                                 MessagingCenter.Send<Messages.ExecuteNextTaskMessage>(message, "ExecuteNextTask");
-                            });
+                            });*/
+                            ExecuteNextTask();
                         }
                     }
 
@@ -206,21 +220,23 @@ namespace Background
         /// </summary>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async static Task ExecuteNextTask(CancellationToken token)
+        public async static void ExecuteNextTask()
         {
             //Asynchronously run a scheduled task
             await Task.Run(async () => {
 
+                Debug.Write("Executing Task: " + taskList.Last.Value.Name);
                 //TODO: check return value
                 taskList.Last.Value.Func();
 
-                //Decrement the execution counter
+
+                //Increment the execution counter
                 taskList.Last.Value.ExecCounter++;
 
                 //Check if any more executions are scheduled if so enqueue again
                 if (taskList.Last.Value.ExecCounter < taskList.Last.Value.MaxExecs)
                 {
-                    taskList.AddBefore(taskList.First, taskList.Last);
+                    taskList.AddFirst(taskList.Last);
                     count++;
                 }
                 //Remove task from end of list

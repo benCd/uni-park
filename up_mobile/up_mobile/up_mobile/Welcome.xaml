@@ -19,7 +19,7 @@
                         HorizontalOptions="Center" />
 
                 <Label Text="Already have an account?"
-                        Font="Small"
+                        FontSize="14"
                         HorizontalOptions="Center" />
 
                 <!--Button to take you to the Log In page-->
@@ -28,7 +28,7 @@
                         Clicked="LoginPage"/>
 
                 <Label Text="New user? Create an account below"
-                        Font="Small"
+                        FontSize="14"
                         HorizontalOptions="Center"/>
 
                 <!--Button to take you to the Register page-->

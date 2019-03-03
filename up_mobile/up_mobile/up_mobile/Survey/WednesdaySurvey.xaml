@@ -2,19 +2,16 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="up_mobile.WednesdaySurvey"
-             Title="New User Survey">
+             Title="Wednesday">
 
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout Padding="0,10,0,10">
-
-                <Label Text="Wednesday" 
-                       Font="Large"
-                       HorizontalTextAlignment="Center" />
+            <StackLayout Padding="10,10,10,10">
 
                 <!--Drop down list for the first Wednesday parking lot selection-->
                 <Picker x:Name="WednesdaySurvey1" 
                         Title="Select a parking lot"
+                        FontSize="14"
                         VerticalOptions="Center">
 
                     <Picker.ItemsSource>
@@ -28,22 +25,25 @@
                 </Picker>
 
                 <Label Text="From" 
-                       Font="Large" />
+                       FontSize="14" />
 
                 <!--Time picker for Wednesday Start Time 1-->
                 <TimePicker x:Name="WednesdayStartTime1" 
-                            Time="{Binding SelectedTime}" />
+                            Time="{Binding SelectedTime}"
+                            FontSize="16"/>
 
                 <Label Text="To" 
-                       Font="Large" />
+                       FontSize="14" />
 
                 <!--Time picker for Wednesday End Time 1-->
                 <TimePicker x:Name="WednesdayEndTime1" 
-                            Time="{Binding SelectedTime}" />
+                            Time="{Binding SelectedTime}" 
+                            FontSize="16"/>
 
                 <!--Drop down list for the second Wednesday parking lot selection-->
                 <Picker x:Name="WednesdaySurvey2" 
                         Title="Select a parking lot"
+                        FontSize="14"
                         VerticalOptions="Center">
 
                     <Picker.ItemsSource>
@@ -57,22 +57,25 @@
                 </Picker>
 
                 <Label Text="From" 
-                       Font="Large" />
+                       FontSize="14" />
 
                 <!--Time picker for Wednesday Start Time 2-->
                 <TimePicker x:Name="WednesdayStartTime2" 
-                            Time="{Binding SelectedTime}" />
+                            Time="{Binding SelectedTime}" 
+                            FontSize="16"/>
 
                 <Label Text="To" 
-                       Font="Large" />
+                       FontSize="14" />
 
                 <!--Time picker for Wednesday End Time 2-->
                 <TimePicker x:Name="WednesdayEndTime2" 
-                            Time="{Binding SelectedTime}" />
+                            Time="{Binding SelectedTime}" 
+                            FontSize="16"/>
 
                 <!--Drop down list for the third Wednesday parking lot selection-->
                 <Picker x:Name="WednesdaySurvey3" 
                         Title="Select a parking lot"
+                        FontSize="14"
                         VerticalOptions="Center">
 
                     <Picker.ItemsSource>
@@ -86,18 +89,20 @@
                 </Picker>
 
                 <Label Text="From" 
-                       Font="Large" />
+                       FontSize="14" />
 
                 <!--Time picker for Wednesday Start Time 3-->
                 <TimePicker x:Name="WednesdayStartTime3" 
-                            Time="{Binding SelectedTime}" />
+                            Time="{Binding SelectedTime}" 
+                            FontSize="16"/>
 
                 <Label Text="To" 
-                       Font="Large" />
+                       FontSize="14" />
 
                 <!--Time picker for Wednesday End Time 3-->
                 <TimePicker x:Name="WednesdayEndTime3" 
-                            Time="{Binding SelectedTime}" />
+                            Time="{Binding SelectedTime}" 
+                            FontSize="16"/>
 
                 <!--Button to go to the next page of their New User Survey information-->
                 <Button x:Name="ThursdaySurveyButton"

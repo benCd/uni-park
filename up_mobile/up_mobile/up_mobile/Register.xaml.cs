@@ -24,9 +24,10 @@ namespace up_mobile
         }
 
         /// <summary>
-        /// When the Register button on the Register page <see cref="Register.xaml"/> is clicked it
-        /// checks that the email and password entered meet requirements for registration, then registers
-        /// the user, sends them a confirmation email, and then navigates to the Login page <see cref="Login.xaml"/>
+        /// When the Register button on the Register page <see cref="Register.xaml"/> 
+        /// is clicked it checks that the email and password entered meet requirements 
+        /// for registration, then registers the user, sends them a confirmation email, 
+        /// and then navigates to the Login page <see cref="Login.xaml"/>
         /// 
         /// FOR NOW IT JUST GOES TO THE LOGIN PAGE
         /// </summary>
@@ -36,8 +37,9 @@ namespace up_mobile
         {
             Button button = (Button)sender;
 
-            var RegEmail = RegisterEmail.Text;
-            var RegPassword = RegisterPassword.Text;
+            // How to get the information from those fields to Register with
+            // RegisterEmail.Text;
+            // RegisterPassword.Text;
 
             await Navigation.PushAsync(new Login());
         }

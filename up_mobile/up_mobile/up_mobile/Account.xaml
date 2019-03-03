@@ -7,9 +7,9 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="0,10,0,10">
-               
+
                 <Label Text="Here are your account details:"
-                        Font="Small"
+                        FontSize="14"
                         HorizontalOptions="Center"/>
 
                 <!--Button to log the user out-->

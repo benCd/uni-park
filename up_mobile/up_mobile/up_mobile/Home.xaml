@@ -9,7 +9,7 @@
             <StackLayout Padding="0,10,0,10">
 
                 <Label Text="Thanks for logging in!"
-                        Font="Large"
+                        FontSize="14"
                         HorizontalOptions="Center" />
                 
             </StackLayout>
