@@ -107,6 +107,7 @@ namespace up_mobile.Backend
         {
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformGET(uri);
+            cookies = new CookieContainer(); //remove cookies
         }
 
         /// <summary>
