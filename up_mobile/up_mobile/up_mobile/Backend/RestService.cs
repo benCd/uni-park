@@ -20,35 +20,21 @@ namespace up_mobile.Backend
     /// </summary>
     public class RestService
     {
-        static CookieContainer cookies = new CookieContainer();
+        static CookieContainer cookies;
         static HttpClient client = new HttpClient();
         const string defaultBaseUri = "http://10.0.2.2:3000";
 
         public static RestService service = new RestService();
 
         //Constructors will be altered when this class is converted to static
-        /*private RestService()
+        private RestService()
         {
-            CookieContainer cookies = new CookieContainer();
+            cookies = new CookieContainer();
             HttpClientHandler handler = new HttpClientHandler();
             handler.CookieContainer = cookies;
-            HttpClient client = new HttpClient(handler);
-        }*/
-        
-        /*public RestService()
-        {
-            /*var username = Settings.Username;
-            var password = Settings.Password;
-            var auth = string.Format("{0}:{1}", username, password);
-            var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(auth));*/
+            client = new HttpClient(handler);
+        }
 
-            //client = new HttpClient();
-            //client.MaxResponseContentBufferSize = 256000;
-            //for authenetication. still exploring other options
-            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
-        //}*/
-        
-    
         /// <summary>
         /// Registers a new user with the given email and password. Posts the fields to the server 
         /// and creates a new user to log in as provided that the request goes through successfully
@@ -58,7 +44,7 @@ namespace up_mobile.Backend
         /// <param name="password">new user password</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>A bool indicating if a new user was successfully created</returns>
-        public static async Task<bool> RegisterUser(string in_email, string in_password, string serviceUri = "/register")
+        public async Task<bool> RegisterUser(string in_email, string in_password, string serviceUri = "/register")
         {
             string json = JsonConvert.SerializeObject(new
             {
@@ -87,13 +73,8 @@ namespace up_mobile.Backend
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>bool indicating registration success</returns>
         /// 
-        public static async Task<bool> LoginUser(string in_email, string in_password, string serviceUri = "/login")
+        public async Task<bool> LoginUser(string in_email, string in_password, string serviceUri = "/login")
         {
-            //must create a new client with a handler and a blank cookiecontainer set to get cookies later
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.CookieContainer = cookies;
-            client = new HttpClient(handler);
-
             string json = JsonConvert.SerializeObject(new
             {
                 email = in_email,
@@ -122,7 +103,7 @@ namespace up_mobile.Backend
         /// </summary>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns></returns>
-        public static async Task LogoutUser(string serviceUri = "/logout")
+        public async Task LogoutUser(string serviceUri = "/logout")
         {
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformGET(uri);
@@ -135,7 +116,7 @@ namespace up_mobile.Backend
         /// <param name="lot_id">lot id for the lot that pins are wanted from</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>A pinholder object</returns>
-        public async Task<PinHolder> GetLotPinsAsync(int in_lot_id, string serviceUri = "/lotpins") //MAKE STATIC!!
+        public async Task<PinHolder> GetLotPinsAsync(int in_lot_id, string serviceUri = "/lotpins") 
         {
             PinHolder ph = new PinHolder();
 
@@ -165,7 +146,7 @@ namespace up_mobile.Backend
         /// <param name="in_lot_id">id of the lot the pin is in</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>a bool indicating the success of posting the new pin</returns>
-        public static async Task<bool> PostNewPinAsync(double in_longitude, double in_latitude, int in_lot_id, string serviceUri = "/newpin")
+        public async Task<bool> PostNewPinAsync(double in_longitude, double in_latitude, int in_lot_id, string serviceUri = "/newpin")
         {
             string json = JsonConvert.SerializeObject(new
             {
@@ -194,7 +175,7 @@ namespace up_mobile.Backend
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <param name="baseUri">uri of main web api</param>
         /// <returns>The parking lot object corresponding to the lot the user is in, or null if no lot was found</returns>
-        public static async Task<ParkingLot> FindLot(double in_latitude, double in_longtitude, double in_accuracy, string serviceUri = "/findlot")
+        public async Task<ParkingLot> FindLot(double in_latitude, double in_longtitude, double in_accuracy, string serviceUri = "/findlot")
         {
             ParkingLot pl = null;
 
@@ -347,84 +328,6 @@ namespace up_mobile.Backend
         {
             baseUri += "{0}";
             return new Uri(string.Format(baseUri, serviceUri));
-        }
-
-        //NOTE: the rest of the methods may not be functional, they are preexisting testing methods
-        //the rest will most likely be refactored or removed
-
-        /// <summary>
-        /// Method for getting all parking pins from a mysql database using a baseUri
-        /// and a serviceUri to form a full url which points to a web api. Generates an 
-        /// HTTP GET request and parses parking pin object from JSON sent by the web api.
-        /// Check project settings for both android/iOS to ensure current 
-        /// http client implementation is capable of supporting TLS 1.2+
-        /// </summary>
-        /// <param name="serviceUri">uri fragment indicating a particular service</param>
-        /// <param name="baseUri">uri of main web api</param>
-        /// <returns>A pinholder object containing an array of parking pins</returns>
-        public async Task<PinHolder> GetPinsAsync(string serviceUri = "/pins" , string baseUri = defaultBaseUri)
-        {
-            PinHolder ph = new PinHolder();
-            baseUri += "{0}";
-            var uri = new Uri(string.Format(baseUri, serviceUri));
-
-            try
-            {
-                var response = await client.GetAsync(uri);
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    Debug.Write("HERE IS THE RESPONSE" + content);
-                    ph = JsonConvert.DeserializeObject<PinHolder>(content);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-
-            return ph;
-        }
-
-        /// <summary>
-        /// Method for posting a parking pin to a mysql database given a baseUri
-        /// and a serviceUri which together form the url of a web api. Generates 
-        /// A HTTP POST request after using the geolocator plugin to create a new
-        /// parking pin instance, which is translated to json before being sent.
-        /// Check project settings for both android/iOS to ensure current 
-        /// http client implementation is capable of supporting TLS 1.2+
-        /// </summary>
-        /// <param name="serviceUri">uri fragment indicating a particular service</param>
-        /// <param name="baseUri">uri of main web api</param>
-        /// <returns>a bool indicating success of the POST</returns>
-        public async Task<bool> PostPinAsync(string serviceUri = "/pins", string baseUri = defaultBaseUri)
-        {
-            Position p = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10), null, true);
-            ParkingPin pin = new ParkingPin(p.Latitude, p.Longitude, DateTime.Now);
-
-            baseUri += "{0}";
-            var uri = new Uri(string.Format(baseUri, serviceUri)); 
-
-            try
-            {
-                var json = JsonConvert.SerializeObject(pin);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = null;
-                response = await client.PostAsync(uri, content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return true;
-                }
-                else return false;
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                return false;
-            }
         }
     }
 }

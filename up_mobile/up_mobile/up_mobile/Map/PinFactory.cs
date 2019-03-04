@@ -25,9 +25,7 @@ namespace up_mobile.Map
         /// <returns></returns>
         public static async Task<List<Pin>> GetPinsFor(int LotId)
         {
-            var Rest = new RestService();
-
-            var RawPins = await Rest.GetPinsAsync();
+            var RawPins = await RestService.service.GetLotPinsAsync(LotId);
 
             var Pins = new List<Pin>();
 
