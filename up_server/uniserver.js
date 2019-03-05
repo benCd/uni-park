@@ -129,6 +129,7 @@ app.post('/login', function (req, res, next) {
     if (!user) return res.status(401).send('Invalid credentials');
     req.login(user, (error) => {
       if (error) return next(error);
+      console.log("got here");
       return res.send('Logged in as ' + user.name);
     });
   })(req, res, next);
@@ -208,6 +209,26 @@ app.post('/getlotinfo', function (req, res, next) {
     for (var i = 0; i < results.length; i++) {
       var report = rdpToObj(results[i]);
       jsonobj.reports.push(report);
+    }
+
+    res.json(jsonobj);
+  });
+});
+
+//get lots by university id
+app.get('/getmyunilots', requireAuth, function (req, res, next) {
+  dbconnection.query('SELECT * FROM `lots` WHERE `university_id` = ?', req.user.university_id, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(404).send('Uni has no lots');
+
+    var jsonobj = {
+      lots: []
+    };
+
+    for (var i = 0; i < results.length; i++) {
+      var report = rdpToObj(results[i]);
+      jsonobj.lots.push(report);
     }
 
     res.json(jsonobj);

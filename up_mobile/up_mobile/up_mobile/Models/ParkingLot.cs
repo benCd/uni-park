@@ -15,8 +15,8 @@ namespace up_mobile.Models
 
         public string GetPrettyFormat()
         {
-            return string.Format("ID: {0} /// max lat: {1} /// min lat: {2} /// max long: {3} /// min long: {4}",
-                Id, Max_Lat, Min_Lat, Max_Long, Min_Long);
+            return string.Format("ID: {0} /// max lat: {1} /// min lat: {2} /// max long: {3} /// min long: {4} /// uni: {5}",
+                Id, Max_Lat, Min_Lat, Max_Long, Min_Long, University_Id);
         }
     }
 }

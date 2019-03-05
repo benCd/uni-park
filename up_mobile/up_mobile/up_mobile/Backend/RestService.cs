@@ -144,6 +144,23 @@ namespace up_mobile.Backend
             return ph;
         }
 
+        //get lots by current user university id
+        public async Task<LotHolder> GetMyUniLots(string serviceUri = "/getmyunilots")
+        {
+            LotHolder lh = new LotHolder();
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformGET(uri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                lh = JsonConvert.DeserializeObject<LotHolder>(rescontent);
+            }
+
+            return lh;
+        }
+
         /// <summary>
         /// Posts a new gps pin to the database with the given gps data and lot id. Requires a logged in user
         /// to generate the associated user id for the new pin, will fail to post the new pin otherwise. 
