@@ -45,7 +45,19 @@ namespace up_mobile
             // RegisterEmail.Text;
             // RegisterPassword.Text;
 
-            await Navigation.PushAsync(new Login());
+            Helpers.Settings.Username  = RegisterEmail.Text;
+            Helpers.Settings.Password = RegisterPassword.Text;
+
+            var regStatus = await RestService.service.RegisterUser(RegisterEmail.Text, RegisterPassword.Text);
+
+            if (regStatus == "Success")
+            {
+                await Navigation.PushAsync(new Login());
+            }
+            else
+            {
+                await DisplayAlert(regStatus, "Please try again", "OK");
+            }
         }
     }
 }
