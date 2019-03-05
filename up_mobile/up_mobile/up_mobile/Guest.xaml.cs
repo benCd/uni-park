@@ -19,7 +19,6 @@ namespace up_mobile
     /// </summary>
     public partial class Guest : ContentPage
     {
-        RestService requests = new RestService();
 
         /// <summary>
         /// Loads the Guest page <see cref="Guest.xaml"/>
@@ -64,33 +63,6 @@ namespace up_mobile
         protected override bool OnBackButtonPressed()
         {
             return true;
-        }
-
-
-        //DELETE ALL THIS LATER VVVV
-        private async void Button_ClickedAsync(object sender, EventArgs e)
-        {
-            /*Position p = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10), null, true);
-            ParkingPin pp = new ParkingPin(p.Latitude, p.Longitude, p.Accuracy);
-            Console.WriteLine(pp.Time.ToString());
-            Console.Write(JsonConvert.SerializeObject(pp).ToString());*/
-            PinHolder ph = await requests.GetPinsAsync();
-
-            Debug.Write(ph.Pins.ToString());
-            for (int i = 0; i < ph.Pins.Length; i += 1)
-            {
-                //Debug.Write(ph.Pins[i].GetPrettyFormat());
-            }
-        }
-
-        private async void Button2_ClickedAsync(object sender, EventArgs e)
-        {
-            await requests.PostPinAsync();
-            Position p = await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(10), null, true);
-            ParkingPin pin = new ParkingPin(p.Latitude, p.Longitude, DateTime.Now);
-
-            //Debug.Write(DateTime.Now.ToString());
-           // Debug.Write(DateTime.Now.ToString());
-        }
+        }        
     }
 }

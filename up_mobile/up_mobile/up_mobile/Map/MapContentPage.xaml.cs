@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using up_mobile.Map.Utils;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Forms.Maps;
 using System.Diagnostics;
 
-namespace up_mobile.Map
+namespace up_mobile
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapContentPage : ContentPage
@@ -19,13 +19,19 @@ namespace up_mobile.Map
         /// </summary>
         private static Xamarin.Forms.Maps.Map map;
 
+        public MapContentPage() : this(0)
+        {
+
+        }
+
         /// <summary>
         /// Constructor for MapContentPage pages, which are used to display a map of
         /// a parking lot. 
         /// </summary>
         /// <param name="LotId">ID for the parking lot to load</param>
-		public MapContentPage(int LotId)
+		public MapContentPage(int LotId = 0) : base()
 		{
+           
             this.Title = "Lot XYZ";
             //TODO IMPLEMENT MAP REST REQUEST!
 
