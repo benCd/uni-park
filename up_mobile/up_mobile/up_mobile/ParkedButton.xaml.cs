@@ -49,6 +49,8 @@ namespace up_mobile
                 return 0; }
                 );
 
+            
+            //TODO Set map to current parking lot
             await Navigation.PushAsync(new ParkedConfirm((Button)sender));
         }
     }

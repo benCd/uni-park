@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using up_mobile.Map.Utils;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Essentials;
 using System.Diagnostics;
 
-namespace up_mobile.Map
+namespace up_mobile
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MapMenu : ScrollView

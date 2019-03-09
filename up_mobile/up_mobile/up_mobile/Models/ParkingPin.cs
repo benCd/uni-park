@@ -1,4 +1,5 @@
 ﻿using System;
+using up_mobile.Map.Utils;
 
 namespace up_mobile.Models
 {

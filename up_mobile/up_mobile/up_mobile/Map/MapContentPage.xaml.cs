@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using up_mobile.Map.Utils;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Forms.Maps;
 using System.Diagnostics;
 using up_mobile.Backend;
 
-namespace up_mobile.Map
+namespace up_mobile
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapContentPage : ContentPage
@@ -18,16 +18,26 @@ namespace up_mobile.Map
         /// <summary>
         /// Variable holding the map for every instance of a <see cref="MapContentPage"/>
         /// </summary>
-        private static Xamarin.Forms.Maps.Map map;
-        private static LotHolder lotholder;
+        private static LotMap map;
+
+        /// <summary>
+        /// Holds the current lot the map is focusing in on
+        /// </summary>
+        public static int CurrentLotId { set;  get; }
+
+        public MapContentPage() : this(0)
+        {
+
+        }
 
         /// <summary>
         /// Constructor for MapContentPage pages, which are used to display a map of
         /// a parking lot. 
         /// </summary>
         /// <param name="LotId">ID for the parking lot to load</param>
-		public MapContentPage(int LotId)
+		public MapContentPage(int LotId = 0) : base()
 		{
+           
             this.Title = "Lot XYZ";
             //TODO IMPLEMENT MAP REST REQUEST!
 
@@ -45,9 +55,8 @@ namespace up_mobile.Map
         {
 
             lotholder = await RestService.service.GetMyUniLots();
-
-            if (map == null)
-                map = new Xamarin.Forms.Maps.Map(
+            if(map == null)
+                map = new LotMap(
                            MapSpan.FromCenterAndRadius(
                                new Position(lotholder.Lots[0].Center_Lat, lotholder.Lots[0].Center_Long), Distance.FromKilometers(0.1)))
                 {
@@ -68,13 +77,13 @@ namespace up_mobile.Map
         /// <param name="LotId"> The ID for the parking lot, whose information should be loaded</param>
         private static async void SetPins(int LotId)
         {
-            map.Pins.Clear();
+            map.ParkingPins.Clear();
 
             var pins = await PinFactory.GetPinsFor(LotId);
 
-            foreach (Pin p in pins)
+            foreach (ParkingPin p in pins)
             {
-                map.Pins.Add(p);
+                map.ParkingPins.Add(p);
             }
         }
 
@@ -84,6 +93,8 @@ namespace up_mobile.Map
         /// <param name="LotId">ID of the lot to move to</param>
         public static async void MoveToLot(int LotId)
         {
+            CurrentLotId = LotId;
+
             //------------------------------------------
             //TODO request lot information from REST API
             //REQUEST GOES HERE
@@ -110,6 +121,7 @@ namespace up_mobile.Map
             Debug.Print("Button: " + LotId);
             var span = MapSpan.FromCenterAndRadius(position, radius);
             map.MoveToRegion(span);
+            SetPins(LotId);
         }
 	}
 }

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using up_mobile.Backend;
+//using up_mobile.Map.Utils;
 using up_mobile.Models;
 using Xamarin.Forms.Maps;
 
-namespace up_mobile.Map
+namespace up_mobile
 {
     /// <summary>
     /// Factory to create <see cref="Pin"/> from <see cref="ParkingPin"/>

@@ -42,6 +42,10 @@ namespace up_mobile
 
             Helpers.Settings.IsLoggedIn = false;
 
+            //Clearing properites
+            Application.Current.Properties.Clear();
+
+
             await Navigation.PushAsync(new Guest());
         }
 

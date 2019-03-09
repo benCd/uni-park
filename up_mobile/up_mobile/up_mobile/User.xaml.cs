@@ -27,6 +27,9 @@ namespace up_mobile
 
             // Suppresses the back button at the top of the page
             NavigationPage.SetHasBackButton(this, false);
+
+            //Setting necessary data
+            Setup();
         }
 
         /// <summary>
@@ -37,6 +40,18 @@ namespace up_mobile
         protected override bool OnBackButtonPressed()
         {
             return true;
+        }
+
+        /// <summary>
+        /// Sets up the properties so we can access necessary and continuously used data.
+        /// </summary>
+        async void Setup()
+        {
+            //Retrieving Uni data
+            Application.Current.Properties.Add("UniversityId", await RestService.service.GetMyUni());
+
+            //Retrieving Lot data for uni
+            //Application.Current.Properties.Add("UniversityLots", await RestService.service.);
         }
 
     }

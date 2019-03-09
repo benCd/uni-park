@@ -64,8 +64,5 @@ namespace up_mobile
         {
             return true;
         }
-
-
-        
     }
 }
