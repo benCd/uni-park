@@ -166,8 +166,8 @@ app.get('/lotpins', function (req, res, next) { //lot_id has not been added to d
 //send a new gps pin to db
 app.post('/newpin', requireAuth, function (req, res, next) {
    var pin = req.body;
-   dbconnection.query({sql: 'INSERT INTO `gpsdata`(user_id,timestamp,longitude,latitude,lot_id) VALUES(?,?,?,?,?)',
-   values: [req.user.id, new Date(), pin.longitude, pin.latitude, pin.lot_id]}, function (error, results, fields) {
+   dbconnection.query({sql: 'INSERT INTO `gpsdata`(user_id,timestamp,longitude,latitude,lot_id,volume) VALUES(?,?,?,?,?,?)',
+   values: [req.user.id, new Date(), pin.longitude, pin.latitude, pin.lot_id, pin.volume]}, function (error, results, fields) {
      if (error) return next(error);
    });
    res.send('Pin added');

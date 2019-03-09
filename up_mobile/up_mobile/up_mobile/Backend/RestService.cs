@@ -170,13 +170,14 @@ namespace up_mobile.Backend
         /// <param name="in_lot_id">id of the lot the pin is in</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>a bool indicating the success of posting the new pin</returns>
-        public async Task<bool> PostNewPinAsync(double in_longitude, double in_latitude, int in_lot_id, string serviceUri = "/newpin")
+        public async Task<bool> PostNewPinAsync(double in_longitude, double in_latitude, int in_lot_id, double in_volume, string serviceUri = "/newpin")
         {
             string json = JsonConvert.SerializeObject(new
             {
                 longitude = in_longitude,
                 latitude = in_latitude,
-                lot_id = in_lot_id
+                lot_id = in_lot_id,
+                volume = in_volume
             });
 
             Uri uri = makeUri(serviceUri);
