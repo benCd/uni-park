@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using up_mobile.Backend;
-
+using up_mobile.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -39,16 +40,21 @@ namespace up_mobile
             /// </remarks>
             Helpers.Settings.Username = LoginEmail.Text;
             Helpers.Settings.Password = LoginPassword.Text;
-            Helpers.Settings.IsLoggedIn = true;
 
-            if (Helpers.Settings.TookNewUserSurvey == false)
-            {
-                await Navigation.PushAsync(new NewUserSurvey());
-            }
+            var loginSuccess = RestService.service.LoginUser(LoginEmail.Text, LoginPassword.Text);
 
-            else if (Helpers.Settings.TookNewUserSurvey == true)
+            if (await loginSuccess)
             {
-                await Navigation.PushAsync(new User());
+                Helpers.Settings.IsLoggedIn = true;
+                var surveyTaken = await RestService.service.SeeSurveyStatus();
+                Helpers.Settings.TookNewUserSurvey = surveyTaken;
+
+                if (surveyTaken)
+                    await Navigation.PushAsync(new User());
+                else
+                    await Navigation.PushAsync(new NewUserSurvey());
+            } else {
+                await DisplayAlert("Incorrect email and password combination", "Please try again", "OK");
             }
         }
     }

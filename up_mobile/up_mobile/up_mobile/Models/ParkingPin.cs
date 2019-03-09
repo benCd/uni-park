@@ -9,7 +9,7 @@ namespace up_mobile.Models
         public int User_id { get; set; }
         public double Latitude { get; set; }    
         public double Longitude { get; set; }
-        public double Percentage { get; set; }
+        public double Volume { get; set; }
         public DateTime Timestamp { get; set; }
         public int Lot_id { get; set; }
 

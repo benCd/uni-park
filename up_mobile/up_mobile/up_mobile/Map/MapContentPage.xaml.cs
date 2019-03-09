@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Forms.Maps;
 using System.Diagnostics;
+using up_mobile.Backend;
 
 namespace up_mobile
 {
@@ -40,10 +41,24 @@ namespace up_mobile
             this.Title = "Lot XYZ";
             //TODO IMPLEMENT MAP REST REQUEST!
 
+            makeMap();
+
+            while (map == null) ;
+            
+            var stack = new StackLayout { Spacing = 0 };
+            stack.Children.Add(map);
+            stack.Children.Add(new MapMenu());
+            Content = stack;
+        }
+
+        private static async void makeMap()
+        {
+
+            lotholder = await RestService.service.GetMyUniLots();
             if(map == null)
                 map = new LotMap(
                            MapSpan.FromCenterAndRadius(
-                               new Position(42.671133, -83.214928), Distance.FromKilometers(0.1)))
+                               new Position(lotholder.Lots[0].Center_Lat, lotholder.Lots[0].Center_Long), Distance.FromKilometers(0.1)))
                 {
                     IsShowingUser = true,
                     VerticalOptions = LayoutOptions.FillAndExpand,
@@ -52,12 +67,7 @@ namespace up_mobile
                     MapType = MapType.Satellite
                 };
 
-            SetPins(LotId);
-            
-            var stack = new StackLayout { Spacing = 0 };
-            stack.Children.Add(map);
-            stack.Children.Add(new MapMenu());
-            Content = stack;
+            SetPins(0);
         }
 
         /// <summary>

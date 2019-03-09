@@ -63,6 +63,6 @@ namespace up_mobile
         protected override bool OnBackButtonPressed()
         {
             return true;
-        }        
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using up_mobile.Backend;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -38,6 +38,8 @@ namespace up_mobile
             /// <remarks>
             /// Updating logged in status in <see cref="Settings.cs"/>
             /// </remarks>
+            RestService.service.LogoutUser();
+
             Helpers.Settings.IsLoggedIn = false;
 
             //Clearing properites

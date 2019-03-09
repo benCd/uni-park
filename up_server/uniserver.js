@@ -23,7 +23,6 @@ var dbconnection = mysql.createConnection({
   user     : config.database.user,
   password : config.database.password,
   database : config.database.db,
-  typecast : false
 });
 dbconnection.connect();
 
@@ -85,7 +84,7 @@ app.use(session({
   secret: config.secret,
   resave: false,
   saveUninitialized: false,
-  cookie : {maxAge: 365 * 24 * 60 * 60 * 1000}, //set cookie expiration to 1 year, 'maxAge' used instead of 'expires' at express-session's reccomendation
+  cookie : {maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: false}, //set cookie expiration to 1 year, 'maxAge' used instead of 'expires' at express-session's reccomendation
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -95,16 +94,28 @@ app.use(passport.session());
 //register
 app.post('/register', function (req, res, next) { //need to dynamically set uni!!
   var newuser = req.body;
+  var unimail = newuser.email.substring(newuser.email.indexOf('@')+1, newuser.email.length)
+  console.log(unimail);
 
-  dbconnection.query('SELECT * FROM `users` WHERE `name` = ?', newuser.email, function (error, results, fields) { //checks if this email already exists in db
+  dbconnection.query('SELECT `id` FROM `universities` WHERE `email` = ?', unimail, function (error, results, fields) {
     if (error) return next(error);
-    if (results.length !=0 ) { //if we get a result, it does
-      res.status(409).send('Email already registered'); //don't proceed to creating new row, stop here
-    } else {
-      dbconnection.query({sql: 'INSERT INTO `users`(name,pass,university_id,credibility) VALUES(?,?,?,?)', //create new rot for new user
-      values: [newuser.email, newuser.password, 1, 10]}, function (error, results, fields) {
+    if (results.length ==0 )
+      res.status(400).send('Not a valid university email');
+    else {
+      var uid = results[0].id;
+
+
+      dbconnection.query('SELECT * FROM `users` WHERE `name` = ?', newuser.email, function (error, results, fields) { //checks if this email already exists in db
         if (error) return next(error);
-        res.send('User created');
+        if (results.length !=0 ) { //if we get a result, it does
+          res.status(409).send('Email already registered'); //don't proceed to creating new row, stop here
+        } else {
+          dbconnection.query({sql: 'INSERT INTO `users`(name,pass,university_id) VALUES(?,?,?)',
+          values: [newuser.email, newuser.password, uid]}, function (error, results, fields) {
+            if (error) return next(error);
+            res.status(201).send('User created');
+          });
+        }
       });
     }
   });
@@ -118,17 +129,16 @@ app.post('/login', function (req, res, next) {
     if (!user) return res.status(401).send('Invalid credentials');
     req.login(user, (error) => {
       if (error) return next(error);
+      console.log("got here");
       return res.send('Logged in as ' + user.name);
     });
   })(req, res, next);
 });
 
 //logout
-app.get('/logout', function (req, res) {
-  if (req.user) {
-    req.session.destroy();
-    res.send('Logged out as ' + req.user.name);
-  } else res.send('Not logged in!');
+app.get('/logout', requireAuth, function (req, res) {
+  req.session.destroy();
+  res.send('Logged out as ' + req.user.name);
 });
 
 //new and untested
@@ -156,8 +166,8 @@ app.get('/lotpins', function (req, res, next) { //lot_id has not been added to d
 //send a new gps pin to db
 app.post('/newpin', requireAuth, function (req, res, next) {
    var pin = req.body;
-   dbconnection.query({sql: 'INSERT INTO `gpsdata`(user_id,timestamp,longitude,latitude,lot_id) VALUES(?,?,?,?,?)',
-   values: [req.user.id, new Date(), pin.longitude, pin.latitude, pin.lot_id]}, function (error, results, fields) {
+   dbconnection.query({sql: 'INSERT INTO `gpsdata`(user_id,timestamp,longitude,latitude,lot_id,volume) VALUES(?,?,?,?,?,?)',
+   values: [req.user.id, new Date(), pin.longitude, pin.latitude, pin.lot_id, pin.volume]}, function (error, results, fields) {
      if (error) return next(error);
    });
    res.send('Pin added');
@@ -205,6 +215,26 @@ app.post('/getlotinfo', function (req, res, next) {
   });
 });
 
+//get lots by university id
+app.get('/getmyunilots', requireAuth, function (req, res, next) {
+  dbconnection.query('SELECT * FROM `lots` WHERE `university_id` = ?', req.user.university_id, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(404).send('Uni has no lots');
+
+    var jsonobj = {
+      lots: []
+    };
+
+    for (var i = 0; i < results.length; i++) {
+      var report = rdpToObj(results[i]);
+      jsonobj.lots.push(report);
+    }
+
+    res.json(jsonobj);
+  });
+});
+
 //new
 //get university info for a specific user given their id
 app.post('/getuni', function (req, res, next) {
@@ -233,6 +263,12 @@ app.get('/myuni', requireAuth, function (req, res, next) {
 
     res.json(rdpToObj(results[0]));
   });
+});
+
+//see if survey taken
+app.get('/surveystatus', requireAuth, function (req, res, next) {
+  var status = req.user.surveytaken;
+  res.send(status.toString());
 });
 
 //finally, make our https server and listen for requests

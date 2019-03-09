@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Plugin.Geolocator;
-using Plugin.Geolocator.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -44,7 +42,7 @@ namespace up_mobile.Backend
         /// <param name="password">new user password</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>A bool indicating if a new user was successfully created</returns>
-        public async Task<bool> RegisterUser(string in_email, string in_password, string serviceUri = "/register")
+        public async Task<string> RegisterUser(string in_email, string in_password, string serviceUri = "/register")
         {
             string json = JsonConvert.SerializeObject(new
             {
@@ -58,9 +56,13 @@ namespace up_mobile.Backend
             //debugging
             Debug.Write(response.Content.ToString());
             if (response.IsSuccessStatusCode)
-                return true;
-            else
-                return false;
+                return "Success";
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+                return "Not a valid university email";
+            if (response.StatusCode == HttpStatusCode.Conflict)
+                return "Email is already registered";
+
+            return "error";
         }
 
         /// <summary>
@@ -75,6 +77,8 @@ namespace up_mobile.Backend
         /// 
         public async Task<bool> LoginUser(string in_email, string in_password, string serviceUri = "/login")
         {
+            Cookie myCookie = null;
+
             string json = JsonConvert.SerializeObject(new
             {
                 email = in_email,
@@ -84,12 +88,14 @@ namespace up_mobile.Backend
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformPOST(uri, json);
 
-            if (response.IsSuccessStatusCode){
+            if (response.IsSuccessStatusCode) {
                 //get cookies
                 IEnumerable<Cookie> resCookies = cookies.GetCookies(uri).Cast<Cookie>();
-                Cookie myCookie = resCookies.First();
                 //save cookie
-                cookies.Add(myCookie);
+                if (resCookies.Any()) {
+                    myCookie = resCookies.First();
+                    cookies.Add(myCookie);
+                }
 
                 if (myCookie != null)
                     return true;
@@ -138,6 +144,23 @@ namespace up_mobile.Backend
             return ph;
         }
 
+        //get lots by current user university id
+        public async Task<LotHolder> GetMyUniLots(string serviceUri = "/getmyunilots")
+        {
+            LotHolder lh = new LotHolder();
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformGET(uri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                lh = JsonConvert.DeserializeObject<LotHolder>(rescontent);
+            }
+
+            return lh;
+        }
+
         /// <summary>
         /// Posts a new gps pin to the database with the given gps data and lot id. Requires a logged in user
         /// to generate the associated user id for the new pin, will fail to post the new pin otherwise. 
@@ -147,13 +170,14 @@ namespace up_mobile.Backend
         /// <param name="in_lot_id">id of the lot the pin is in</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>a bool indicating the success of posting the new pin</returns>
-        public async Task<bool> PostNewPinAsync(double in_longitude, double in_latitude, int in_lot_id, string serviceUri = "/newpin")
+        public async Task<bool> PostNewPinAsync(double in_longitude, double in_latitude, int in_lot_id, double in_volume, string serviceUri = "/newpin")
         {
             string json = JsonConvert.SerializeObject(new
             {
                 longitude = in_longitude,
                 latitude = in_latitude,
-                lot_id = in_lot_id
+                lot_id = in_lot_id,
+                volume = in_volume
             });
 
             Uri uri = makeUri(serviceUri);
@@ -276,6 +300,22 @@ namespace up_mobile.Backend
             }
 
             return uni;
+        }
+
+        public async Task<bool> SeeSurveyStatus(string serviceUri = "/surveystatus")
+        {
+            bool b = false;
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformGET(uri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                if (rescontent == "1")
+                    b = true;
+            }
+
+            return b;
         }
 
         /// <summary>
