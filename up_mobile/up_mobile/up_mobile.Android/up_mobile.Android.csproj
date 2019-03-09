@@ -75,6 +75,7 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DroidMapUtils\DroidCustomMapRenderer.cs" />
     <Compile Include="ExecuteScheduleService.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -119,6 +120,11 @@
       <Project>{25F67136-8BE1-4AB0-9CD8-2B6A050744DF}</Project>
       <Name>up_mobile</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\DroidInfoWindow.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
