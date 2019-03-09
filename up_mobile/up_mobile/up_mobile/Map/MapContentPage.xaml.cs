@@ -9,6 +9,7 @@ using Xamarin.Forms.Xaml;
 using Xamarin.Forms.Maps;
 using System.Diagnostics;
 using up_mobile.Backend;
+using up_mobile.Models;
 
 namespace up_mobile
 {
@@ -19,6 +20,8 @@ namespace up_mobile
         /// Variable holding the map for every instance of a <see cref="MapContentPage"/>
         /// </summary>
         private static LotMap map;
+
+        private static LotHolder lotholder;
 
         /// <summary>
         /// Holds the current lot the map is focusing in on
@@ -53,8 +56,7 @@ namespace up_mobile
 
         private static async void makeMap()
         {
-
-            lotholder = await RestService.service.GetMyUniLots();
+            lotholder = (LotHolder)Application.Current.Properties["UniversityLots"];
             if(map == null)
                 map = new LotMap(
                            MapSpan.FromCenterAndRadius(
@@ -81,7 +83,7 @@ namespace up_mobile
 
             var pins = await PinFactory.GetPinsFor(LotId);
 
-            foreach (ParkingPin p in pins)
+            foreach (Map.Utils.ParkingPin p in pins)
             {
                 map.ParkingPins.Add(p);
             }

@@ -24,16 +24,16 @@ namespace up_mobile
         /// </summary>
         /// <param name="LotId">ID for the parking lot, whose pins are supposed to be retrieved</param>
         /// <returns></returns>
-        public static async Task<List<Pin>> GetPinsFor(int LotId)
+        public static async Task<List<Map.Utils.ParkingPin>> GetPinsFor(int LotId)
         {
             var RawPins = await RestService.service.GetLotPinsAsync(LotId);
 
-            var Pins = new List<Pin>();
+            var Pins = new List<Map.Utils.ParkingPin>();
 
             if(RawPins != null)
                 foreach(ParkingPin Pin in RawPins.Pins)
                 {
-                    Pins.Add(new Pin()
+                    Pins.Add(new Map.Utils.ParkingPin()
                     {
                         Position = new Position(Pin.Latitude, Pin.Longitude),
                         Label = Pin.User_id + "\n@" + Pin.Timestamp + "\n" + Pin.Volume

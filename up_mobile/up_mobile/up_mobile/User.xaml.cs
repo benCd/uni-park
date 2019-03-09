@@ -51,7 +51,7 @@ namespace up_mobile
             Application.Current.Properties.Add("UniversityId", await RestService.service.GetMyUni());
 
             //Retrieving Lot data for uni
-            //Application.Current.Properties.Add("UniversityLots", await RestService.service.);
+            Application.Current.Properties.Add("UniversityLots", await RestService.service.GetMyUniLots());
         }
 
     }
