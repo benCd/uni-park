@@ -15,6 +15,10 @@ namespace up_mobile
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class SurveyPage : ContentPage
 	{
+        /// <summary>
+        /// Queue to hold the selected days for the new user survey which is
+        /// passed over from a Queue of the same name in <see cref="NewUserSurvey.xaml.cs"/>
+        /// </summary>
         Queue<String> SurveyNavigationQueue = new Queue<String>();
 
         /// <summary>
@@ -23,12 +27,21 @@ namespace up_mobile
 		public SurveyPage (Queue<String> q)
 		{
             SurveyNavigationQueue = q;
-            this.Title = SurveyNavigationQueue.Dequeue();
+
+            /// <remarks>
+            /// If something is still remaining in the Queue it sets the next thing 
+            /// as this page <see cref="SurveyPage.xaml"/>'s Title
+            /// </remarks>
+            if (SurveyNavigationQueue.Count() > 0)
+            {
+                this.Title = SurveyNavigationQueue.Peek();
+            }
+
 			InitializeComponent ();
 		}
 
         /// <summary>
-        /// When the Next Page button on SurveyPage page 
+        /// When the Submit button on SurveyPage page 
         /// <see cref="SurveyPage.xaml"/> is pressed it navigates 
         /// to the next version of the page. If the Queue is empty it navigates
         /// to the User page <see cref="User.xaml"/>
@@ -37,13 +50,15 @@ namespace up_mobile
         {
             Button button = (Button)sender;
 
-            if (SurveyNavigationQueue.Count() != 0)
+            if (SurveyNavigationQueue.Count() > 0)
             {
+                SurveyNavigationQueue.Dequeue();
                 await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue));
             }
             if (SurveyNavigationQueue.Count() == 0)
             {
-                //await DisplayAlert("Thanks!", "This information really helps us", "OK");
+                // Pop up to thank the user for taking the survey
+                await DisplayAlert("Thanks!", "This information really helps us", "OK");
 
                 /// <remarks>
                 /// Storing this value in <see cref="Settings.cs"/> so it does not give them the survey for future log ins

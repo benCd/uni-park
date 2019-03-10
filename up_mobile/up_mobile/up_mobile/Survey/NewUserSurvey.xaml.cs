@@ -41,7 +41,7 @@ namespace up_mobile
         public Queue<String> SurveyNavigationQueue = new Queue<String>();
 
         /// <summary>
-        /// Adds all days which are toggled on to the SurveyNavigationQueue <see cref="NewUserSurvey.xaml.cs"/> line 41
+        /// Adds all days which are toggled on to the SurveyNavigationQueue <see cref="NewUserSurvey.xaml.cs"/>
         /// and when the Begin Survey button on NewUserSurvey page <see cref="NewUserSurvey.xaml"/> is pressed it 
         /// navigates to <see cref="SurveyPage.xaml"/>
         /// </summary>
@@ -49,9 +49,9 @@ namespace up_mobile
         {
             Button button = (Button)sender;
 
-            ///<remarks>
-            /// Neccessary to avoid mix up of page titles if the user were to navigate 
-            /// back to this page and alter the selected days.
+            /// <remarks>
+            /// This Clear operation is needed to avoid mix up of page titles if the 
+            /// user were to navigate back to this page and alter the selected days.
             /// </remarks>
             SurveyNavigationQueue.Clear();
 
