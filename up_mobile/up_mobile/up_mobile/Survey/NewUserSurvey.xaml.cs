@@ -49,31 +49,37 @@ namespace up_mobile
         {
             Button button = (Button)sender;
 
+            ///<remarks>
+            /// Neccessary to avoid mix up of page titles if the user were to navigate 
+            /// back to this page and alter the selected days.
+            /// </remarks>
+            SurveyNavigationQueue.Clear();
+
             if (this.MondayToggle.On == true)
             {
                 SurveyNavigationQueue.Enqueue("Monday");
             }
-            else if (this.TuesdayToggle.On == true)
+            if (this.TuesdayToggle.On == true)
             {
                 SurveyNavigationQueue.Enqueue("Tuesday");
             }
-            else if (this.WednesdayToggle.On == true)
+            if (this.WednesdayToggle.On == true)
             {
                 SurveyNavigationQueue.Enqueue("Wednesday");
             }
-            else if (this.ThursdayToggle.On == true)
+            if (this.ThursdayToggle.On == true)
             {
                 SurveyNavigationQueue.Enqueue("Thursday");
             }
-            else if (this.FridayToggle.On == true)
+            if (this.FridayToggle.On == true)
             {
                 SurveyNavigationQueue.Enqueue("Friday");
             }
-            else if (this.SaturdayToggle.On == true)
+            if (this.SaturdayToggle.On == true)
             {
                 SurveyNavigationQueue.Enqueue("Saturday");
             }
-            else if (this.SundayToggle.On == true)
+            if (this.SundayToggle.On == true)
             {
                 SurveyNavigationQueue.Enqueue("Sunday");
             }

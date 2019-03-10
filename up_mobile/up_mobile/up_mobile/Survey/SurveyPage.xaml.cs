@@ -15,13 +15,15 @@ namespace up_mobile
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class SurveyPage : ContentPage
 	{
+        Queue<String> SurveyNavigationQueue = new Queue<String>();
+
         /// <summary>
         /// Loads SurveyPage  page
         /// </summary>
 		public SurveyPage (Queue<String> q)
 		{
-            Queue<String> SurveyNavigationQueue = q;
-            this.Title = q.Dequeue();
+            SurveyNavigationQueue = q;
+            this.Title = SurveyNavigationQueue.Dequeue();
 			InitializeComponent ();
 		}
 
@@ -33,7 +35,7 @@ namespace up_mobile
         async void NextSurveyPageButtonClicked(object sender, EventArgs args)
         {
             Button button = (Button)sender;
-            //await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue));
+            await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue));
         }
     }
 }
