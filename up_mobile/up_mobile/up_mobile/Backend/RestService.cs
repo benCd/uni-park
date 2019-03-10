@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using up_mobile.Models;
+using Xamarin.Forms;
 
 namespace up_mobile.Backend
 {
@@ -18,7 +19,7 @@ namespace up_mobile.Backend
     /// </summary>
     public class RestService
     {
-        static CookieContainer cookies;
+        public CookieContainer cookies { set; get; }
         static HttpClient client = new HttpClient();
         const string defaultBaseUri = "http://35.207.3.28:8080";
 
@@ -27,7 +28,24 @@ namespace up_mobile.Backend
         //Constructors will be altered when this class is converted to static
         private RestService()
         {
-            cookies = new CookieContainer();
+            if (Application.Current.Properties.ContainsKey("Cookies") && Application.Current.Properties["Cookies"] != null)
+                cookies = (CookieContainer)Application.Current.Properties["Cookies"];
+            else if(!Application.Current.Properties.ContainsKey("Cookies"))
+            {
+                cookies = new CookieContainer();
+                Application.Current.Properties.Add("Cookies", cookies);
+            }
+            else if (Application.Current.Properties["Cookies"] == null)
+            {
+                cookies = new CookieContainer();
+                Application.Current.Properties["Cookies"] = cookies;
+            }
+
+            //DEBUG ------------------------------------------------
+            foreach (Cookie c in ((CookieContainer)Application.Current.Properties["Cookies"]).GetCookies(new Uri(defaultBaseUri)))
+                Debug.Write(c.Name + " -> " + c.Value);
+            //!DEBUG ------------------------------------------------
+
             HttpClientHandler handler = new HttpClientHandler();
             handler.CookieContainer = cookies;
             client = new HttpClient(handler);
@@ -97,6 +115,11 @@ namespace up_mobile.Backend
                     cookies.Add(myCookie);
                 }
 
+                Debug.Write("Cookie:");
+                Debug.Write(myCookie.Value);
+                /*foreach (Cookie c in ((CookieContainer)Application.Current.Properties["Cookies"]).GetCookies(new Uri(defaultBaseUri)))
+                    Debug.Write(c.Name + " -> " + c.Value);
+                */
                 if (myCookie != null)
                     return true;
             }
@@ -111,9 +134,12 @@ namespace up_mobile.Backend
         /// <returns></returns>
         public async Task LogoutUser(string serviceUri = "/logout")
         {
+            //DEBUG ------------------------------------------------
+            foreach (Cookie c in cookies.GetCookies(new Uri(defaultBaseUri)))
+                Debug.Write(c.Name + " + " + c.Value);
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformGET(uri);
-            cookies = new CookieContainer(); //remove cookies
+            //cookies = null; //remove cookies
         }
 
         /// <summary>
@@ -126,6 +152,7 @@ namespace up_mobile.Backend
         public async Task<PinHolder> GetLotPinsAsync(int in_lot_id, string serviceUri = "/lotpins") 
         {
             PinHolder ph = new PinHolder();
+            
 
             string json = JsonConvert.SerializeObject(new
             {

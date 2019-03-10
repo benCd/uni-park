@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Background;
+using up_mobile.Backend;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace up_mobile
@@ -84,6 +85,9 @@ namespace up_mobile
             {
                 //PROMPT TO LOGINZ
             }
+
+            if (Application.Current.Properties.ContainsKey("Cookies"))
+                RestService.service.cookies = Application.Current.Properties["Cookies"] as System.Net.CookieContainer;
 
             //TaskScheduler.ExecuteSchedule();
         }

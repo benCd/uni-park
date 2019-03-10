@@ -40,7 +40,7 @@ namespace up_mobile
                     Pins.Add(new Map.Utils.ParkingPin()
                     {
                         Position = new Position(Pin.Latitude, Pin.Longitude),
-                        Label = Pin.User_id + "\n@" + Pin.Timestamp + "\n" + Pin.Volume
+                        Text = Pin.User_id + "\n@" + Pin.Timestamp + "\n" + Pin.Volume
                     });
                 }
             Debug.Write("Exiting PinFactory!");

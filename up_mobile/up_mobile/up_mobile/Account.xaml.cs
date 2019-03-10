@@ -42,10 +42,15 @@ namespace up_mobile
 
             Helpers.Settings.IsLoggedIn = false;
 
-            //Clearing properites
-            Application.Current.Properties.Clear();
+            //Cleaning up the map
+            Map.Utils.MapCleaner.CleanUp();
 
-            await Navigation.PushAsync(new Guest());
+            //Clearing properites
+            Application.Current.Properties["Cookies"] = null;
+
+            Navigation.InsertPageBefore(new Guest(),Navigation.NavigationStack[0]);
+            //await Navigation.PushAsync(new Guest());
+            await Navigation.PopToRootAsync(true);
         }
 
     }

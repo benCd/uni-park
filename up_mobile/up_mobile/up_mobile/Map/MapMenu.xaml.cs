@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using up_mobile.Map.Utils;
+﻿using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Essentials;
@@ -16,41 +11,51 @@ namespace up_mobile
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MapMenu : ScrollView
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        StackLayout Stack;
 
         public MapMenu()
         {
-            Orientation = ScrollOrientation.Horizontal;
+            InitializeComponent();
             HeightRequest = DeviceDisplay.MainDisplayInfo.Height / 18;
-            BackgroundColor = Color.Accent;
-
-            Stack = new StackLayout();
-            Stack.Orientation = StackOrientation.Horizontal;
-            Populate().ContinueWith(
-                t => {
-                    Content = Stack;
-                    Debug.Write("Done constructing MapMenu"); }
-                );
-            
         }
 
-        private async Task Populate()
+        public async Task Populate()
         {
             Debug.Write("Entering Populate()");
 
-            var lotholder = await RestService.service.GetMyUniLots();
+            LotHolder lotholder = null;
 
-            Debug.Write(lotholder.Lots);
+            //Debug.Write("------------> CHECKPOINT 0");
 
-            foreach (ParkingLot lot in lotholder.Lots)
+            if (Application.Current.Properties.ContainsKey("UniversityLots"))
+                lotholder = (LotHolder)Application.Current.Properties["UniversityLots"];
+
+            //Debug.Write("------------> CHECKPOINT 1");
+
+            if (lotholder == null)
             {
-                Debug.Write(lot);
-                Stack.Children.Add(new RememberButton(lot.Lot_Name, lot.Id));
+                Debug.Write("Lotholder == null!");
+                lotholder = await RestService.service.GetMyUniLots();
             }
 
+            foreach (ParkingLot lot in lotholder.Lots)
+                Debug.Write("Lotholder swallowed: " + lot.Lot_Name + " with STD " + lot.Id);
+
+
+                //Debug.Write("------------> CHECKPOINT 2");
+                foreach (ParkingLot lot in lotholder.Lots)
+                {
+                Debug.Write("Adding Button for: " + lot.Lot_Name);
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Stack.Children.Add(new RememberButton(lot.Lot_Name, lot.Id));
+                });
+                }
+
+            //Debug.Write("------------> CHECKPOINT 3");
+
+            foreach (RememberButton button in Stack.Children)
+                Debug.Write(button.Text + " :::: " + button.IDVal);
+            
             Debug.Write("Exiting Populate()");
         }
 
@@ -62,18 +67,16 @@ namespace up_mobile
             /// <summary>
             /// Gets the ID set to this button.
             /// </summary>
-            public int IDval { get; }
+            public int IDVal { get; }
 
-            public RememberButton(string label, int idval) : base()
+            public RememberButton(string label, int id) : base()
             {
-                IDval = idval;
+                IDVal = id;
                 Text = label;
-                Clicked += async (sender, args) => MapContentPage.MoveToLot(IDval);
+                Clicked += async (sender, args) => MapContentPage.MoveToLot(IDVal);
 
-                BackgroundColor = Color.Accent;
-
+                BackgroundColor = Color.Red;
             }
-            
         }
     }
 }

@@ -19,7 +19,7 @@ namespace up_mobile
         /// <summary>
         /// Variable holding the map for every instance of a <see cref="MapContentPage"/>
         /// </summary>
-        private static LotMap map;
+        public static LotMap map;
 
         /// <summary>
         /// Holds all lots in currently preloaded
@@ -29,7 +29,9 @@ namespace up_mobile
         /// <summary>
         /// Holds the index of lot the map is focusing in on
         /// </summary>
-        public static int CurrentLotIndex { set; get; } = 8;
+        public static int CurrentLotIndex { set; get; } = 0;
+
+        private StackLayout Stack;
 
         public MapContentPage() : this(0)
         {
@@ -45,41 +47,37 @@ namespace up_mobile
 		{
             Debug.Write("Entering MapContentPage constructor");
             this.Title = "Parking";
+            Debug.Write("Starting to create map");
+            if (map == null)
+                map = new LotMap()
+                {
+                    IsShowingUser = true,
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    HasScrollEnabled = false,
+                    HasZoomEnabled = false,
+                    MapType = MapType.Satellite,
+                    ParkingPins = new List<Map.Utils.ParkingPin>()
+                };
+
+            Stack = new StackLayout { Spacing = 0 };
+
+            var mm = new MapMenu();
+
+            Stack.Children.Add(map);
+            Debug.Write("Added Map");
+            Stack.Children.Add(mm);
+            Content = Stack;
 
             ensureLots().ContinueWith(
                     t => 
                     {
-                        lotholder = (LotHolder)Application.Current.Properties["UniversityLots"];
-                        Debug.Write("Starting to create map");
-                        if (map == null)
-                            map = new LotMap(/*
-                                       MapSpan.FromCenterAndRadius(
-                                           new Position(lotholder.Lots[0].Center_Lat, lotholder.Lots[0].Center_Long), Distance.FromKilometers(0.1))
-                                           */)
-                        {
-                            IsShowingUser = true,
-                            VerticalOptions = LayoutOptions.FillAndExpand,
-                            HasScrollEnabled = false,
-                            HasZoomEnabled = false,
-                            MapType = MapType.Satellite,
-                            ParkingPins = new List<Map.Utils.ParkingPin>()
-                        };
-
-
-                        SetPins(CurrentLotIndex).ContinueWith(t2=> {
-                            Debug.Write("Done Setting Map and Pins");
-                            var stack = new StackLayout { Spacing = 0 };
-                            stack.Children.Add(map);
-                            Debug.Write("Added Map");
-                            stack.Children.Add(new MapMenu());
-                            Debug.Write("Added Menu");
-                            Debug.Write(Content);
-                            Content = stack;
-                            Debug.Write("Finished creating map");
-                            MoveToLot(CurrentLotIndex);
-                        });
+                        Debug.Write("-----> Lots Ensured, Moving Map NOW");
+                        MoveToLot(CurrentLotIndex);
+                        mm.Populate();
                     }
                 );
+                
+                   
         }
 
         private static async Task ensureLots()
@@ -87,8 +85,19 @@ namespace up_mobile
             Debug.Write("Entering ensureLots()!");
             if (!Application.Current.Properties.ContainsKey("UniversityLots"))
                 Application.Current.Properties.Add("UniversityLots", await RestService.service.GetMyUniLots());
-            if (Application.Current.Properties["UniversityLots"] == null)
+            else
+            {
+                Debug.Write("Setting UniversityLots Property");
                 Application.Current.Properties["UniversityLots"] = await RestService.service.GetMyUniLots();
+
+            }
+                
+
+            lotholder = await RestService.service.GetMyUniLots();
+
+            foreach (ParkingLot lot in ((LotHolder)Application.Current.Properties["UniversityLots"]).Lots)
+                Debug.Write(lot.Lot_Name);
+
             Debug.Write("Finished Lot adding continuing!");
         }
 
@@ -107,18 +116,26 @@ namespace up_mobile
         /// <summary>
         /// Moves the map to a different lot.
         /// </summary>
-        /// <param name="LotIndex">ID of the lot to move to</param>
-        public static async void MoveToLot(int LotIndex)
+        /// <param name="IDVal">ID of the lot to move to</param>
+        public static async void MoveToLot(int IDVal)
         {
-            CurrentLotIndex = LotIndex;
+            if (lotholder != null && lotholder.Lots!= null && lotholder.Lots[CurrentLotIndex] != null)
+            {
+                var plot = lotholder.Lots[0];
 
-            var position = new Position(lotholder.Lots[CurrentLotIndex].Center_Lat, lotholder.Lots[CurrentLotIndex].Center_Long);
-            var radius = Distance.FromKilometers(0.1);
+                foreach (ParkingLot lot in lotholder.Lots)
+                    if (lot.Id == IDVal)
+                        plot = lot;
 
-            Debug.Print("Switching Lot to " + lotholder.Lots[CurrentLotIndex].Lot_Name);
-            var span = MapSpan.FromCenterAndRadius(position, radius);
-            map.MoveToRegion(span);
-            SetPins(lotholder.Lots[CurrentLotIndex].Id);
+                var position = new Position(plot.Center_Lat, plot.Center_Long);
+                var radius = Distance.FromKilometers(0.1);
+
+                Debug.Print("Switching Lot to " + lotholder.Lots[CurrentLotIndex].Lot_Name);
+                var span = MapSpan.FromCenterAndRadius(position, radius);
+                Device.BeginInvokeOnMainThread(() => { map.MoveToRegion(span); });
+                
+                SetPins(lotholder.Lots[CurrentLotIndex].Id);
+            }
         }
 	}
 }

@@ -132,18 +132,27 @@ namespace up_mobile.Droid.DroidMapUtils
 
         private ParkingPin GetParkingPin(Marker marker)
         {
-            throw new NotImplementedException();
+            var position = new Position(marker.Position.Latitude, marker.Position.Longitude);
+            foreach (var pin in parkingPins)
+            {
+                if (pin.Position == position)
+                {
+                    return pin;
+                }
+            }
+            return null;
         }
 
         void OnInfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
         {
-            /*
+            
             var parkingPin = GetParkingPin(e.Marker);
             if (parkingPin == null)
             {
                 throw new Exception("Custom pin not found");
             }
-            */
+            System.Diagnostics.Debug.Write("InfoWindowClicked!");
+
 
             System.Diagnostics.Debug.Write(sender.GetType().ToString());
 
