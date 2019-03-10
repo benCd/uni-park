@@ -20,7 +20,8 @@ namespace up_mobile
         /// </summary>
 		public SurveyPage (Queue<String> q)
 		{
-            this.Title = q.Peek();
+            Queue<String> SurveyNavigationQueue = q;
+            this.Title = q.Dequeue();
 			InitializeComponent ();
 		}
 
@@ -32,7 +33,7 @@ namespace up_mobile
         async void NextSurveyPageButtonClicked(object sender, EventArgs args)
         {
             Button button = (Button)sender;
-            //await Navigation.PushAsync(new SurveyPage());
+            //await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue));
         }
     }
 }

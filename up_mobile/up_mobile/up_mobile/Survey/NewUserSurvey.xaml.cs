@@ -41,9 +41,9 @@ namespace up_mobile
         public Queue<String> SurveyNavigationQueue = new Queue<String>();
 
         /// <summary>
-        /// When the Begin Survey button on NewUserSurvey page 
-        /// <see cref="NewUserSurvey.xaml"/> is pressed it navigates 
-        /// to the MondaySurvey page <see cref="MondaySurvey.xaml"/>
+        /// Adds all days which are toggled on to the SurveyNavigationQueue <see cref="NewUserSurvey.xaml.cs"/> line 41
+        /// and when the Begin Survey button on NewUserSurvey page <see cref="NewUserSurvey.xaml"/> is pressed it 
+        /// navigates to <see cref="SurveyPage.xaml"/>
         /// </summary>
         async void NewUserSurveyClicked(object sender, EventArgs args)
         {
