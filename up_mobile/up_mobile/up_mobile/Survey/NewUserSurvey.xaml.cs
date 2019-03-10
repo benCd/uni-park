@@ -37,6 +37,9 @@ namespace up_mobile
             return true;
         }
 
+        // Queue to hold the selected days for the new user survey
+        Queue<string> SurveyNavigationQueue = new Queue<string>();
+
         /// <summary>
         /// When the Begin Survey button on NewUserSurvey page 
         /// <see cref="NewUserSurvey.xaml"/> is pressed it navigates 
@@ -48,34 +51,34 @@ namespace up_mobile
 
             if (this.MondayToggle.On == true)
             {
-
+                SurveyNavigationQueue.Enqueue("Monday");
             }
             else if (this.TuesdayToggle.On == true)
             {
-
+                SurveyNavigationQueue.Enqueue("Tuesday");
             }
             else if (this.WednesdayToggle.On == true)
             {
-
+                SurveyNavigationQueue.Enqueue("Wednesday");
             }
             else if (this.ThursdayToggle.On == true)
             {
-
+                SurveyNavigationQueue.Enqueue("Thursday");
             }
             else if (this.FridayToggle.On == true)
             {
-
+                SurveyNavigationQueue.Enqueue("Friday");
             }
             else if (this.SaturdayToggle.On == true)
             {
-
+                SurveyNavigationQueue.Enqueue("Saturday");
             }
             else if (this.SundayToggle.On == true)
             {
-
+                SurveyNavigationQueue.Enqueue("Sunday");
             }
 
-            await Navigation.PushAsync(new MondaySurvey());
+            //await Navigation.PushAsync(new SurveyPage());
         }
     }
 }
