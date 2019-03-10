@@ -47,11 +47,6 @@ namespace up_mobile
         /// </summary>
         async void Setup()
         {
-            //Retrieving Uni data
-            Application.Current.Properties.Add("UniversityId", await RestService.service.GetMyUni());
-
-            //Retrieving Lot data for uni
-            Application.Current.Properties.Add("UniversityLots", await RestService.service.GetMyUniLots());
         }
 
     }

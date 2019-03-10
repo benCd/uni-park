@@ -8,6 +8,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using up_mobile.Backend;
+using up_mobile.Models;
 
 namespace up_mobile
 {
@@ -23,23 +25,33 @@ namespace up_mobile
         {
             Orientation = ScrollOrientation.Horizontal;
             HeightRequest = DeviceDisplay.MainDisplayInfo.Height / 18;
-            BackgroundColor = Color.Black;
+            BackgroundColor = Color.Accent;
 
             Stack = new StackLayout();
-            Populate();
             Stack.Orientation = StackOrientation.Horizontal;
-            Content = Stack;
+            Populate().ContinueWith(
+                t => {
+                    Content = Stack;
+                    Debug.Write("Done constructing MapMenu"); }
+                );
+            
         }
 
-        private void Populate()
+        private async Task Populate()
         {
-            //-----------------------------------------------------------------
-            //TODO Implement rest request for university data and their lot IDs
-            //-----------------------------------------------------------------
-            for (int i = 0; i < 3; i++)
+            Debug.Write("Entering Populate()");
+
+            var lotholder = await RestService.service.GetMyUniLots();
+
+            Debug.Write(lotholder.Lots);
+
+            foreach (ParkingLot lot in lotholder.Lots)
             {
-                Stack.Children.Add(new RememberButton("Button " + i, i));
+                Debug.Write(lot);
+                Stack.Children.Add(new RememberButton(lot.Lot_Name, lot.Id));
             }
+
+            Debug.Write("Exiting Populate()");
         }
 
         /// <summary>
@@ -57,6 +69,9 @@ namespace up_mobile
                 IDval = idval;
                 Text = label;
                 Clicked += async (sender, args) => MapContentPage.MoveToLot(IDval);
+
+                BackgroundColor = Color.Accent;
+
             }
             
         }

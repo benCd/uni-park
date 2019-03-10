@@ -21,12 +21,15 @@ namespace up_mobile
         /// </summary>
         private static LotMap map;
 
+        /// <summary>
+        /// Holds all lots in currently preloaded
+        /// </summary>
         private static LotHolder lotholder;
 
         /// <summary>
-        /// Holds the current lot the map is focusing in on
+        /// Holds the index of lot the map is focusing in on
         /// </summary>
-        public static int CurrentLotId { set;  get; }
+        public static int CurrentLotIndex { set; get; } = 8;
 
         public MapContentPage() : this(0)
         {
@@ -40,36 +43,53 @@ namespace up_mobile
         /// <param name="LotId">ID for the parking lot to load</param>
 		public MapContentPage(int LotId = 0) : base()
 		{
-           
-            this.Title = "Lot XYZ";
-            //TODO IMPLEMENT MAP REST REQUEST!
+            Debug.Write("Entering MapContentPage constructor");
+            this.Title = "Parking";
 
-            makeMap();
+            ensureLots().ContinueWith(
+                    t => 
+                    {
+                        lotholder = (LotHolder)Application.Current.Properties["UniversityLots"];
+                        Debug.Write("Starting to create map");
+                        if (map == null)
+                            map = new LotMap(/*
+                                       MapSpan.FromCenterAndRadius(
+                                           new Position(lotholder.Lots[0].Center_Lat, lotholder.Lots[0].Center_Long), Distance.FromKilometers(0.1))
+                                           */)
+                        {
+                            IsShowingUser = true,
+                            VerticalOptions = LayoutOptions.FillAndExpand,
+                            HasScrollEnabled = false,
+                            HasZoomEnabled = false,
+                            MapType = MapType.Satellite,
+                            ParkingPins = new List<Map.Utils.ParkingPin>()
+                        };
 
-            while (map == null) ;
-            
-            var stack = new StackLayout { Spacing = 0 };
-            stack.Children.Add(map);
-            stack.Children.Add(new MapMenu());
-            Content = stack;
+
+                        SetPins(CurrentLotIndex).ContinueWith(t2=> {
+                            Debug.Write("Done Setting Map and Pins");
+                            var stack = new StackLayout { Spacing = 0 };
+                            stack.Children.Add(map);
+                            Debug.Write("Added Map");
+                            stack.Children.Add(new MapMenu());
+                            Debug.Write("Added Menu");
+                            Debug.Write(Content);
+                            Content = stack;
+                            Debug.Write("Finished creating map");
+                            MoveToLot(CurrentLotIndex);
+                        });
+                    }
+                );
         }
 
-        private static async void makeMap()
+        private static async Task ensureLots()
         {
-            lotholder = (LotHolder)Application.Current.Properties["UniversityLots"];
-            if(map == null)
-                map = new LotMap(
-                           MapSpan.FromCenterAndRadius(
-                               new Position(lotholder.Lots[0].Center_Lat, lotholder.Lots[0].Center_Long), Distance.FromKilometers(0.1)))
-                {
-                    IsShowingUser = true,
-                    VerticalOptions = LayoutOptions.FillAndExpand,
-                    HasScrollEnabled = false,
-                    HasZoomEnabled = false,
-                    MapType = MapType.Satellite
-                };
-
-            SetPins(0);
+            Debug.Write("Entering ensureLots()!");
+            if (!Application.Current.Properties.ContainsKey("UniversityLots"))
+                Application.Current.Properties.Add("UniversityLots", await RestService.service.GetMyUniLots());
+            if (Application.Current.Properties["UniversityLots"] == null)
+                Application.Current.Properties["UniversityLots"] = await RestService.service.GetMyUniLots();
+            Debug.Write("Finished Lot adding continuing!");
         }
 
         /// <summary>
@@ -77,53 +97,28 @@ namespace up_mobile
         /// </summary>
         /// <param name="map"><see cref="Xamarin.Forms.Maps.Map"/> instance to which the pins are added</param>
         /// <param name="LotId"> The ID for the parking lot, whose information should be loaded</param>
-        private static async void SetPins(int LotId)
+        private static async Task SetPins(int LotId)
         {
-            map.ParkingPins.Clear();
-
-            var pins = await PinFactory.GetPinsFor(LotId);
-
-            foreach (Map.Utils.ParkingPin p in pins)
-            {
-                map.ParkingPins.Add(p);
-            }
+            Debug.Write("EnteringSetPins!");
+            map.ParkingPins = await PinFactory.GetPinsFor(LotId);
+            Debug.Write("Exiting SetPins!");
         }
 
         /// <summary>
         /// Moves the map to a different lot.
         /// </summary>
-        /// <param name="LotId">ID of the lot to move to</param>
-        public static async void MoveToLot(int LotId)
+        /// <param name="LotIndex">ID of the lot to move to</param>
+        public static async void MoveToLot(int LotIndex)
         {
-            CurrentLotId = LotId;
+            CurrentLotIndex = LotIndex;
 
-            //------------------------------------------
-            //TODO request lot information from REST API
-            //REQUEST GOES HERE
-            //------------------------------------------
-            
-            var position = new Position(42.671133, -83.2149);
+            var position = new Position(lotholder.Lots[CurrentLotIndex].Center_Lat, lotholder.Lots[CurrentLotIndex].Center_Long);
             var radius = Distance.FromKilometers(0.1);
 
-            switch (LotId)
-            {
-                case 0:
-                    position = new Position(42.671133, -83.2149);
-                    radius = Distance.FromKilometers(0.1);
-                    break;
-                case 1:
-                    position = new Position(42.671133, -83.25);
-                    radius = Distance.FromKilometers(0.5);
-                    break;
-                case 2:
-                    position = new Position(42.671133, -83.214928);
-                    radius = Distance.FromKilometers(0.7);
-                    break;
-            }
-            Debug.Print("Button: " + LotId);
+            Debug.Print("Switching Lot to " + lotholder.Lots[CurrentLotIndex].Lot_Name);
             var span = MapSpan.FromCenterAndRadius(position, radius);
             map.MoveToRegion(span);
-            SetPins(LotId);
+            SetPins(lotholder.Lots[CurrentLotIndex].Id);
         }
 	}
 }

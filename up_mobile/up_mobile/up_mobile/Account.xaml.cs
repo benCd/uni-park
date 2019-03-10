@@ -38,13 +38,12 @@ namespace up_mobile
             /// <remarks>
             /// Updating logged in status in <see cref="Settings.cs"/>
             /// </remarks>
-            RestService.service.LogoutUser();
+            await RestService.service.LogoutUser();
 
             Helpers.Settings.IsLoggedIn = false;
 
             //Clearing properites
             Application.Current.Properties.Clear();
-
 
             await Navigation.PushAsync(new Guest());
         }

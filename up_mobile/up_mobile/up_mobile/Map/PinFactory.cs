@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using up_mobile.Backend;
@@ -26,6 +27,8 @@ namespace up_mobile
         /// <returns></returns>
         public static async Task<List<Map.Utils.ParkingPin>> GetPinsFor(int LotId)
         {
+            Debug.Write("Entering PinFactory!");
+
             var RawPins = await RestService.service.GetLotPinsAsync(LotId);
 
             var Pins = new List<Map.Utils.ParkingPin>();
@@ -33,12 +36,14 @@ namespace up_mobile
             if(RawPins != null)
                 foreach(ParkingPin Pin in RawPins.Pins)
                 {
+                    Debug.Write("Adding new pin!");
                     Pins.Add(new Map.Utils.ParkingPin()
                     {
                         Position = new Position(Pin.Latitude, Pin.Longitude),
                         Label = Pin.User_id + "\n@" + Pin.Timestamp + "\n" + Pin.Volume
                     });
                 }
+            Debug.Write("Exiting PinFactory!");
             return Pins;
         }
     }

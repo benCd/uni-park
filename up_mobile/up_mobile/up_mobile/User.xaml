@@ -13,7 +13,7 @@
 
     <!--Pages displayed on the tabs-->
     <local:ParkedButton></local:ParkedButton>
-    <local:MapContentPage></local:MapContentPage>
+    <!----><local:MapContentPage></local:MapContentPage>
     <local:Account></local:Account>
     
 </TabbedPage>

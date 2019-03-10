@@ -33,7 +33,10 @@ namespace up_mobile.Droid.DroidMapUtils
 
         protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Xamarin.Forms.Maps.Map> e)
         {
+            System.Diagnostics.Debug.Write("Calling OnElementChanged in DroidCustomMapRenderer");
+
             base.OnElementChanged(e);
+
 
             if (e.OldElement != null)
             {
@@ -46,6 +49,8 @@ namespace up_mobile.Droid.DroidMapUtils
                 parkingPins = formsMap.ParkingPins;
                 Control.GetMapAsync(this);
             }
+            System.Diagnostics.Debug.Write("Exiting OnElementChanged in DroidCustomMapRenderer");
+
         }
 
 
@@ -54,8 +59,11 @@ namespace up_mobile.Droid.DroidMapUtils
         {
             base.OnMapReady(map);
 
+            System.Diagnostics.Debug.Write("Calling OnMapReady in DroidCustomMapRenderer");
+
             NativeMap.InfoWindowClick += OnInfoWindowClick;
             NativeMap.SetInfoWindowAdapter(this);
+            System.Diagnostics.Debug.Write("Exiting OnMapReady in DroidCustomMapRenderer");
         }
 
 
