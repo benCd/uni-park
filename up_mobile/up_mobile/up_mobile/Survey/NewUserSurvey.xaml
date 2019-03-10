@@ -8,7 +8,7 @@
         <StackLayout Padding="25,10,25,10">
                     
             <!--Label asking the user to take the New User Survey-->
-            <Label Text="Since this is your first time using Uni-Park, please enter your parking information from the previous week. Start off by selecting which days are relevant to you. If a field isn't needed, leave it blank."
+            <Label Text="Since this is your first time using Uni-Park, please enter your parking information from the previous week. If a field isn't needed, leave it blank."
                         FontSize="14"
                         HorizontalOptions="Center" 
                         HorizontalTextAlignment="Center"/>
@@ -23,7 +23,6 @@
                         <SwitchCell x:Name="FridayToggle" Text="Friday" On="False"/>
                         <SwitchCell x:Name="SaturdayToggle" Text="Saturday" On="False"/>
                         <SwitchCell x:Name="SundayToggle" Text="Sunday" On="False"/>
-
                     </TableSection>
                 </TableRoot>
             </TableView>

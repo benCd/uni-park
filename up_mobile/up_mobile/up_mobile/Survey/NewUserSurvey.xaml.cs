@@ -45,6 +45,36 @@ namespace up_mobile
         async void NewUserSurveyClicked(object sender, EventArgs args)
         {
             Button button = (Button)sender;
+
+            if (this.MondayToggle.On == true)
+            {
+
+            }
+            else if (this.TuesdayToggle.On == true)
+            {
+
+            }
+            else if (this.WednesdayToggle.On == true)
+            {
+
+            }
+            else if (this.ThursdayToggle.On == true)
+            {
+
+            }
+            else if (this.FridayToggle.On == true)
+            {
+
+            }
+            else if (this.SaturdayToggle.On == true)
+            {
+
+            }
+            else if (this.SundayToggle.On == true)
+            {
+
+            }
+
             await Navigation.PushAsync(new MondaySurvey());
         }
     }
