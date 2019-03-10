@@ -8,10 +8,25 @@
         <StackLayout Padding="25,10,25,10">
                     
             <!--Label asking the user to take the New User Survey-->
-            <Label Text="We require that first time users of our app take our new user survey. Please enter your parking information from the previous week. This will help us improve the efficiency of Uni-Park. If a field isn't needed, leave it blank."
+            <Label Text="Since this is your first time using Uni-Park, please enter your parking information from the previous week. Start off by selecting which days are relevant to you. If a field isn't needed, leave it blank."
                         FontSize="14"
                         HorizontalOptions="Center" 
                         HorizontalTextAlignment="Center"/>
+
+            <TableView>
+                <TableRoot>
+                    <TableSection>
+                        <SwitchCell x:Name="MondayToggle" Text="Monday" On="False"/>
+                        <SwitchCell x:Name="TuesdayToggle" Text="Tuesday" On="False"/>
+                        <SwitchCell x:Name="WednesdayToggle" Text="Wednesday" On="False"/>
+                        <SwitchCell x:Name="ThursdayToggle" Text="Thursday" On="False"/>
+                        <SwitchCell x:Name="FridayToggle" Text="Friday" On="False"/>
+                        <SwitchCell x:Name="SaturdayToggle" Text="Saturday" On="False"/>
+                        <SwitchCell x:Name="SundayToggle" Text="Sunday" On="False"/>
+
+                    </TableSection>
+                </TableRoot>
+            </TableView>
 
             <!--Button to begin the New User Survey-->
             <Button x:Name="NewUserSurveyButton"
