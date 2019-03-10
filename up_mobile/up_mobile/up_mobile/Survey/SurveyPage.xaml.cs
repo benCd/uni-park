@@ -18,8 +18,9 @@ namespace up_mobile
         /// <summary>
         /// Loads SurveyPage  page
         /// </summary>
-		public SurveyPage ()
+		public SurveyPage (Queue<String> q)
 		{
+            this.Title = q.Peek();
 			InitializeComponent ();
 		}
 

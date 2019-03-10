@@ -38,7 +38,7 @@ namespace up_mobile
         }
 
         // Queue to hold the selected days for the new user survey
-        Queue<string> SurveyNavigationQueue = new Queue<string>();
+        public Queue<String> SurveyNavigationQueue = new Queue<String>();
 
         /// <summary>
         /// When the Begin Survey button on NewUserSurvey page 
@@ -78,7 +78,7 @@ namespace up_mobile
                 SurveyNavigationQueue.Enqueue("Sunday");
             }
 
-            //await Navigation.PushAsync(new SurveyPage());
+            await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue));
         }
     }
 }
