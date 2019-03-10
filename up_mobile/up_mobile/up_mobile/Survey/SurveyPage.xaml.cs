@@ -30,12 +30,28 @@ namespace up_mobile
         /// <summary>
         /// When the Next Page button on SurveyPage page 
         /// <see cref="SurveyPage.xaml"/> is pressed it navigates 
-        /// to the next version of the page
+        /// to the next version of the page. If the Queue is empty it navigates
+        /// to the User page <see cref="User.xaml"/>
         /// </summary>
         async void NextSurveyPageButtonClicked(object sender, EventArgs args)
         {
             Button button = (Button)sender;
-            await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue));
+
+            if (SurveyNavigationQueue.Count() != 0)
+            {
+                await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue));
+            }
+            if (SurveyNavigationQueue.Count() == 0)
+            {
+                //await DisplayAlert("Thanks!", "This information really helps us", "OK");
+
+                /// <remarks>
+                /// Storing this value in <see cref="Settings.cs"/> so it does not give them the survey for future log ins
+                /// </remarks>
+                Helpers.Settings.TookNewUserSurvey = true;
+
+                await Navigation.PushAsync(new User());
+            }
         }
     }
 }

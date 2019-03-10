@@ -105,7 +105,7 @@
 
                 <!--Button to go to the next page of their New User Survey information-->
                 <Button x:Name="NextSurveyPageButton"
-                        Text="Next Page"
+                        Text="Submit"
                         HorizontalOptions="Center" 
                         Clicked="NextSurveyPageButtonClicked"/>
 
