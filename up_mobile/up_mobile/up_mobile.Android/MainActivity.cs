@@ -14,6 +14,7 @@ namespace up_mobile.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+
             //Init for Rg.Plugins.Popup
             Rg.Plugins.Popup.Popup.Init(this, savedInstanceState);
 

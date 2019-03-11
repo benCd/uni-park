@@ -25,7 +25,7 @@ namespace up_mobile
         /// <summary>
         /// Holds all lots in currently preloaded
         /// </summary>
-        private static LotHolder lotholder;
+        public static LotHolder lotholder;
 
         /// <summary>
         /// Holds the index of lot the map is focusing in on
