@@ -9,6 +9,7 @@ using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
 using up_mobile.Map.Utils;
 using Android.Gms.Maps.Model;
+using up_mobile.Backend;
 
 [assembly: ExportRenderer(typeof(LotMap), typeof(DroidCustomMapRenderer))]
 namespace up_mobile.Droid.DroidMapUtils
@@ -176,14 +177,18 @@ namespace up_mobile.Droid.DroidMapUtils
             return null;
         }
 
-        void OnInfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
+        async void OnInfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
         {
             
             var parkingPin = GetParkingPin(e.Marker);
             if (parkingPin == null)
             {
-                throw new Exception("Custom pin not found");
+                System.Diagnostics.Debug.Write("Pin not found!");
             }
+
+            await RestService.service.VoteOnPin(parkingPin.ID, 1);
+            await MapContentPage.UpdatePins();
+
             System.Diagnostics.Debug.Write("InfoWindowClicked!");
 
             System.Diagnostics.Debug.Write(sender.GetType().ToString());

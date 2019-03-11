@@ -58,7 +58,7 @@ namespace up_mobile
                     IsShowingUser = true,
                     VerticalOptions = LayoutOptions.FillAndExpand,
                     HasScrollEnabled = false,
-                    HasZoomEnabled = false,
+                    HasZoomEnabled = true,
                     MapType = MapType.Satellite,
                     ParkingPins = new List<Map.Utils.ParkingPin>()
                 };
@@ -71,7 +71,7 @@ namespace up_mobile
 
             var buttonToBringUpMapMenu = new Button()
             {
-                Text = "Eat me out mofo!"
+                Text = "Select a lot!"
             };
 
             buttonToBringUpMapMenu.Clicked += BringUpLotMenu;
@@ -171,6 +171,7 @@ namespace up_mobile
         /// <returns>NOTHING!</returns>
         public static async Task UpdatePins()
         {
+            map.Pins.Clear();
             SetPins(CurrentLotID);
         }
 

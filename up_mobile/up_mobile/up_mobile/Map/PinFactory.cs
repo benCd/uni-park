@@ -41,7 +41,10 @@ namespace up_mobile
                     {
                         Position = new Position(Pin.Latitude, Pin.Longitude),
                         Label = Pin.User_id + "\n@" + Pin.Timestamp + "\n",
-                        Text = (Pin.Volume*100).ToString() + "%"
+                        Text = (Pin.Volume * 100).ToString() + "%",
+                        ID = Pin.Id,
+                        Downvotes = Pin.Downvotes,
+                        Upvotes = Pin.Upvotes
                     });
                 }
             Debug.Write("Exiting PinFactory!");
