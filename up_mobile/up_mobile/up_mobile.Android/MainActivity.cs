@@ -38,6 +38,8 @@ namespace up_mobile.Droid
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
+            
+
             base.OnCreate(savedInstanceState);
             // the following call to the cross current activity plugin is required by the GPS plugin
             CrossCurrentActivity.Current.Init(this, savedInstanceState);

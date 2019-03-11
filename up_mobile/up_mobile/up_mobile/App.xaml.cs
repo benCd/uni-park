@@ -12,7 +12,7 @@ namespace up_mobile
         public App()
         {
             InitializeComponent();
-
+            
             //Change execution scheduler specific property upon cancellation
             MessagingCenter.Subscribe<Background.Messages.CancelExecuteScheduleMessage>(this, "CancelExecuteScheduleMessage", async message =>
             {

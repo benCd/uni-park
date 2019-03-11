@@ -8,20 +8,24 @@
         <ScrollView>
             <StackLayout Padding="0,10,0,10">
 
-                <Label Text="LOT"
-                       FontSize="24"
-                       HorizontalOptions="Center"/>
+                <Label
+                    x:Name="Label"
+                    Text="LOT"
+                    FontSize="24"
+                    HorizontalOptions="Center"/>
 
                 <Label x:Name="displayLabel"
                         Text="Lot Fullness:"
                         HorizontalOptions="Center"/>
 
                 <!---Slider for observation of Lot fullness-->
-                <Slider Minimum="0"
-                        Maximum="100"
-                        ValueChanged="SliderUpdated"
-                        BackgroundColor="#2196F3"
-                        ThumbColor="White"/>
+                <Slider 
+                    x:Name="VolumeSlider" 
+                    Minimum="0"
+                    Maximum="100"
+                    ValueChanged="SliderUpdated"
+                    BackgroundColor="#2196F3"
+                    ThumbColor="White"/>
 
                 <!--Confirmation button-->
                 <Button Text="Confirm"

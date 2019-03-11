@@ -30,7 +30,7 @@ namespace up_mobile
         /// <summary>
         /// Holds the index of lot the map is focusing in on
         /// </summary>
-        public static int CurrentLotIndex { set; get; } = 0;
+        public static int CurrentLotID { set; get; } = 0;
 
 
         private static MapMenu MapM;
@@ -80,7 +80,7 @@ namespace up_mobile
             Debug.Write("Added Map");
             Content = Stack;
 
-            ensureLots().ContinueWith(
+            EnsureLots().ContinueWith(
                     t => 
                     {
                         Debug.Write("-----> Lots Ensured, Moving Map NOW");
@@ -88,11 +88,9 @@ namespace up_mobile
                         MapM.Populate();
                     }
                 );
-                
-                   
         }
 
-        private static async Task ensureLots()
+        private static async Task EnsureLots()
         {
             Debug.Write("Entering ensureLots()!");
             if (!Application.Current.Properties.ContainsKey("UniversityLots"))
@@ -121,7 +119,13 @@ namespace up_mobile
         private static async Task SetPins(int LotId)
         {
             Debug.Write("EnteringSetPins!");
-            map.ParkingPins = await PinFactory.GetPinsFor(LotId);
+            var pins = await PinFactory.GetPinsFor(LotId);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                map.ParkingPins = pins;
+                foreach (Map.Utils.ParkingPin pin in pins)
+                    map.Pins.Add(pin);
+            });
             Debug.Write("Exiting SetPins!");
         }
 
@@ -131,7 +135,7 @@ namespace up_mobile
         /// <param name="IDVal">ID of the lot to move to</param>
         public static async void MoveToLot(int IDVal)
         {
-            if (lotholder != null && lotholder.Lots!= null && lotholder.Lots[CurrentLotIndex] != null)
+            if (lotholder != null && lotholder.Lots!= null && lotholder.Lots[CurrentLotID] != null)
             {
                 var plot = lotholder.Lots[0];
 
@@ -142,19 +146,33 @@ namespace up_mobile
                 var position = new Position(plot.Center_Lat, plot.Center_Long);
                 var radius = Distance.FromKilometers(0.1);
 
-                Debug.Print("Switching Lot to " + lotholder.Lots[CurrentLotIndex].Lot_Name);
+                Debug.Print("Switching Lot to " + lotholder.Lots[CurrentLotID].Lot_Name);
                 var span = MapSpan.FromCenterAndRadius(position, radius);
                 Device.BeginInvokeOnMainThread(() => { map.MoveToRegion(span); });
-                
-                SetPins(lotholder.Lots[CurrentLotIndex].Id);
+                CurrentLotID = IDVal;
+                SetPins(CurrentLotID);
             }
         }
 
+
+        /// <summary>
+        /// Opens the <see cref="MapMenu"/> popup
+        /// </summary>
+        /// <param name="sender">Button sender</param>
+        /// <param name="args"> Args I guess</param>
         public async void BringUpLotMenu(object sender, EventArgs args)
         {
             await PopupNavigation.Instance.PushAsync(MapM);
         }
 
+        /// <summary>
+        /// Updates the pins in the current parkinglot
+        /// </summary>
+        /// <returns>NOTHING!</returns>
+        public static async Task UpdatePins()
+        {
+            SetPins(CurrentLotID);
+        }
 
 	}
 }

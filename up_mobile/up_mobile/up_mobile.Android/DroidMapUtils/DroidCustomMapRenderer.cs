@@ -16,6 +16,7 @@ using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
 using up_mobile.Map.Utils;
 using Android.Gms.Maps.Model;
+using System.Collections.Specialized;
 
 [assembly: ExportRenderer(typeof(LotMap), typeof(DroidCustomMapRenderer))]
 namespace up_mobile.Droid.DroidMapUtils
@@ -27,16 +28,17 @@ namespace up_mobile.Droid.DroidMapUtils
     {
         List<ParkingPin> parkingPins;
 
+        GoogleMap googleMap;
+
+        LotMap formsMap;
+
         public DroidCustomMapRenderer(Context context) : base(context) { }
-
-
 
         protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Xamarin.Forms.Maps.Map> e)
         {
             System.Diagnostics.Debug.Write("Calling OnElementChanged in DroidCustomMapRenderer");
 
             base.OnElementChanged(e);
-
 
             if (e.OldElement != null)
             {
@@ -45,46 +47,82 @@ namespace up_mobile.Droid.DroidMapUtils
 
             if (e.NewElement != null)
             {
-                var formsMap = (LotMap)e.NewElement;
+                formsMap = (LotMap)e.NewElement;
                 parkingPins = formsMap.ParkingPins;
                 Control.GetMapAsync(this);
             }
             System.Diagnostics.Debug.Write("Exiting OnElementChanged in DroidCustomMapRenderer");
 
         }
-
-
-
+        
         protected override void OnMapReady(GoogleMap map)
         {
             base.OnMapReady(map);
 
-            System.Diagnostics.Debug.Write("Calling OnMapReady in DroidCustomMapRenderer");
+            //googleMap = map;
 
+            System.Diagnostics.Debug.Write("Calling OnMapReady in DroidCustomMapRenderer");
+            /*
+            if (googleMap != null)
+            {
+                UpdatePins();
+            }
+            */
             NativeMap.InfoWindowClick += OnInfoWindowClick;
             NativeMap.SetInfoWindowAdapter(this);
+
             System.Diagnostics.Debug.Write("Exiting OnMapReady in DroidCustomMapRenderer");
         }
+        /*
+        private void UpdatePins(bool firstUpdate = true)
+        {
+            if (googleMap == null) return;
 
+            if (formsMap.ParkingPins != null)
+            {
+                foreach (var pin in formsMap.ParkingPins)
+                {
+                    AddPin(pin);
+                }
 
+                if (firstUpdate)
+                {
+                    var observable = formsMap.ParkingPins as INotifyCollectionChanged;
+                    if (observable != null)
+                    {
+                        observable.CollectionChanged += OnCustomPinsCollectionChanged;
+                    }
+                }
+            }
+        }
+
+        private void OnCustomPinsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            
+        }
+
+        private void AddPin(ParkingPin pin)
+        {
+            var marker = new MarkerOptions();
+
+            marker.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
+            marker.SetTitle(pin.Text);
+            marker.SetSnippet(pin.Label);
+            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.pin));
+
+            googleMap.AddMarker(marker);
+        }
+        */
 
         protected override MarkerOptions CreateMarker(Pin pin)
         {
             var marker = new MarkerOptions();
+            System.Diagnostics.Debug.Write("Making pin!");
+            var pp = pin as ParkingPin;
             marker.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
-
-            if (pin is ParkingPin)
-            {
-                var pp = pin as ParkingPin;
-
-                marker.SetTitle(pp.Text);
-                marker.SetSnippet(pp.Label);
-                //marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.pin));
-            }
-            else
-            {
-
-            }
+            marker.SetTitle(pp.Text);
+            marker.SetSnippet(pp.Label);
+            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.pin));
             return marker;
         }
 
@@ -100,13 +138,13 @@ namespace up_mobile.Droid.DroidMapUtils
                 var parkingPin = GetParkingPin(marker);
                 if (parkingPin == null)
                 {
-                    throw new Exception("Custom pin not found");
+                    return null;//throw new Exception("Custom pin not found");
                 }
 
                 view = inflater.Inflate(Resource.Layout.DroidInfoWindow, null);
 
-                /*var infoTitle = view.FindViewById<TextView>(Resource.Id.InfoWindowTitle);
-                /var infoSubtitle = view.FindViewById<TextView>(Resource.Id.InfoWindowSubtitle);
+                var infoTitle = view.FindViewById<TextView>(Resource.Id.InfoWindowTitle);
+                var infoSubtitle = view.FindViewById<TextView>(Resource.Id.InfoWindowSubtitle);
 
                 if (infoTitle != null)
                 {
@@ -115,7 +153,7 @@ namespace up_mobile.Droid.DroidMapUtils
                 if (infoSubtitle != null)
                 {
                     infoSubtitle.Text = marker.Snippet;
-                }*/
+                }
 
                 return view;
             }
@@ -128,14 +166,17 @@ namespace up_mobile.Droid.DroidMapUtils
             return null;
         }
 
-
-
         private ParkingPin GetParkingPin(Marker marker)
         {
+            foreach (var pin in formsMap.ParkingPins)
+                System.Diagnostics.Debug.Write("Longitude: " + pin.Position.Latitude + "Latitude: " + pin.Position.Longitude);
+            System.Diagnostics.Debug.Write("Marker: " + marker.Position.Latitude + " : " + marker.Position.Longitude);
+
             var position = new Position(marker.Position.Latitude, marker.Position.Longitude);
-            foreach (var pin in parkingPins)
+            //TODO MIGHT BE QUESTIONABLE CODE, REVIEW! using formsMap.ParkingPins vs. parkingPins
+            foreach (var pin in formsMap.ParkingPins)
             {
-                if (pin.Position == position)
+                if (pin.Position.Equals(position))
                 {
                     return pin;
                 }
@@ -153,10 +194,7 @@ namespace up_mobile.Droid.DroidMapUtils
             }
             System.Diagnostics.Debug.Write("InfoWindowClicked!");
 
-
             System.Diagnostics.Debug.Write(sender.GetType().ToString());
-
-
         }
     }
 }
