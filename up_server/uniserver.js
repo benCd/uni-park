@@ -143,15 +143,16 @@ app.get('/logout', requireAuth, function (req, res) {
 
 //new and untested
 //get gps pins for given lot
-app.post('/lotpins', function (req, res, next) {
+//updated
+app.post('/lotpins', function (req, res, next) { //lot_id has not been added to db yet...
   dbconnection.query('SELECT * FROM `gpsdata` WHERE `lot_id` = ?', req.body.lot_id, function (error, results, fields) {
     if (error) return next(error);
-
-    if (results.length == 0) return res.status(404).send('Lot contains no pins');
 
     var jsonobj = {
       pins: []
     };
+
+    if (results.length == 0) return res.json(jsonobj);
 
     for (var i = 0; i < results.length; i++) {
       var pin = rdpToObj(results[i]);
@@ -173,29 +174,25 @@ app.post('/newpin', requireAuth, function (req, res, next) {
    res.send('Pin added');
 });
 
-//working
 //determine current lot from gps data
 app.post('/findlot', function (req, res, next) {
   var pos = req.body;
   var acc = req.body.accuracy;
-  dbconnection.query('SELECT * FROM `lots`', function (error, results, fields) {
+  dbconnection.query('SELECT * FROM `lots` WHERE `min_lat` <= ? AND `max_lat` >= ? AND `min_long` <= ? AND `max_long` >= ?',
+  [pos. latitude, pos.latitude, pos.longitude, pos.longitude], function (error, results, fields) {
     if (error) return next(error);
 
     if (results.length == 0) return res.status(404).send('No lots');
 
-    for (var i = 0; i < results.length; i++) {
-      var lot = results[i];
-      if (pos.latitude >= (lot.min_lat-acc) && pos.latitude <= (lot.max_lat+acc)
-      && pos.longitude >= (lot.min_long-acc) && pos.longitude <= (lot.max_long+acc)){
-        return res.json(rdpToObj(lot));
-      }
-    }
+    var lot = results[0];
+    return res.json(rdpToObj(lot));
 
     res.status(404).send('Lot was not found');
   });
 });
 
 //get lot reports from lot id
+//may be removed later
 app.post('/getlotinfo', function (req, res, next) {
   dbconnection.query('SELECT * FROM `lotdata` WHERE `id` = ?', req.body.lot_id, function (error, results, fields) {
     if (error) return next(error);
@@ -220,11 +217,11 @@ app.get('/getmyunilots', requireAuth, function (req, res, next) {
   dbconnection.query('SELECT * FROM `lots` WHERE `university_id` = ?', req.user.university_id, function (error, results, fields) {
     if (error) return next(error);
 
-    if (results.length == 0) return res.status(404).send('Uni has no lots');
-
     var jsonobj = {
       lots: []
     };
+
+    if (results.length == 0) return res.json(jsonobj);
 
     for (var i = 0; i < results.length; i++) {
       var report = rdpToObj(results[i]);
@@ -269,6 +266,34 @@ app.get('/myuni', requireAuth, function (req, res, next) {
 app.get('/surveystatus', requireAuth, function (req, res, next) {
   var status = req.user.surveytaken;
   res.send(status.toString());
+});
+
+//NEW FOR MARCH 10TH
+//update survey status for current user
+app.get('/surveyset', requireAuth, function (req, res, next) {
+  dbconnection.query('UPDATE `users` SET `surveytaken` = ? WHERE `id` = ?', [1, req.user.id], function (error, results, fields) {
+    if (error) return next(error);
+  });
+  res.send('Survey status updated for user');
+});
+
+//voting on pins
+app.post('/vote', requireAuth, function (req, res, next) {
+  var vote = req.body.vote;
+  if (typeof vote != "number") return next(error);
+  if (vote > 0){
+    dbconnection.query('UPDATE `gpsdata` SET `upvotes` = `upvotes` + ? WHERE `id` = ?',
+    [vote, req.body.pin_id], function (error, results, fields) {
+      if (error) return next(error);
+      res.send("upvote added");
+    });
+  }else{
+    dbconnection.query('UPDATE `gpsdata` SET `downvotes` = `downvotes` + ? WHERE `id` = ?',
+    [Math.abs(vote), req.body.pin_id], function (error, results, fields) {
+      if (error) return next(error);
+      res.send("downvote added");
+    });
+  }
 });
 
 //finally, make our https server and listen for requests
