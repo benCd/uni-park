@@ -386,6 +386,44 @@ namespace up_mobile.Backend
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceUri"></param>
+        /// <returns></returns>
+        public async Task SetSurveyStatus(string serviceUri = "/surveyset")
+        {
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformGET(uri);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="in_pin_id"></param>
+        /// <param name="in_vote"></param>
+        /// <param name="serviceUri"></param>
+        /// <returns></returns>
+        public async Task<bool> VoteOnPin(int in_pin_id, int in_vote, string serviceUri = "/vote")
+        {
+            string json = JsonConvert.SerializeObject(new
+            {
+                pin_id = in_pin_id,
+                vote = in_vote
+            });
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
         /// Takes two strings and forms a uri object for later web requests. Helpful for treating
         /// the uri as nothing more than two strings which can be changed through this function.
         /// </summary>

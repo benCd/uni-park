@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
 using Android.Content;
 using Android.Gms.Maps;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
 using Android.Widget;
 using up_mobile.Droid.DroidMapUtils;
 using Xamarin.Forms;
@@ -16,7 +9,6 @@ using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
 using up_mobile.Map.Utils;
 using Android.Gms.Maps.Model;
-using System.Collections.Specialized;
 
 [assembly: ExportRenderer(typeof(LotMap), typeof(DroidCustomMapRenderer))]
 namespace up_mobile.Droid.DroidMapUtils
