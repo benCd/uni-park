@@ -10,6 +10,7 @@ using Xamarin.Forms.Maps;
 using System.Diagnostics;
 using up_mobile.Backend;
 using up_mobile.Models;
+using Rg.Plugins.Popup.Services;
 
 namespace up_mobile
 {
@@ -30,6 +31,9 @@ namespace up_mobile
         /// Holds the index of lot the map is focusing in on
         /// </summary>
         public static int CurrentLotIndex { set; get; } = 0;
+
+
+        private static MapMenu MapM;
 
         private StackLayout Stack;
 
@@ -61,19 +65,27 @@ namespace up_mobile
 
             Stack = new StackLayout { Spacing = 0 };
 
-            var mm = new MapMenu();
+            MapM = new MapMenu();
 
             Stack.Children.Add(map);
+
+            var buttonToBringUpMapMenu = new Button()
+            {
+                Text = "Eat me out mofo!"
+            };
+
+            buttonToBringUpMapMenu.Clicked += BringUpLotMenu;
+
+            Stack.Children.Add(buttonToBringUpMapMenu);
             Debug.Write("Added Map");
-            Stack.Children.Add(mm);
             Content = Stack;
 
             ensureLots().ContinueWith(
                     t => 
                     {
                         Debug.Write("-----> Lots Ensured, Moving Map NOW");
-                        MoveToLot(CurrentLotIndex);
-                        mm.Populate();
+                        MoveToLot(lotholder.Lots[0].Id);
+                        MapM.Populate();
                     }
                 );
                 
@@ -137,5 +149,12 @@ namespace up_mobile
                 SetPins(lotholder.Lots[CurrentLotIndex].Id);
             }
         }
+
+        public async void BringUpLotMenu(object sender, EventArgs args)
+        {
+            await PopupNavigation.Instance.PushAsync(MapM);
+        }
+
+
 	}
 }

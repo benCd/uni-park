@@ -1,10 +1,36 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ScrollView xmlns="http://xamarin.com/schemas/2014/forms" 
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="up_mobile.MapMenu">
-    <StackLayout Orientation="Horizontal"
-                 x:Name="Stack"
-                 BackgroundColor="Black">
-        
-    </StackLayout>
-</ScrollView>
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:PopupPage 
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+    xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
+    x:Class="up_mobile.MapMenu">
+    <!--You can set an animation in the xaml file or in the csharp code behind-->
+    <pages:PopupPage.Animation>
+        <animations:ScaleAnimation 
+            PositionIn="Center"
+            PositionOut="Center"
+            ScaleIn="1.2"
+            ScaleOut="0.8"
+            DurationIn="400"
+            DurationOut="300"
+            EasingIn="SinOut"
+            EasingOut="SinIn"
+            HasBackgroundAnimation="True"/>
+    </pages:PopupPage.Animation>
+    <!--You can use any elements here which are extended from Xamarin.Forms.View-->
+    <ScrollView
+        Padding="20, 20, 20, 20"
+        VerticalOptions="Center" 
+        HorizontalOptions="Center">
+        <StackLayout 
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" 
+            Padding="20, 20, 20, 20"
+            x:Name="Stack">
+            <Label
+                Text="Select a parking lot!"/>
+        </StackLayout>
+    </ScrollView>
+    
+</pages:PopupPage>

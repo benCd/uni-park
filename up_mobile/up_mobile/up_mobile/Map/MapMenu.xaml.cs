@@ -9,13 +9,13 @@ using up_mobile.Models;
 namespace up_mobile
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class MapMenu : ScrollView
+    public partial class MapMenu : Rg.Plugins.Popup.Pages.PopupPage
     {
 
         public MapMenu()
         {
             InitializeComponent();
-            HeightRequest = DeviceDisplay.MainDisplayInfo.Height / 18;
+            //HeightRequest = DeviceDisplay.MainDisplayInfo.Height / 18;
         }
 
         public async Task Populate()
