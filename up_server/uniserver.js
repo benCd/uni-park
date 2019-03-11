@@ -13,7 +13,7 @@ const app = express();
 
 //nodejs server connection info
 const hostname = config.server.host;
-const port = config.server.port;
+const port = process.env.PORT || 8080;
 
 //configuring mysql...
 //mysql database connection info
@@ -143,7 +143,7 @@ app.get('/logout', requireAuth, function (req, res) {
 
 //new and untested
 //get gps pins for given lot
-app.get('/lotpins', function (req, res, next) { //lot_id has not been added to db yet...
+app.post('/lotpins', function (req, res, next) {
   dbconnection.query('SELECT * FROM `gpsdata` WHERE `lot_id` = ?', req.body.lot_id, function (error, results, fields) {
     if (error) return next(error);
 
@@ -272,6 +272,6 @@ app.get('/surveystatus', requireAuth, function (req, res, next) {
 });
 
 //finally, make our https server and listen for requests
-http.createServer(app).listen(port, hostname, () => {
+http.createServer(app).listen(port,() => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
