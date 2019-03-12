@@ -54,6 +54,7 @@
 				android:text="0"
 				android:textColor="@android:color/black"
 				android:textSize="14dp"
+			
 			/>
 	</LinearLayout>
 </LinearLayout>

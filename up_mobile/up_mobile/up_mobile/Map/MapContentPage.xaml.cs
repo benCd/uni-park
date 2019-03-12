@@ -122,6 +122,7 @@ namespace up_mobile
             var pins = await PinFactory.GetPinsFor(LotId);
             Device.BeginInvokeOnMainThread(() =>
             {
+                map.Pins.Clear();
                 map.ParkingPins = pins;
                 foreach (Map.Utils.ParkingPin pin in pins)
                     map.Pins.Add(pin);
@@ -171,7 +172,6 @@ namespace up_mobile
         /// <returns>NOTHING!</returns>
         public static async Task UpdatePins()
         {
-            map.Pins.Clear();
             SetPins(CurrentLotID);
         }
 

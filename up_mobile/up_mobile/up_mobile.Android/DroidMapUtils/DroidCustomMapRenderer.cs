@@ -138,6 +138,8 @@ namespace up_mobile.Droid.DroidMapUtils
 
                 var infoTitle = view.FindViewById<TextView>(Resource.Id.InfoWindowTitle);
                 var infoSubtitle = view.FindViewById<TextView>(Resource.Id.InfoWindowSubtitle);
+                var upvotes = view.FindViewById<TextView>(Resource.Id.UpvoteCount);
+                var downvotes = view.FindViewById<TextView>(Resource.Id.DownCount);
 
                 if (infoTitle != null)
                 {
@@ -147,6 +149,10 @@ namespace up_mobile.Droid.DroidMapUtils
                 {
                     infoSubtitle.Text = marker.Snippet;
                 }
+                if (downvotes != null)
+                    downvotes.Text = "v "+ parkingPin.Downvotes.ToString() + " " ;
+                if (upvotes != null)
+                    upvotes.Text =  "^ "+parkingPin.Upvotes.ToString() + " " ;
 
                 return view;
             }
