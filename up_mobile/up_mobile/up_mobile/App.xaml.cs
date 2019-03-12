@@ -102,6 +102,8 @@ namespace up_mobile
                 MapContentPage.lotholder = (Models.LotHolder)App.Current.Properties["UniversityLots"];
 
             //TaskScheduler.ExecuteSchedule();
+
+            MapContentPage.InitMap();
         }
     }
 }

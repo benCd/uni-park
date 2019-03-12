@@ -90,6 +90,16 @@ namespace up_mobile
                 );
         }
 
+        public static void InitMap()
+        {
+            EnsureLots().ContinueWith(t =>
+            {
+                MoveToLot(lotholder.Lots[0].Id);
+                MapM.Populate();
+            });
+            
+        }
+
         private static async Task EnsureLots()
         {
             Debug.Write("Entering ensureLots()!");
