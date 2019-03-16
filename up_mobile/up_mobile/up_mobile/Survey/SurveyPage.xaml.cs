@@ -68,5 +68,18 @@ namespace up_mobile
                 await Navigation.PushAsync(new User());
             }
         }
+
+        /// <summary>
+        /// When the Slider is moved on <see cref="SurveyPage.xaml"/> it updates what
+        /// is shown on the page just above the slider, letting users know what value
+        /// they are reporting for Lot fullness
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        void SliderUpdated(object sender, ValueChangedEventArgs args)
+        {
+            int value = (int)args.NewValue;
+            SurveyDisplayLabel.Text = String.Format("Lot Fullness is {0} %", value);
+        }
     }
 }

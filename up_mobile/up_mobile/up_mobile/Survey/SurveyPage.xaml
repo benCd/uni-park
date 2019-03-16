@@ -7,8 +7,8 @@
         <ScrollView>
             <StackLayout Padding="10,10,10,10">
 
-                <!--Drop down list for the first parking lot selection-->
-                <Picker x:Name="LotSelection1" 
+                <!--Drop down list for the parking lot selection-->
+                <Picker x:Name="LotSelection" 
                         Title="Select a parking lot"
                         FontSize="14"
                         VerticalOptions="Center">
@@ -26,82 +26,29 @@
                 <Label Text="From" 
                        FontSize="14" />
 
-                <!--Time picker for Start Time 1-->
-                <TimePicker x:Name="StartTime1" 
+                <!--Time picker for Start Time-->
+                <TimePicker x:Name="StartTime" 
                             Time="{Binding SelectedTime}" 
                             FontSize="16"/>
 
                 <Label Text="To" 
                        FontSize="14" />
 
-                <!--Time picker for End Time 1-->
-                <TimePicker x:Name="EndTime1" 
+                <!--Time picker for End Time-->
+                <TimePicker x:Name="EndTime" 
                             Time="{Binding SelectedTime}" 
                             FontSize="16"/>
 
-                <!--Drop down list for the second parking lot selection-->
-                <Picker x:Name="LotSelection2" 
-                        Title="Select a parking lot"
-                        FontSize="14"
-                        VerticalOptions="Center">
-
-                    <Picker.ItemsSource>
-                        <x:Array Type="{x:Type x:String}">
-                            <x:String>P-1</x:String>
-                            <x:String>P-2</x:String>
-                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
-                        </x:Array>
-                    </Picker.ItemsSource>
-
-                </Picker>
-
-                <Label Text="From" 
-                       FontSize="14" />
-
-                <!--Time picker for Start Time 2-->
-                <TimePicker x:Name="StartTime2" 
-                            Time="{Binding SelectedTime}" 
-                            FontSize="16"/>
-
-                <Label Text="To" 
-                       FontSize="14" />
-
-                <!--Time picker for End Time 2-->
-                <TimePicker x:Name="EndTime2" 
-                            Time="{Binding SelectedTime}" 
-                            FontSize="16"/>
-
-                <!--Drop down list for the third parking lot selection-->
-                <Picker x:Name="LotSelection3" 
-                        Title="Select a parking lot"
-                        FontSize="14"
-                        VerticalOptions="Center">
-
-                    <Picker.ItemsSource>
-                        <x:Array Type="{x:Type x:String}">
-                            <x:String>P-1</x:String>
-                            <x:String>P-2</x:String>
-                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
-                        </x:Array>
-                    </Picker.ItemsSource>
-
-                </Picker>
-
-                <Label Text="From" 
-                       FontSize="14" />
-
-                <!--Time picker for Start Time 3-->
-                <TimePicker x:Name="StartTime3" 
-                            Time="{Binding SelectedTime}" 
-                            FontSize="16"/>
-
-                <Label Text="To" 
-                       FontSize="14" />
-
-                <!--Time picker for End Time 3-->
-                <TimePicker x:Name="EndTime3" 
-                            Time="{Binding SelectedTime}" 
-                            FontSize="16"/>
+                <Label x:Name="SurveyDisplayLabel" 
+                    Text="Lot Fullness Upon Arrival:"
+                        HorizontalOptions="Center"/>
+                
+                <!---Slider for observation of Lot fullness-->
+                <Slider Minimum="0"
+                        Maximum="100"
+                        ValueChanged="SurveySliderUpdated"
+                        BackgroundColor="#2196F3"
+                        ThumbColor="White"/>
 
                 <!--Button to go to the next page of their New User Survey information-->
                 <Button x:Name="NextSurveyPageButton"

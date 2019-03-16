@@ -92,7 +92,7 @@ namespace up_mobile
         void SliderUpdated(object sender, ValueChangedEventArgs args)
         {
             int value = (int) args.NewValue;
-            displayLabel.Text = String.Format("Lot Fullness is {0} %", value);
+            ParkedDisplayLabel.Text = String.Format("Lot Fullness is {0} %", value);
         }
 
     }
