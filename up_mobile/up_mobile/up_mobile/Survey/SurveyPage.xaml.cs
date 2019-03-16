@@ -76,7 +76,7 @@ namespace up_mobile
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        void SliderUpdated(object sender, ValueChangedEventArgs args)
+        void SurveySliderUpdated(object sender, ValueChangedEventArgs args)
         {
             int value = (int)args.NewValue;
             SurveyDisplayLabel.Text = String.Format("Lot Fullness is {0} %", value);
