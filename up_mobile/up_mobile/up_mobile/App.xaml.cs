@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Background;
+using up_mobile.Backend;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace up_mobile
@@ -11,11 +12,11 @@ namespace up_mobile
         public App()
         {
             InitializeComponent();
-
+            
             //Change execution scheduler specific property upon cancellation
             MessagingCenter.Subscribe<Background.Messages.CancelExecuteScheduleMessage>(this, "CancelExecuteScheduleMessage", async message =>
             {
-                Application.Current.Properties["execution_schedule_running"] = false;
+                App.Current.Properties["execution_schedule_running"] = false;
             });
 
             /// <summary>
@@ -43,7 +44,16 @@ namespace up_mobile
         {
             // Handling application sleep properties
 
-            //TODO sleep properties
+            //Sleep properties
+            //Save university lots
+            if (App.Current.Properties.ContainsKey("UniversityLots"))
+                App.Current.Properties["UniversityLots"] = MapContentPage.lotholder;
+            
+            //Save current cookie
+            if (App.Current.Properties.ContainsKey("Cookies"))
+                App.Current.Properties["Cookies"] = RestService.service.cookies;
+
+            App.Current.SavePropertiesAsync();
         }
 
         protected override void OnResume()
@@ -66,26 +76,34 @@ namespace up_mobile
         private void Load()
         {
             //If the task scheduler is not running an execution schedule start it
-            if(!Application.Current.Properties.ContainsKey("execution_schedule_running") || !(bool)Application.Current.Properties["execution_schedule_running"])
+            if(!App.Current.Properties.ContainsKey("execution_schedule_running") || !(bool)App.Current.Properties["execution_schedule_running"])
             {
                 var message = new Messages.ExecuteScheduleMessage();
                 MessagingCenter.Send<Messages.ExecuteScheduleMessage>(message, "ExecuteScheduleMessage");
             }
 
             // If user has not been online in one week clear the user_id
-            if(Application.Current.Properties.ContainsKey("last_online") && Application.Current.Properties.ContainsKey("last_opened"))
-                if (DateTime.Today.Subtract((DateTime)Application.Current.Properties["last_online"]).TotalDays > 7 ||
-                    DateTime.Today.Subtract((DateTime)Application.Current.Properties["last_opened"]).TotalDays > 21)
+            if(App.Current.Properties.ContainsKey("last_online") && App.Current.Properties.ContainsKey("last_opened"))
+                if (DateTime.Today.Subtract((DateTime)App.Current.Properties["last_online"]).TotalDays > 7 ||
+                    DateTime.Today.Subtract((DateTime)App.Current.Properties["last_opened"]).TotalDays > 21)
                 {
-                    Application.Current.Properties["user_id"] = -1;
+                    App.Current.Properties["user_id"] = -1;
                 }
 
-            if (Application.Current.Properties.ContainsKey("user_id") && (int)Application.Current.Properties["user_id"] < 0)
+            if (App.Current.Properties.ContainsKey("user_id") && (int)App.Current.Properties["user_id"] < 0)
             {
                 //PROMPT TO LOGINZ
             }
 
+            if (App.Current.Properties.ContainsKey("Cookies"))
+                RestService.service.cookies = App.Current.Properties["Cookies"] as System.Net.CookieContainer;
+
+            if (App.Current.Properties.ContainsKey("UniversityLots"))
+                MapContentPage.lotholder = (Models.LotHolder)App.Current.Properties["UniversityLots"];
+
             //TaskScheduler.ExecuteSchedule();
+
+            MapContentPage.InitMap();
         }
     }
 }

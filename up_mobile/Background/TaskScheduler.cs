@@ -189,7 +189,7 @@ namespace Background
 
                     //Check in 1 second intervals what task is scheduled next
                     await Task.Delay(1000);
-                    Debug.Write("Checking for Tasks to execute!");
+                    //Debug.Write("Checking for Tasks to execute!");
 
                     //Only check when the list is populated to avoid errors
                     if(count > 0)
@@ -197,7 +197,7 @@ namespace Background
                         //Check if the current time of day has passed the scheduled time
                         if(taskList.Last.Value.Time.TimeOfDay.CompareTo(DateTime.Now.TimeOfDay) <= 0)
                         {
-                            Debug.Write("Found Tasks to be run!");
+                            Debug.Write("Found Task to be run!");
                             var message = new Messages.ExecuteNextTaskMessage();
                             Application.Current.Properties["execution_schedule_running"] = true;
                             /*

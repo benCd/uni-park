@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Plugin.Geolocator.Abstractions;
+using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using up_mobile.Backend;
+using up_mobile.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -19,15 +17,20 @@ namespace up_mobile
 	public partial class ParkedConfirm : ContentPage
 	{
         private Button PButton;
+        private Position Position;
+        private ParkingLot Lot;
 
         /// <summary>
         /// Loads the ParkedConfirm page <see cref="ParkedConfirm.xaml"/>
         /// </summary>
         /// <param name="button"></param> Button from ParkedButton page
-		public ParkedConfirm (Button button)
+		public ParkedConfirm (Button button, Position pos, ParkingLot lot)
 		{
+            InitializeComponent ();
+            Position = pos;
+            Label.Text = "You parked in " + lot.Lot_Name;
+            Lot = lot;
             PButton = button;
-			InitializeComponent ();
 		}
 
         /// <summary>
@@ -40,6 +43,8 @@ namespace up_mobile
         /// <param name="args"></param>
         async void ConfirmPressed(object sender, EventArgs args)
         {
+            try { 
+
             /// <remarks>
             /// Removes Task scheduled in <see cref="ParkedButton.xaml.cs"/> when the button
             /// on <see cref="ParkedButton.xaml"/> is pressed
@@ -67,7 +72,13 @@ namespace up_mobile
                 }
                 );
 
+            Debug.Write("PIN WAS SENT AND RECEIVED??? --> "+ await RestService.service.PostNewPinAsync(Position.Longitude, Position.Latitude, Lot.Id, (float)(VolumeSlider.Value)/100.00));
+            await MapContentPage.UpdatePins();
             await Navigation.PopAsync();
+            }catch(NullReferenceException e)
+            {
+                Debug.Write(e.StackTrace);
+            }
         }
 
         /// <summary>
@@ -78,7 +89,6 @@ namespace up_mobile
         /// <param name="args"></param>
         async void DenyPressed(object sender, EventArgs args)
         {
-            Button button = (Button)sender;
             await Navigation.PopAsync();
         }
 

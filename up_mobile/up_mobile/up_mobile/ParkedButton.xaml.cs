@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using up_mobile.Backend;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -49,9 +49,36 @@ namespace up_mobile
                 return 0; }
                 );
 
-            
-            //TODO Set map to current parking lot
-            await Navigation.PushAsync(new ParkedConfirm((Button)sender));
+            try { 
+
+            var pos = await GeoProvider.GetCurrentPositionAsync();
+
+            if (pos == null)
+            {//TODO implement spamming protection! see #40
+                DisplayAlert("We could not get your location!", "We messed up, sorry about that! Please try again later!", "Alright, if I have to...");
+                ((Button)sender).IsEnabled = true;
+                Background.TaskScheduler.RemoveScheduledFunction("EnableButton");
+            }
+            else
+            {
+                Models.ParkingLot lot = await RestService.service.FindLot(pos.Latitude, pos.Longitude, pos.Accuracy);
+
+                if (lot == null)
+                {//TODO implement spamming protection! see #40
+                    DisplayAlert("Oops, we hope you're not in the lake!", "You are not in a recognized parking lot, if this is a mistake, please try again!", "Gotcha!");
+                    ((Button)sender).IsEnabled = true;
+                    Background.TaskScheduler.RemoveScheduledFunction("EnableButton");
+                }
+                else
+                {
+                    //TODO Set map to current parking lot
+                    await Navigation.PushAsync(new ParkedConfirm((Button)sender, pos, lot));
+                }
+            }
+            }catch(Exception e)
+            {
+                Debug.Write(e.StackTrace);
+            }
         }
     }
 }

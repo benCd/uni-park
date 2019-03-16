@@ -9,8 +9,6 @@ namespace up_mobile.Map.Utils
 {
     public class LotMap : Xamarin.Forms.Maps.Map
     {
-        public List<ParkingPin> ParkingPins { get; set; }
-
-        public LotMap(MapSpan span) : base(span) { }
+        public List<ParkingPin> ParkingPins { get; set; } = new List<ParkingPin>();
     }
 }

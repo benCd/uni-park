@@ -7,7 +7,7 @@ namespace up_mobile.Backend
 {
     public class GeoProvider
     {
-        public async Task<Position> GetCurrentPositionAsync()
+        public static async Task<Position> GetCurrentPositionAsync()
         {
             return await CrossGeolocator.Current.GetPositionAsync(TimeSpan.FromSeconds(20), null, true);
         }

@@ -38,15 +38,19 @@ namespace up_mobile
             /// <remarks>
             /// Updating logged in status in <see cref="Settings.cs"/>
             /// </remarks>
-            RestService.service.LogoutUser();
+            await RestService.service.LogoutUser();
 
             Helpers.Settings.IsLoggedIn = false;
 
+            //Cleaning up the map
+            Map.Utils.MapCleaner.CleanUp();
+
             //Clearing properites
-            Application.Current.Properties.Clear();
+            Application.Current.Properties["Cookies"] = null;
 
-
-            await Navigation.PushAsync(new Guest());
+            Navigation.InsertPageBefore(new Guest(),Navigation.NavigationStack[0]);
+            //await Navigation.PushAsync(new Guest());
+            await Navigation.PopToRootAsync(true);
         }
 
     }

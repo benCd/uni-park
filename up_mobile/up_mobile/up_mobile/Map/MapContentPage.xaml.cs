@@ -10,6 +10,7 @@ using Xamarin.Forms.Maps;
 using System.Diagnostics;
 using up_mobile.Backend;
 using up_mobile.Models;
+using Rg.Plugins.Popup.Services;
 
 namespace up_mobile
 {
@@ -19,14 +20,22 @@ namespace up_mobile
         /// <summary>
         /// Variable holding the map for every instance of a <see cref="MapContentPage"/>
         /// </summary>
-        private static LotMap map;
-
-        private static LotHolder lotholder;
+        public static LotMap map;
 
         /// <summary>
-        /// Holds the current lot the map is focusing in on
+        /// Holds all lots in currently preloaded
         /// </summary>
-        public static int CurrentLotId { set;  get; }
+        public static LotHolder lotholder;
+
+        /// <summary>
+        /// Holds the index of lot the map is focusing in on
+        /// </summary>
+        public static int CurrentLotID { set; get; } = 0;
+
+
+        private static MapMenu MapM;
+
+        private StackLayout Stack;
 
         public MapContentPage() : this(0)
         {
@@ -40,36 +49,76 @@ namespace up_mobile
         /// <param name="LotId">ID for the parking lot to load</param>
 		public MapContentPage(int LotId = 0) : base()
 		{
-           
-            this.Title = "Lot XYZ";
-            //TODO IMPLEMENT MAP REST REQUEST!
-
-            makeMap();
-
-            while (map == null) ;
-            
-            var stack = new StackLayout { Spacing = 0 };
-            stack.Children.Add(map);
-            stack.Children.Add(new MapMenu());
-            Content = stack;
-        }
-
-        private static async void makeMap()
-        {
-            lotholder = (LotHolder)Application.Current.Properties["UniversityLots"];
-            if(map == null)
-                map = new LotMap(
-                           MapSpan.FromCenterAndRadius(
-                               new Position(lotholder.Lots[0].Center_Lat, lotholder.Lots[0].Center_Long), Distance.FromKilometers(0.1)))
+            Debug.Write("Entering MapContentPage constructor");
+            this.Title = "Parking";
+            Debug.Write("Starting to create map");
+            if (map == null)
+                map = new LotMap()
                 {
                     IsShowingUser = true,
                     VerticalOptions = LayoutOptions.FillAndExpand,
                     HasScrollEnabled = false,
-                    HasZoomEnabled = false,
-                    MapType = MapType.Satellite
+                    HasZoomEnabled = true,
+                    MapType = MapType.Satellite,
+                    ParkingPins = new List<Map.Utils.ParkingPin>()
                 };
 
-            SetPins(0);
+            Stack = new StackLayout { Spacing = 0 };
+
+            MapM = new MapMenu();
+
+            Stack.Children.Add(map);
+
+            var buttonToBringUpMapMenu = new Button()
+            {
+                Text = "Select a lot!"
+            };
+
+            buttonToBringUpMapMenu.Clicked += BringUpLotMenu;
+
+            Stack.Children.Add(buttonToBringUpMapMenu);
+            Debug.Write("Added Map");
+            Content = Stack;
+
+            EnsureLots().ContinueWith(
+                    t => 
+                    {
+                        Debug.Write("-----> Lots Ensured, Moving Map NOW");
+                        MoveToLot(lotholder.Lots[0].Id);
+                        MapM.Populate();
+                    }
+                );
+        }
+
+        public static void InitMap()
+        {
+            EnsureLots().ContinueWith(t =>
+            {
+                MoveToLot(lotholder.Lots[0].Id);
+                MapM.Populate();
+            });
+            
+        }
+
+        private static async Task EnsureLots()
+        {
+            Debug.Write("Entering ensureLots()!");
+            if (!Application.Current.Properties.ContainsKey("UniversityLots"))
+                Application.Current.Properties.Add("UniversityLots", await RestService.service.GetMyUniLots());
+            else
+            {
+                Debug.Write("Setting UniversityLots Property");
+                Application.Current.Properties["UniversityLots"] = await RestService.service.GetMyUniLots();
+
+            }
+                
+
+            lotholder = await RestService.service.GetMyUniLots();
+
+            foreach (ParkingLot lot in ((LotHolder)Application.Current.Properties["UniversityLots"]).Lots)
+                Debug.Write(lot.Lot_Name);
+
+            Debug.Write("Finished Lot adding continuing!");
         }
 
         /// <summary>
@@ -77,53 +126,64 @@ namespace up_mobile
         /// </summary>
         /// <param name="map"><see cref="Xamarin.Forms.Maps.Map"/> instance to which the pins are added</param>
         /// <param name="LotId"> The ID for the parking lot, whose information should be loaded</param>
-        private static async void SetPins(int LotId)
+        private static async Task SetPins(int LotId)
         {
-            map.ParkingPins.Clear();
-
+            Debug.Write("EnteringSetPins!");
             var pins = await PinFactory.GetPinsFor(LotId);
-
-            foreach (Map.Utils.ParkingPin p in pins)
+            Device.BeginInvokeOnMainThread(() =>
             {
-                map.ParkingPins.Add(p);
-            }
+                map.Pins.Clear();
+                map.ParkingPins = pins;
+                foreach (Map.Utils.ParkingPin pin in pins)
+                    map.Pins.Add(pin);
+            });
+            Debug.Write("Exiting SetPins!");
         }
 
         /// <summary>
         /// Moves the map to a different lot.
         /// </summary>
-        /// <param name="LotId">ID of the lot to move to</param>
-        public static async void MoveToLot(int LotId)
+        /// <param name="IDVal">ID of the lot to move to</param>
+        public static async void MoveToLot(int IDVal)
         {
-            CurrentLotId = LotId;
-
-            //------------------------------------------
-            //TODO request lot information from REST API
-            //REQUEST GOES HERE
-            //------------------------------------------
-            
-            var position = new Position(42.671133, -83.2149);
-            var radius = Distance.FromKilometers(0.1);
-
-            switch (LotId)
+            if (lotholder != null && lotholder.Lots!= null && lotholder.Lots[CurrentLotID] != null)
             {
-                case 0:
-                    position = new Position(42.671133, -83.2149);
-                    radius = Distance.FromKilometers(0.1);
-                    break;
-                case 1:
-                    position = new Position(42.671133, -83.25);
-                    radius = Distance.FromKilometers(0.5);
-                    break;
-                case 2:
-                    position = new Position(42.671133, -83.214928);
-                    radius = Distance.FromKilometers(0.7);
-                    break;
+                var plot = lotholder.Lots[0];
+
+                foreach (ParkingLot lot in lotholder.Lots)
+                    if (lot.Id == IDVal)
+                        plot = lot;
+
+                var position = new Position(plot.Center_Lat, plot.Center_Long);
+                var radius = Distance.FromKilometers(0.1);
+
+                Debug.Print("Switching Lot to " + lotholder.Lots[CurrentLotID].Lot_Name);
+                var span = MapSpan.FromCenterAndRadius(position, radius);
+                Device.BeginInvokeOnMainThread(() => { map.MoveToRegion(span); });
+                CurrentLotID = IDVal;
+                SetPins(CurrentLotID);
             }
-            Debug.Print("Button: " + LotId);
-            var span = MapSpan.FromCenterAndRadius(position, radius);
-            map.MoveToRegion(span);
-            SetPins(LotId);
         }
+
+
+        /// <summary>
+        /// Opens the <see cref="MapMenu"/> popup
+        /// </summary>
+        /// <param name="sender">Button sender</param>
+        /// <param name="args"> Args I guess</param>
+        public async void BringUpLotMenu(object sender, EventArgs args)
+        {
+            await PopupNavigation.Instance.PushAsync(MapM);
+        }
+
+        /// <summary>
+        /// Updates the pins in the current parkinglot
+        /// </summary>
+        /// <returns>NOTHING!</returns>
+        public static async Task UpdatePins()
+        {
+            SetPins(CurrentLotID);
+        }
+
 	}
 }

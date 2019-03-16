@@ -1,15 +1,8 @@
-﻿using System;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.OS;
 using Plugin.CurrentActivity;
-using Plugin.Permissions;
 using Xamarin.Forms;
-using Xamarin.Forms.Maps;
 using Android.Content;
 
 namespace up_mobile.Droid
@@ -21,6 +14,10 @@ namespace up_mobile.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+
+            //Init for Rg.Plugins.Popup
+            Rg.Plugins.Popup.Popup.Init(this, savedInstanceState);
+
             //Init for Xamarin.Forms.Maps 
             Xamarin.FormsMaps.Init(this, savedInstanceState);
 
@@ -40,6 +37,8 @@ namespace up_mobile.Droid
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
+
+            
 
             base.OnCreate(savedInstanceState);
             // the following call to the cross current activity plugin is required by the GPS plugin

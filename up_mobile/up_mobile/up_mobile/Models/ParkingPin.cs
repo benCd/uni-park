@@ -12,6 +12,8 @@ namespace up_mobile.Models
         public double Volume { get; set; }
         public DateTime Timestamp { get; set; }
         public int Lot_id { get; set; }
+        public int Upvotes { get; set; }
+        public int Downvotes { get; set; }
 
         //will remove later
         public ParkingPin(double latitude, double longitude, DateTime timestamp)
