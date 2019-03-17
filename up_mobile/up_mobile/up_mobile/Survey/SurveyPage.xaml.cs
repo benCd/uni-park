@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -22,11 +23,17 @@ namespace up_mobile
         Queue<String> SurveyNavigationQueue = new Queue<String>();
 
         /// <summary>
+        /// List to hold the Survey Data (see <see cref="NewUserSurvey.xaml.cs"/> for constructor)
+        /// </summary>
+        List<SurveyData> SubmissionData = new List<SurveyData>();
+
+        /// <summary>
         /// Loads SurveyPage  page
         /// </summary>
-		public SurveyPage (Queue<String> q)
+		public SurveyPage (Queue<String> q, List<SurveyData> s)
 		{
             SurveyNavigationQueue = q;
+            SubmissionData = s;
 
             /// <remarks>
             /// If something is still remaining in the Queue it sets the next thing 
@@ -52,8 +59,13 @@ namespace up_mobile
 
             if (SurveyNavigationQueue.Count() > 0)
             {
+                // Adding the data submitted to the List of SurveyData objects
+                SubmissionData.Add(new SurveyData(SurveyNavigationQueue.Peek(), LotSelection.SelectedItem.ToString(), StartTime.Time.ToString(), EndTime.Time.ToString()));
+
+                // Removing the day just handled from the Queue
                 SurveyNavigationQueue.Dequeue();
-                await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue));
+
+                await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue, SubmissionData));
             }
             if (SurveyNavigationQueue.Count() == 0)
             {
@@ -65,6 +77,16 @@ namespace up_mobile
                 /// </remarks>
                 Helpers.Settings.TookNewUserSurvey = true;
 
+                // For loop to send the data in the list of SurveyData objects to the database
+                for (int i = 0; i == SubmissionData.Count(); i++)
+                {
+                    //Debug statements to make sure the data is being put into the SurveyData List correctly
+                    Debug.WriteLine("Day: " + SubmissionData[i].Day);
+                    Debug.WriteLine("Lot: " + SubmissionData[i].ParkingLot);
+                    Debug.WriteLine("StartTime: " + SubmissionData[i].StartTime);
+                    Debug.WriteLine("EndTime: " + SubmissionData[i].EndTime);
+                }
+               
                 await Navigation.PushAsync(new User());
             }
         }
@@ -76,10 +98,16 @@ namespace up_mobile
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        void SurveySliderUpdated(object sender, ValueChangedEventArgs args)
+        void StartSliderUpdated(object sender, ValueChangedEventArgs args)
         {
             int value = (int)args.NewValue;
-            SurveyDisplayLabel.Text = String.Format("Lot Fullness is {0} %", value);
+            StartDisplayLabel.Text = String.Format("Lot Fullness Upon Arrival was {0} %", value);
+        }
+
+        void EndSliderUpdated(object sender, ValueChangedEventArgs args)
+        {
+            int value = (int)args.NewValue;
+            EndDisplayLabel.Text = String.Format("Lot Fullness Upon Leaving was {0} %", value);
         }
     }
 }

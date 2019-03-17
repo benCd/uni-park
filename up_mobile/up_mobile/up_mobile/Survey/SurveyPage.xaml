@@ -31,6 +31,19 @@
                             Time="{Binding SelectedTime}" 
                             FontSize="16"/>
 
+                <Label x:Name="StartDisplayLabel" 
+                    Text="Lot Fullness Upon Arrival:"
+                        HorizontalOptions="Center"/>
+
+                <!---Slider for observation of Lot fullness-->
+                <Slider x:Name="StartVolumeSlider"
+                        Minimum="0"
+                        Maximum="100"
+                        Value="0"
+                        ValueChanged="StartSliderUpdated"
+                        BackgroundColor="#2196F3"
+                        ThumbColor="White"/>
+
                 <Label Text="To" 
                        FontSize="14" />
 
@@ -39,14 +52,16 @@
                             Time="{Binding SelectedTime}" 
                             FontSize="16"/>
 
-                <Label x:Name="SurveyDisplayLabel" 
-                    Text="Lot Fullness Upon Arrival:"
+                <Label x:Name="EndDisplayLabel" 
+                    Text="Lot Fullness Upon Leaving:"
                         HorizontalOptions="Center"/>
-                
+
                 <!---Slider for observation of Lot fullness-->
-                <Slider Minimum="0"
+                <Slider x:Name="EndVolumeSlider"
+                        Minimum="0"
                         Maximum="100"
-                        ValueChanged="SurveySliderUpdated"
+                        Value="0"
+                        ValueChanged="EndSliderUpdated"
                         BackgroundColor="#2196F3"
                         ThumbColor="White"/>
 
