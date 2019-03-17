@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using up_mobile.Backend;
+using up_mobile.Helpers;
 using up_mobile.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -24,6 +27,7 @@ namespace up_mobile
         {
             InitializeComponent();
         }
+
         /// <summary>
         /// When Login button on the Login page <see cref="Login.xaml"/> is pressed
         /// it attempts to log the user in. If it is their first time logging in they 
@@ -46,10 +50,17 @@ namespace up_mobile
             if (await loginSuccess)
             {
                 Helpers.Settings.IsLoggedIn = true;
-                var surveyTaken = await RestService.service.SeeSurveyStatus();
-                Helpers.Settings.TookNewUserSurvey = surveyTaken;
+                var surveyTaken = RestService.service.SeeSurveyStatus();
 
-                if (surveyTaken)
+                //new stuff for permissions
+                var permissionGranted = await Permissions.RequestStoragePermission(this);
+                if (!permissionGranted)
+                    return;
+                //
+
+                Helpers.Settings.TookNewUserSurvey = await surveyTaken;
+
+                if (await surveyTaken)
                     await Navigation.PushAsync(new User());
                 else
                     await Navigation.PushAsync(new NewUserSurvey());
