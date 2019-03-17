@@ -56,6 +56,9 @@ namespace up_mobile
                 var permissionGranted = await Permissions.RequestStoragePermission(this);
                 if (!permissionGranted)
                     return;
+                permissionGranted = await Permissions.RequestLocationPermission(this);
+                if (!permissionGranted)
+                    return;
                 //
 
                 Helpers.Settings.TookNewUserSurvey = await surveyTaken;

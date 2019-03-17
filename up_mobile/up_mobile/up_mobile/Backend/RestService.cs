@@ -116,7 +116,7 @@ namespace up_mobile.Backend
                 }
 
                 Debug.Write("Cookie:");
-                Debug.Write(myCookie.Value);
+                //Debug.Write(myCookie.Value);
                 /*foreach (Cookie c in ((CookieContainer)Application.Current.Properties["Cookies"]).GetCookies(new Uri(defaultBaseUri)))
                     Debug.Write(c.Name + " -> " + c.Value);
                 */

@@ -32,5 +32,31 @@ namespace up_mobile.Helpers
             }
             return false;
         }
+
+        public static async Task<bool> RequestLocationPermission(Page page)
+        {
+            var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location);
+            if (status != PermissionStatus.Granted)
+            {
+                if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.Location))
+                {
+                    await page.DisplayAlert("Location permission", "Uni-Park will now request location permission to determine your position and current parking lot", "OK");
+                }
+
+                var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
+                if (results.ContainsKey(Permission.Location))
+                    status = results[Permission.Location];
+            }
+
+            if (status == PermissionStatus.Granted)
+            {
+                return true;
+            }
+            else if (status != PermissionStatus.Unknown)
+            {
+                await page.DisplayAlert("Location permission denied", "Location permission is required, please try again", "OK");
+            }
+            return false;
+        }
     }
 }
