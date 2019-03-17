@@ -104,6 +104,10 @@ namespace up_mobile
             //TaskScheduler.ExecuteSchedule();
 
             MapContentPage.InitMap();
+
+            if (!App.Current.Properties.ContainsKey("DenyPressed"))
+                App.Current.Properties.Add("DenyPressed", 0);
+           
         }
     }
 }
