@@ -110,12 +110,16 @@ namespace up_mobile
         public string ParkingLot { get; set; }
         public string StartTime { get; set; }
         public string EndTime { get; set; }
-        public SurveyData(string day, string parkinglot, string starttime, string endtime)
+        public double StartVolume { get; set; }
+        public double EndVolume { get; set; }
+        public SurveyData(string day, string parkinglot, string starttime, string endtime, double startvolume, double endvolume)
         {
             Day = day;
             ParkingLot = parkinglot;
             StartTime = starttime;
             EndTime = endtime;
+            StartVolume = startvolume;
+            EndVolume = endvolume;
         }
     }
 }

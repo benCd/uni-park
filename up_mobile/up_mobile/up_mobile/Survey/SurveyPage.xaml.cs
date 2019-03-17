@@ -57,38 +57,47 @@ namespace up_mobile
         {
             Button button = (Button)sender;
 
-            if (SurveyNavigationQueue.Count() > 0)
+            if (LotSelection.SelectedItem == null)
             {
-                // Adding the data submitted to the List of SurveyData objects
-                SubmissionData.Add(new SurveyData(SurveyNavigationQueue.Peek(), LotSelection.SelectedItem.ToString(), StartTime.Time.ToString(), EndTime.Time.ToString()));
-
-                // Removing the day just handled from the Queue
-                SurveyNavigationQueue.Dequeue();
-
-                await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue, SubmissionData));
+                await DisplayAlert("You did not select a parking lot", "Please select a lot", "ok");
             }
-            if (SurveyNavigationQueue.Count() == 0)
+            else
             {
-                // Pop up to thank the user for taking the survey
-                await DisplayAlert("Thanks!", "This information really helps us", "OK");
-
-                /// <remarks>
-                /// Storing this value in <see cref="Settings.cs"/> so it does not give them the survey for future log ins
-                /// </remarks>
-                Helpers.Settings.TookNewUserSurvey = true;
-
-                // For loop to send the data in the list of SurveyData objects to the database
-                for (int i = 0; i == SubmissionData.Count(); i++)
+                if (SurveyNavigationQueue.Count() > 0)
                 {
-                    //Debug statements to make sure the data is being put into the SurveyData List correctly
-                    Debug.WriteLine("Day: " + SubmissionData[i].Day);
-                    Debug.WriteLine("Lot: " + SubmissionData[i].ParkingLot);
-                    Debug.WriteLine("StartTime: " + SubmissionData[i].StartTime);
-                    Debug.WriteLine("EndTime: " + SubmissionData[i].EndTime);
+                    // Adding the data submitted to the List of SurveyData objects
+                    SubmissionData.Add(new SurveyData(SurveyNavigationQueue.Peek(), LotSelection.SelectedItem.ToString(), StartTime.Time.ToString(), EndTime.Time.ToString(), (float)(StartVolumeSlider.Value)/100.00, (float)(EndVolumeSlider.Value) / 100.00));
+
+                    // Removing the day just handled from the Queue
+                    SurveyNavigationQueue.Dequeue();
+
+                    await Navigation.PushAsync(new SurveyPage(SurveyNavigationQueue, SubmissionData));
                 }
-               
-                await Navigation.PushAsync(new User());
-            }
+                if (SurveyNavigationQueue.Count() == 0)
+                {
+                    // Pop up to thank the user for taking the survey
+                    await DisplayAlert("Thanks!", "This information really helps us", "OK");
+
+                    /// <remarks>
+                    /// Storing this value in <see cref="Settings.cs"/> so it does not give them the survey for future log ins
+                    /// </remarks>
+                    Helpers.Settings.TookNewUserSurvey = true;
+
+                    // For loop to send the data in the list of SurveyData objects to the database
+                    for (int i = 0; i < SubmissionData.Count(); i++)
+                    {
+                        //Debug statements to make sure the data is being put into the SurveyData List correctly
+                        Debug.WriteLine("Day: " + SubmissionData[i].Day);
+                        Debug.WriteLine("Lot: " + SubmissionData[i].ParkingLot);
+                        Debug.WriteLine("StartTime: " + SubmissionData[i].StartTime);
+                        Debug.WriteLine("Start Volume: " + SubmissionData[i].StartVolume);
+                        Debug.WriteLine("EndTime: " + SubmissionData[i].EndTime);                       
+                        Debug.WriteLine("End Volume: " + SubmissionData[i].EndVolume);
+                    }
+
+                    await Navigation.PushAsync(new User());
+                }
+            }          
         }
 
         /// <summary>
