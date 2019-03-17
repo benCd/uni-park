@@ -32,7 +32,6 @@ namespace up_mobile
         /// </summary>
         public static int CurrentLotID { set; get; } = 0;
 
-
         private static MapMenu MapM;
 
         private StackLayout Stack;
@@ -90,9 +89,9 @@ namespace up_mobile
                 );
         }
 
-        public static void InitMap()
+        public async static void InitMap()
         {
-            EnsureLots().ContinueWith(t =>
+            await EnsureLots().ContinueWith(t =>
             {
                 MoveToLot(lotholder.Lots[0].Id);
                 MapM.Populate();
@@ -103,20 +102,19 @@ namespace up_mobile
         private static async Task EnsureLots()
         {
             Debug.Write("Entering ensureLots()!");
+            /*
+            
             if (!Application.Current.Properties.ContainsKey("UniversityLots"))
                 Application.Current.Properties.Add("UniversityLots", await RestService.service.GetMyUniLots());
             else
             {
                 Debug.Write("Setting UniversityLots Property");
                 Application.Current.Properties["UniversityLots"] = await RestService.service.GetMyUniLots();
-
             }
-                
+            */    
+            
 
             lotholder = await RestService.service.GetMyUniLots();
-
-            foreach (ParkingLot lot in ((LotHolder)Application.Current.Properties["UniversityLots"]).Lots)
-                Debug.Write(lot.Lot_Name);
 
             Debug.Write("Finished Lot adding continuing!");
         }
@@ -135,7 +133,10 @@ namespace up_mobile
                 map.Pins.Clear();
                 map.ParkingPins = pins;
                 foreach (Map.Utils.ParkingPin pin in pins)
+                {
                     map.Pins.Add(pin);
+                }
+                    
             });
             Debug.Write("Exiting SetPins!");
         }
@@ -161,7 +162,7 @@ namespace up_mobile
                 var span = MapSpan.FromCenterAndRadius(position, radius);
                 Device.BeginInvokeOnMainThread(() => { map.MoveToRegion(span); });
                 CurrentLotID = IDVal;
-                SetPins(CurrentLotID);
+                await SetPins(CurrentLotID);
             }
         }
 
@@ -182,7 +183,12 @@ namespace up_mobile
         /// <returns>NOTHING!</returns>
         public static async Task UpdatePins()
         {
-            SetPins(CurrentLotID);
+            await SetPins(CurrentLotID);
+        }
+
+        public static async void BringUpPinInfo(Map.Utils.ParkingPin pin)
+        {
+            await PopupNavigation.Instance.PushAsync(new PinInfo(pin));
         }
 
 	}
