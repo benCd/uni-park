@@ -21,7 +21,7 @@ namespace up_mobile.Backend
     {
         public CookieContainer cookies { set; get; }
         static HttpClient client = new HttpClient();
-        const string defaultBaseUri = "http://35.207.3.28:8080";
+        const string defaultBaseUri = "http://127.0.0.1:8080"; 
 
         public static RestService service = new RestService();
 
@@ -422,6 +422,13 @@ namespace up_mobile.Backend
             return false;
         }
 
+        public async Task PostSurveyResults(List<SurveyData> surveyList, string serviceUri = "/surveyresults")
+        {
+            string json = JsonConvert.SerializeObject(surveyList);
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+        }
 
         /// <summary>
         /// Takes two strings and forms a uri object for later web requests. Helpful for treating

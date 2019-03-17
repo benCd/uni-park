@@ -15,9 +15,7 @@
 
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
-                            <x:String>P-1</x:String>
-                            <x:String>P-2</x:String>
-                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                            <!-- <x:String>P-1</x:String> -->
                         </x:Array>
                     </Picker.ItemsSource>
 

@@ -7,6 +7,8 @@ using System.Diagnostics;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using up_mobile.Backend;
+using up_mobile.Models;
 
 namespace up_mobile
 {
@@ -28,12 +30,35 @@ namespace up_mobile
         List<SurveyData> SubmissionData = new List<SurveyData>();
 
         /// <summary>
-        /// Loads SurveyPage  page
+        /// Holds all the university lot objects that will be used for the picker
         /// </summary>
+        static LotHolder pageLots;
+
+        /// <summary>
+        /// Loads SurveyPage  page
+        /// </summary
 		public SurveyPage (Queue<String> q, List<SurveyData> s)
 		{
             SurveyNavigationQueue = q;
             SubmissionData = s;
+
+            
+            getPageLots().ContinueWith(
+                t =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        var lotList = new List<ParkingLot>();
+                        foreach (ParkingLot lot in pageLots.Lots)
+                        { 
+                            lotList.Add(lot);
+                        }
+
+                        LotSelection.ItemsSource = lotList;
+                    });
+                }
+            );
+            
 
             /// <remarks>
             /// If something is still remaining in the Queue it sets the next thing 
@@ -46,6 +71,11 @@ namespace up_mobile
 
 			InitializeComponent ();
 		}
+
+        public async Task getPageLots()
+        {
+            pageLots = await RestService.service.GetMyUniLots();
+        }
 
         /// <summary>
         /// When the Submit button on SurveyPage page 
@@ -94,6 +124,8 @@ namespace up_mobile
                         Debug.WriteLine("EndTime: " + SubmissionData[i].EndTime);                       
                         Debug.WriteLine("End Volume: " + SubmissionData[i].EndVolume);
                     }
+
+                    //await RestService.service.PostSurveyResults(SubmissionData);
 
                     await Navigation.PushAsync(new User());
                 }
