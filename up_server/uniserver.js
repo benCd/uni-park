@@ -330,12 +330,12 @@ app.post('/surveyresults', requireAuth, function (req, res, next) {
     var sVolume = truncateDecimal(myArr[i].StartVolume, 2);
     var eVolume = truncateDecimal(myArr[i].EndVolume, 2);
 
-    var newDate1 = dates[dayName];
+    var newDate1 = new Date(dates[dayName]);
     var hmsStart = myArr[i].StartTime;
     var a1 = hmsStart.split(':');
     newDate1.setHours(a1[0],a1[1],a1[2],0);
 
-    var newDate2 = dates[dayName];
+    var newDate2 = new Date(dates[dayName]);
     var hmsEnd = myArr[i].EndTime;
     var a2 = hmsEnd.split(':');
     newDate2.setHours(a2[0],a2[1],a2[2],0);
