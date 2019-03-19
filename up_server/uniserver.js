@@ -129,7 +129,7 @@ app.post('/login', function (req, res, next) {
     if (!user) return res.status(401).send('Invalid credentials');
     req.login(user, (error) => {
       if (error) return next(error);
-      console.log("got here");
+      console.log(user.name+" logged in");
       return res.send('Logged in as ' + user.name);
     });
   })(req, res, next);
@@ -167,8 +167,9 @@ app.post('/lotpins', function (req, res, next) { //lot_id has not been added to 
 //send a new gps pin to db
 app.post('/newpin', requireAuth, function (req, res, next) {
    var pin = req.body;
+   var volume = truncateDecimal(pin.volume, 2);
    dbconnection.query({sql: 'INSERT INTO `gpsdata`(user_id,timestamp,longitude,latitude,lot_id,volume) VALUES(?,?,?,?,?,?)',
-   values: [req.user.id, new Date(), pin.longitude, pin.latitude, pin.lot_id, pin.volume]}, function (error, results, fields) {
+   values: [req.user.id, new Date(), pin.longitude, pin.latitude, pin.lot_id, volume]}, function (error, results, fields) {
      if (error) return next(error);
    });
    res.send('Pin added');
@@ -268,7 +269,6 @@ app.get('/surveystatus', requireAuth, function (req, res, next) {
   res.send(status.toString());
 });
 
-//NEW FOR MARCH 10TH
 //update survey status for current user
 app.get('/surveyset', requireAuth, function (req, res, next) {
   dbconnection.query('UPDATE `users` SET `surveytaken` = ? WHERE `id` = ?', [1, req.user.id], function (error, results, fields) {
@@ -295,6 +295,90 @@ app.post('/vote', requireAuth, function (req, res, next) {
     });
   }
 });
+
+//3/17
+app.post('/getpinbyid', requireAuth, function (req, res, next) {
+  var id = req.body.id;
+  dbconnection.query('SELECT * FROM `gpsdata` WHERE `id` = ?', id, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(404).send('No pin');
+
+    res.json(rdpToObj(results[0]));
+  });
+});
+
+app.post('/getuserbyid', requireAuth, function (req, res, next) {
+  var id = req.body.id;
+  dbconnection.query('SELECT `name` FROM `users` WHERE `id` = ?', id, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(404).send('No user');
+
+    res.json(results[0].name);
+  });
+});
+
+app.post('/surveyresults', requireAuth, function (req, res, next) {
+  var myArr = req.body;
+  console.log(myArr);
+  var dates = previousCalendarWeek();
+
+  for (var i = 0; i < myArr.length; i++) {
+    var dayName = myArr[i].Day;
+    var lid = myArr[i].Lot_id;
+    var sVolume = truncateDecimal(myArr[i].StartVolume, 2);
+    var eVolume = truncateDecimal(myArr[i].EndVolume, 2);
+
+    var newDate1 = dates[dayName];
+    var hmsStart = myArr[i].StartTime;
+    var a1 = hmsStart.split(':');
+    newDate1.setHours(a1[0],a1[1],a1[2],0);
+
+    var newDate2 = dates[dayName];
+    var hmsEnd = myArr[i].EndTime;
+    var a2 = hmsEnd.split(':');
+    newDate2.setHours(a2[0],a2[1],a2[2],0);
+
+    var values = [
+      [lid, req.user.id, newDate1, sVolume],
+      [lid, req.user.id, newDate2, eVolume]
+    ];
+
+    dbconnection.query('INSERT INTO `surveydata` (lot_id, user_id, timestamp, volume) VALUES ?',
+    [values], function (error, results, fields) {
+      if (error) return next(error);
+    });
+  }
+  console.log("Survey recieved by "+req.user.name);
+  res.send("Survey recieved");
+});
+
+function truncateDecimal(num, fixed) {
+    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
+    var str = num.toString().match(re)[0];
+    return parseFloat(str);
+}
+
+function previousCalendarWeek(){
+  var d0 = new Date();
+  d0.setDate(d0.getDate() - d0.getDay() - 7);
+  var d1 = new Date();
+  d1.setDate(d0.getDate() + 1);
+  var d2 = new Date();
+  d2.setDate(d0.getDate() + 2);
+  var d3 = new Date();
+  d3.setDate(d0.getDate() + 3);
+  var d4 = new Date();
+  d4.setDate(d0.getDate() + 4);
+  var d5 = new Date();
+  d5.setDate(d0.getDate() + 5);
+  var d6 = new Date();
+  d6.setDate(d0.getDate() + 6);
+
+  var dates = {"Sunday": d0, "Monday": d1, "Tuesday": d2, "Wednesday": d3, "Thursday": d4, "Friday": d5, "Saturday": d6};
+  return dates;
+}
 
 //finally, make our https server and listen for requests
 http.createServer(app).listen(port,() => {
