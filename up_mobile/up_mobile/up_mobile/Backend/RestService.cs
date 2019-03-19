@@ -21,7 +21,7 @@ namespace up_mobile.Backend
     {
         public CookieContainer cookies { set; get; }
         static HttpClient client = new HttpClient();
-        const string defaultBaseUri = "http://10.0.2.2:8080"; 
+        const string defaultBaseUri = "http://35.207.3.28:8080"; 
 
         public static RestService service = new RestService();
 
