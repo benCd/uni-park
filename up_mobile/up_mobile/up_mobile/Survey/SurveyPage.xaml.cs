@@ -34,6 +34,8 @@ namespace up_mobile
         /// </summary>
         static LotHolder pageLots;
 
+        Dictionary<String, int> lotValuePair = new Dictionary<string, int>();
+
         /// <summary>
         /// Loads SurveyPage  page
         /// </summary
@@ -48,10 +50,11 @@ namespace up_mobile
                 {
                     Device.BeginInvokeOnMainThread(() =>
                     {
-                        var lotList = new List<ParkingLot>();
+                        var lotList = new List<string>();
                         foreach (ParkingLot lot in pageLots.Lots)
                         { 
-                            lotList.Add(lot);
+                            lotList.Add(lot.Lot_Name);
+                            lotValuePair.Add(lot.Lot_Name, lot.Id);
                         }
 
                         LotSelection.ItemsSource = lotList;
@@ -96,7 +99,7 @@ namespace up_mobile
                 if (SurveyNavigationQueue.Count() > 0)
                 {
                     // Adding the data submitted to the List of SurveyData objects
-                    SubmissionData.Add(new SurveyData(SurveyNavigationQueue.Peek(), LotSelection.SelectedItem.ToString(), StartTime.Time.ToString(), EndTime.Time.ToString(), (float)(StartVolumeSlider.Value)/100.00, (float)(EndVolumeSlider.Value) / 100.00));
+                    SubmissionData.Add(new SurveyData(SurveyNavigationQueue.Peek(), lotValuePair[LotSelection.SelectedItem.ToString()], StartTime.Time.ToString(), EndTime.Time.ToString(), (float)(StartVolumeSlider.Value)/100.00, (float)(EndVolumeSlider.Value) / 100.00));
 
                     // Removing the day just handled from the Queue
                     SurveyNavigationQueue.Dequeue();
@@ -118,14 +121,15 @@ namespace up_mobile
                     {
                         //Debug statements to make sure the data is being put into the SurveyData List correctly
                         Debug.WriteLine("Day: " + SubmissionData[i].Day);
-                        Debug.WriteLine("Lot: " + SubmissionData[i].ParkingLot);
+                        Debug.WriteLine("Lot: " + SubmissionData[i].Lot_id);
                         Debug.WriteLine("StartTime: " + SubmissionData[i].StartTime);
                         Debug.WriteLine("Start Volume: " + SubmissionData[i].StartVolume);
                         Debug.WriteLine("EndTime: " + SubmissionData[i].EndTime);                       
                         Debug.WriteLine("End Volume: " + SubmissionData[i].EndVolume);
                     }
 
-                    //await RestService.service.PostSurveyResults(SubmissionData);
+                    await RestService.service.PostSurveyResults(SubmissionData);
+                    await RestService.service.SetSurveyStatus();
 
                     await Navigation.PushAsync(new User());
                 }

@@ -107,15 +107,15 @@ namespace up_mobile
     public class SurveyData
     {
         public string Day { get; set; }
-        public string ParkingLot { get; set; }
+        public int Lot_id { get; set; }
         public string StartTime { get; set; }
         public string EndTime { get; set; }
         public double StartVolume { get; set; }
         public double EndVolume { get; set; }
-        public SurveyData(string day, string parkinglot, string starttime, string endtime, double startvolume, double endvolume)
+        public SurveyData(string day, int lot_id, string starttime, string endtime, double startvolume, double endvolume)
         {
             Day = day;
-            ParkingLot = parkinglot;
+            Lot_id = lot_id;
             StartTime = starttime;
             EndTime = endtime;
             StartVolume = startvolume;

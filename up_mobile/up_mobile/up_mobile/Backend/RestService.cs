@@ -21,7 +21,7 @@ namespace up_mobile.Backend
     {
         public CookieContainer cookies { set; get; }
         static HttpClient client = new HttpClient();
-        const string defaultBaseUri = "http://127.0.0.1:8080"; 
+        const string defaultBaseUri = "http://10.0.2.2:8080"; 
 
         public static RestService service = new RestService();
 
@@ -329,6 +329,11 @@ namespace up_mobile.Backend
             return uni;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceUri"></param>
+        /// <returns></returns>
         public async Task<bool> SeeSurveyStatus(string serviceUri = "/surveystatus")
         {
             bool b = false;
@@ -343,46 +348,6 @@ namespace up_mobile.Backend
             }
 
             return b;
-        }
-
-        /// <summary>
-        /// Generic method for performing an http post.
-        /// </summary>
-        /// <param name="uri">uri to access</param>
-        /// <param name="json">json content to be sent</param>
-        /// <returns></returns>
-        private static async Task<HttpResponseMessage> PerformPOST(Uri uri, string json)
-        {
-            HttpResponseMessage response = null;
-            try
-            {
-                var reqcontent = new StringContent(json, Encoding.UTF8, "application/json");
-                response = await client.PostAsync(uri, reqcontent);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-            return response;
-        }
-
-        /// <summary>
-        /// Generic method for performing an http get.
-        /// </summary>
-        /// <param name="uri">uri to access</param>
-        /// <returns></returns>
-        private static async Task<HttpResponseMessage> PerformGET(Uri uri)
-        {
-            HttpResponseMessage response = null;
-            try
-            {
-                response = await client.GetAsync(uri);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-            return response;
         }
 
         /// <summary>
@@ -422,12 +387,101 @@ namespace up_mobile.Backend
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="surveyList"></param>
+        /// <param name="serviceUri"></param>
+        /// <returns></returns>
         public async Task PostSurveyResults(List<SurveyData> surveyList, string serviceUri = "/surveyresults")
         {
             string json = JsonConvert.SerializeObject(surveyList);
 
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformPOST(uri, json);
+        }
+
+        public async Task<string> GetUsernameById(int in_id, string serviceUri = "/getuserbyid")
+        {
+            string name = null;
+
+            string json = JsonConvert.SerializeObject(new
+            {
+                id = in_id
+            });
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                name = JsonConvert.DeserializeObject<string>(rescontent);
+            }
+
+            return name; 
+        }
+
+        public async Task<ParkingPin> GetPinById(int in_id, string serviceUri = "/getuserbyid")
+        {
+            ParkingPin pin = null;
+
+            string json = JsonConvert.SerializeObject(new
+            {
+                id = in_id
+            });
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                pin = JsonConvert.DeserializeObject<ParkingPin>(rescontent);
+            }
+
+            return pin;
+        }
+
+
+        /// <summary>
+        /// Generic method for performing an http post.
+        /// </summary>
+        /// <param name="uri">uri to access</param>
+        /// <param name="json">json content to be sent</param>
+        /// <returns></returns>
+        private static async Task<HttpResponseMessage> PerformPOST(Uri uri, string json)
+        {
+            HttpResponseMessage response = null;
+            try
+            {
+                var reqcontent = new StringContent(json, Encoding.UTF8, "application/json");
+                response = await client.PostAsync(uri, reqcontent);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return response;
+        }
+
+        /// <summary>
+        /// Generic method for performing an http get.
+        /// </summary>
+        /// <param name="uri">uri to access</param>
+        /// <returns></returns>
+        private static async Task<HttpResponseMessage> PerformGET(Uri uri)
+        {
+            HttpResponseMessage response = null;
+            try
+            {
+                response = await client.GetAsync(uri);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return response;
         }
 
         /// <summary>

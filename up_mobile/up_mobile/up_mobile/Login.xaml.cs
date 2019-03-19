@@ -51,7 +51,6 @@ namespace up_mobile
             {
                 var surveyTaken = RestService.service.SeeSurveyStatus();
 
-                /*
                 //new stuff for permissions
                 var permissionGranted = await Permissions.RequestStoragePermission(this);
                 if (!permissionGranted)
@@ -60,7 +59,6 @@ namespace up_mobile
                 if (!permissionGranted)
                     return;
                 //
-                */
 
                 Helpers.Settings.TookNewUserSurvey = await surveyTaken;
                 Helpers.Settings.IsLoggedIn = true;
