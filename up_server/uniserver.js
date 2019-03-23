@@ -1,6 +1,6 @@
 //config file for storing private connection info
 const config = require('./config');
-//node js housekeeping, getting modules and making an express instance
+//node js housekeeping, getting modules
 const http = require('http');
 const express = require('express');
 const uuid = require('uuid/v4');
@@ -25,15 +25,6 @@ var dbconnection = mysql.createConnection({
   database : config.database.db,
 });
 dbconnection.connect();
-
-//custom function for translating mysql's rowdatapacket results into standard js objects
-function rdpToObj(rowObject) {
-  var result = {};
-  Object.keys(rowObject).forEach(function(key, index) {
-    result[key] = rowObject[key];
-  });
-  return result;
-}
 
 //configuring passport...
 //configure passport.js to use the local strategy
@@ -113,7 +104,7 @@ app.post('/register', function (req, res, next) { //need to dynamically set uni!
           dbconnection.query({sql: 'INSERT INTO `users`(name,pass,university_id) VALUES(?,?,?)',
           values: [newuser.email, newuser.password, uid]}, function (error, results, fields) {
             if (error) return next(error);
-            res.status(201).send('User created');
+            res.status(200).send('User created');
           });
         }
       });
@@ -141,9 +132,7 @@ app.get('/logout', requireAuth, function (req, res) {
   res.send('Logged out as ' + req.user.name);
 });
 
-//new and untested
 //get gps pins for given lot
-//updated
 app.post('/lotpins', function (req, res, next) { //lot_id has not been added to db yet...
   dbconnection.query('SELECT * FROM `gpsdata` WHERE `lot_id` = ?', req.body.lot_id, function (error, results, fields) {
     if (error) return next(error);
@@ -157,56 +146,6 @@ app.post('/lotpins', function (req, res, next) { //lot_id has not been added to 
     for (var i = 0; i < results.length; i++) {
       var pin = rdpToObj(results[i]);
       jsonobj.pins.push(pin);
-    }
-
-    res.json(jsonobj);
-  });
-});
-
-//working
-//send a new gps pin to db
-app.post('/newpin', requireAuth, function (req, res, next) {
-   var pin = req.body;
-   var volume = truncateDecimal(pin.volume, 2);
-   dbconnection.query({sql: 'INSERT INTO `gpsdata`(user_id,timestamp,longitude,latitude,lot_id,volume) VALUES(?,?,?,?,?,?)',
-   values: [req.user.id, new Date(), pin.longitude, pin.latitude, pin.lot_id, volume]}, function (error, results, fields) {
-     if (error) return next(error);
-   });
-   res.send('Pin added');
-});
-
-//determine current lot from gps data
-app.post('/findlot', function (req, res, next) {
-  var pos = req.body;
-  var acc = req.body.accuracy;
-  dbconnection.query('SELECT * FROM `lots` WHERE `min_lat` <= ? AND `max_lat` >= ? AND `min_long` <= ? AND `max_long` >= ?',
-  [pos. latitude, pos.latitude, pos.longitude, pos.longitude], function (error, results, fields) {
-    if (error) return next(error);
-
-    if (results.length == 0) return res.status(404).send('No lots');
-
-    var lot = results[0];
-    return res.json(rdpToObj(lot));
-
-    res.status(404).send('Lot was not found');
-  });
-});
-
-//get lot reports from lot id
-//may be removed later
-app.post('/getlotinfo', function (req, res, next) {
-  dbconnection.query('SELECT * FROM `lotdata` WHERE `id` = ?', req.body.lot_id, function (error, results, fields) {
-    if (error) return next(error);
-
-    if (results.length == 0) return res.status(404).send('Lot contains no reports');
-
-    var jsonobj = {
-      reports: []
-    };
-
-    for (var i = 0; i < results.length; i++) {
-      var report = rdpToObj(results[i]);
-      jsonobj.reports.push(report);
     }
 
     res.json(jsonobj);
@@ -233,31 +172,76 @@ app.get('/getmyunilots', requireAuth, function (req, res, next) {
   });
 });
 
-//new
+//send a new gps pin to db
+app.post('/newpin', requireAuth, function (req, res, next) {
+   var pin = req.body;
+   var volume = truncateDecimal(pin.volume, 2);
+   dbconnection.query({sql: 'INSERT INTO `gpsdata`(user_id,timestamp,longitude,latitude,lot_id,volume) VALUES(?,?,?,?,?,?)',
+   values: [req.user.id, new Date(), pin.longitude, pin.latitude, pin.lot_id, volume]}, function (error, results, fields) {
+     if (error) return next(error);
+   });
+   res.send('Pin added');
+});
+
+//determine current lot from gps data
+app.post('/findlot', function (req, res, next) {
+  var pos = req.body;
+  var acc = req.body.accuracy;
+  dbconnection.query('SELECT * FROM `lots` WHERE `min_lat` <= ? AND `max_lat` >= ? AND `min_long` <= ? AND `max_long` >= ?',
+  [pos. latitude, pos.latitude, pos.longitude, pos.longitude], function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(204).send('Not in a lot');
+
+    var lot = results[0];
+    return res.json(rdpToObj(lot));
+  });
+});
+
+//THE FOLLOWING NEEDS TO BE CHANGED!!
+//get lot reports from lot id
+app.post('/getlotinfo', function (req, res, next) {
+  dbconnection.query('SELECT * FROM `lotdata` WHERE `id` = ?', req.body.lot_id, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(204).send('Lot contains no reports');
+
+    var jsonobj = {
+      reports: []
+    };
+
+    for (var i = 0; i < results.length; i++) {
+      var report = rdpToObj(results[i]);
+      jsonobj.reports.push(report);
+    }
+
+    res.json(jsonobj);
+  });
+});
+
 //get university info for a specific user given their id
 app.post('/getuni', function (req, res, next) {
   dbconnection.query('SELECT `university_id` FROM `users` WHERE `id` = ?', req.body.user_id, function (error, results, fields) {
     if (error) return next(error);
 
-    if (results.length == 0) return res.status(404).send('No user with given id');
+    if (results.length == 0) return res.status(204).send('No user with given id');
 
     dbconnection.query('SELECT * FROM `universities` WHERE `id` = ?', results[0].university_id, function (error, results, fields) {
       if (error) return next(error);
 
-      if (results.length == 0) return res.status(404).send('No uni associated with uni id in user');
+      if (results.length == 0) return res.status(204).send('No uni associated with uni id in user');
 
       res.json(rdpToObj(results[0]));
     });
   });
 });
 
-//new
 //get university info for current user
 app.get('/myuni', requireAuth, function (req, res, next) {
   dbconnection.query('SELECT * FROM `universities` WHERE `id` = ?', req.user.university_id, function (error, results, fields) {
     if (error) return next(error);
 
-    if (results.length == 0) return res.status(404).send('No uni associated with uni id in user');
+    if (results.length == 0) return res.status(204).send('No uni associated with uni id in user');
 
     res.json(rdpToObj(results[0]));
   });
@@ -296,29 +280,7 @@ app.post('/vote', requireAuth, function (req, res, next) {
   }
 });
 
-//3/17
-app.post('/getpinbyid', requireAuth, function (req, res, next) {
-  var id = req.body.id;
-  dbconnection.query('SELECT * FROM `gpsdata` WHERE `id` = ?', id, function (error, results, fields) {
-    if (error) return next(error);
-
-    if (results.length == 0) return res.status(404).send('No pin');
-
-    res.json(rdpToObj(results[0]));
-  });
-});
-
-app.post('/getuserbyid', requireAuth, function (req, res, next) {
-  var id = req.body.id;
-  dbconnection.query('SELECT `name` FROM `users` WHERE `id` = ?', id, function (error, results, fields) {
-    if (error) return next(error);
-
-    if (results.length == 0) return res.status(404).send('No user');
-
-    res.json(results[0].name);
-  });
-});
-
+//input survey results into survey table
 app.post('/surveyresults', requireAuth, function (req, res, next) {
   var myArr = req.body;
   console.log(myArr);
@@ -354,12 +316,49 @@ app.post('/surveyresults', requireAuth, function (req, res, next) {
   res.send("Survey recieved");
 });
 
+//untested
+//return a username based on user id
+app.post('/getuserbyid', requireAuth, function (req, res, next) {
+  var id = req.body.id;
+  dbconnection.query('SELECT `name` FROM `users` WHERE `id` = ?', id, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(204).send('No user');
+
+    res.json(results[0].name);
+  });
+});
+
+//return a gps pin obj based on pin id
+app.post('/getpinbyid', requireAuth, function (req, res, next) {
+  var id = req.body.id;
+  dbconnection.query('SELECT * FROM `gpsdata` WHERE `id` = ?', id, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(204).send('No pin');
+
+    res.json(rdpToObj(results[0]));
+  });
+});
+//end of routes
+
+//custom function for translating mysql's rowdatapacket results into standard js objects
+function rdpToObj(rowObject) {
+  var result = {};
+  Object.keys(rowObject).forEach(function(key, index) {
+    result[key] = rowObject[key];
+  });
+  return result;
+}
+
+//custom function for cutting off extra decimals
 function truncateDecimal(num, fixed) {
     var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
     var str = num.toString().match(re)[0];
     return parseFloat(str);
 }
 
+//custom function for getting previous full calandar week as dates
 function previousCalendarWeek(){
   var d0 = new Date();
   d0.setDate(d0.getDate() - d0.getDay() - 7);
