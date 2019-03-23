@@ -25,7 +25,6 @@ namespace up_mobile.Backend
 
         public static RestService service = new RestService();
 
-        //Constructors will be altered when this class is converted to static
         private RestService()
         {
             if (Application.Current.Properties.ContainsKey("Cookies") && Application.Current.Properties["Cookies"] != null)
@@ -171,7 +170,13 @@ namespace up_mobile.Backend
             return ph;
         }
 
-        //get lots by current user university id
+        /// <summary>
+        /// Uses the id of the currently logged in user to determine university id and then uses that to return
+        /// a lotholder object filled with the lots associated with the user's university. If the university
+        /// id is wrong or the university has no lots, the lotholder object will be empty.
+        /// </summary>
+        /// <param name="serviceUri"></param>
+        /// <returns>lotholder object with an array of parking lot objects</returns>
         public async Task<LotHolder> GetMyUniLots(string serviceUri = "/getmyunilots")
         {
             LotHolder lh = new LotHolder();
@@ -241,7 +246,7 @@ namespace up_mobile.Backend
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformPOST(uri, json);
 
-            if (response.IsSuccessStatusCode)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 var rescontent = await response.Content.ReadAsStringAsync();
                 pl = JsonConvert.DeserializeObject<ParkingLot>(rescontent);
@@ -250,6 +255,8 @@ namespace up_mobile.Backend
             return pl;
         }
 
+        /// THE FOLLOWING REQUEST WAS MADE BEFORE THE LOT DATA TABLE'S PURPOSE WAS DECIDED, THIS REQUEST
+        /// SHOULD NOT BE USED AS IT IS LIKELY PERFORMING STRANGE MEANINGLESS TASKS AT THE MOMENT!
         /// <summary>
         /// Returns a reportholder containing all the parking reports for a lot with a given id. Performs an
         /// http post and returns lotdata rows which match the lot id in the form of parkingreport objects
@@ -270,7 +277,7 @@ namespace up_mobile.Backend
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformPOST(uri, json);
 
-            if (response.IsSuccessStatusCode)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 var rescontent = await response.Content.ReadAsStringAsync();
                 rh = JsonConvert.DeserializeObject<ReportHolder>(rescontent);
@@ -298,7 +305,7 @@ namespace up_mobile.Backend
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformPOST(uri, json);
 
-            if (response.IsSuccessStatusCode)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 var rescontent = await response.Content.ReadAsStringAsync();
                 uni = JsonConvert.DeserializeObject<University>(rescontent);
@@ -320,7 +327,7 @@ namespace up_mobile.Backend
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformGET(uri);
 
-            if (response.IsSuccessStatusCode)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 var rescontent = await response.Content.ReadAsStringAsync();
                 uni = JsonConvert.DeserializeObject<University>(rescontent);
@@ -330,10 +337,10 @@ namespace up_mobile.Backend
         }
 
         /// <summary>
-        /// 
+        /// Peaks at the currently logged in user's survey status through an HTTP get
         /// </summary>
-        /// <param name="serviceUri"></param>
-        /// <returns></returns>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
+        /// <returns>a bool indicating if they have taken the survey, 1 = yes</returns>
         public async Task<bool> SeeSurveyStatus(string serviceUri = "/surveystatus")
         {
             bool b = false;
@@ -351,9 +358,10 @@ namespace up_mobile.Backend
         }
 
         /// <summary>
-        /// 
+        /// Sets the currently logged in user's survey status to true, indicating that the
+        /// survey has been completed
         /// </summary>
-        /// <param name="serviceUri"></param>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns></returns>
         public async Task SetSurveyStatus(string serviceUri = "/surveyset")
         {
@@ -362,7 +370,9 @@ namespace up_mobile.Backend
         }
 
         /// <summary>
-        /// 
+        /// Uses a pin id and an int to cast a vote on the pin with said id. The vote int
+        /// can be positive or negative, with the sign indicating it is an upvote or a downvote.
+        /// Performs an HTTP post to place the votes on the pin within the database.
         /// </summary>
         /// <param name="in_pin_id"></param>
         /// <param name="in_vote"></param>
@@ -388,10 +398,12 @@ namespace up_mobile.Backend
         }
 
         /// <summary>
-        /// 
+        /// Takes a list of filled survey data objects in a http post request and translates them 
+        /// into rows for the survey data table. Currently does not respond with the success of the
+        /// post or handle any http status codes for errors
         /// </summary>
-        /// <param name="surveyList"></param>
-        /// <param name="serviceUri"></param>
+        /// <param name="surveyList">a list of filled survey data objects, representing the user's answers</param>
+        /// <param name="serviceUri">uri fragment indicating a particular service</param>>
         /// <returns></returns>
         public async Task PostSurveyResults(List<SurveyData> surveyList, string serviceUri = "/surveyresults")
         {
@@ -401,6 +413,7 @@ namespace up_mobile.Backend
             HttpResponseMessage response = await PerformPOST(uri, json);
         }
 
+        //UNTESTED
         public async Task<string> GetUsernameById(int in_id, string serviceUri = "/getuserbyid")
         {
             string name = null;
@@ -413,7 +426,7 @@ namespace up_mobile.Backend
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformPOST(uri, json);
 
-            if (response.IsSuccessStatusCode)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 var rescontent = await response.Content.ReadAsStringAsync();
                 name = JsonConvert.DeserializeObject<string>(rescontent);
@@ -422,6 +435,7 @@ namespace up_mobile.Backend
             return name; 
         }
 
+        //UNTESTED
         public async Task<ParkingPin> GetPinById(int in_id, string serviceUri = "/getuserbyid")
         {
             ParkingPin pin = null;
@@ -434,7 +448,7 @@ namespace up_mobile.Backend
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformPOST(uri, json);
 
-            if (response.IsSuccessStatusCode)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 var rescontent = await response.Content.ReadAsStringAsync();
                 pin = JsonConvert.DeserializeObject<ParkingPin>(rescontent);
