@@ -92,10 +92,9 @@ app.use(passport.session());
 
 //routing for web services starts here!
 //register
-app.post('/register', function (req, res, next) { //need to dynamically set uni!!
+app.post('/register', function (req, res, next) {
   var newuser = req.body;
   var unimail = newuser.email.substring(newuser.email.indexOf('@')+1, newuser.email.length)
-  console.log(unimail);
 
   dbconnection.query('SELECT `id` FROM `universities` WHERE `email` = ?', unimail, function (error, results, fields) {
     if (error) return next(error);
@@ -103,7 +102,6 @@ app.post('/register', function (req, res, next) { //need to dynamically set uni!
       res.status(400).send('Not a valid university email');
     else {
       var uid = results[0].id;
-
 
       dbconnection.query('SELECT * FROM `users` WHERE `name` = ?', newuser.email, function (error, results, fields) { //checks if this email already exists in db
         if (error) return next(error);
@@ -113,6 +111,7 @@ app.post('/register', function (req, res, next) { //need to dynamically set uni!
           dbconnection.query({sql: 'INSERT INTO `users`(name,pass,university_id) VALUES(?,?,?)',
           values: [newuser.email, newuser.password, uid]}, function (error, results, fields) {
             if (error) return next(error);
+            console.log("New user registered: "+newuser.email)
             res.status(200).send('User created');
           });
         }
@@ -138,6 +137,7 @@ app.post('/login', function (req, res, next) {
 //logout
 app.get('/logout', requireAuth, function (req, res) {
   req.session.destroy();
+  console.log(req.user.name+" logged out");
   res.send('Logged out as ' + req.user.name);
 });
 
@@ -200,7 +200,7 @@ app.post('/findlot', function (req, res, next) {
   [pos. latitude, pos.latitude, pos.longitude, pos.longitude], function (error, results, fields) {
     if (error) return next(error);
 
-    if (results.length == 0) return res.status(204).send('Not in a lot');
+    if (results.length == 0) return res.status(404).send('Not in a lot');
 
     var lot = results[0];
     return res.json(rdpToObj(lot));
@@ -213,7 +213,7 @@ app.post('/getlotinfo', function (req, res, next) {
   dbconnection.query('SELECT * FROM `lotdata` WHERE `id` = ?', req.body.lot_id, function (error, results, fields) {
     if (error) return next(error);
 
-    if (results.length == 0) return res.status(204).send('Lot contains no reports');
+    if (results.length == 0) return res.status(404).send('Lot contains no reports');
 
     var jsonobj = {
       reports: []
@@ -233,12 +233,12 @@ app.post('/getuni', function (req, res, next) {
   dbconnection.query('SELECT `university_id` FROM `users` WHERE `id` = ?', req.body.user_id, function (error, results, fields) {
     if (error) return next(error);
 
-    if (results.length == 0) return res.status(204).send('No user with given id');
+    if (results.length == 0) return res.status(404).send('No user with given id');
 
     dbconnection.query('SELECT * FROM `universities` WHERE `id` = ?', results[0].university_id, function (error, results, fields) {
       if (error) return next(error);
 
-      if (results.length == 0) return res.status(204).send('No uni associated with uni id in user');
+      if (results.length == 0) return res.status(404).send('No uni associated with uni id in user');
 
       res.json(rdpToObj(results[0]));
     });
@@ -250,7 +250,7 @@ app.get('/myuni', requireAuth, function (req, res, next) {
   dbconnection.query('SELECT * FROM `universities` WHERE `id` = ?', req.user.university_id, function (error, results, fields) {
     if (error) return next(error);
 
-    if (results.length == 0) return res.status(204).send('No uni associated with uni id in user');
+    if (results.length == 0) return res.status(404).send('No uni associated with uni id in user');
 
     res.json(rdpToObj(results[0]));
   });
@@ -292,7 +292,6 @@ app.post('/vote', requireAuth, function (req, res, next) {
 //input survey results into survey table
 app.post('/surveyresults', requireAuth, function (req, res, next) {
   var myArr = req.body;
-  console.log(myArr);
   var dates = previousCalendarWeek();
 
   for (var i = 0; i < myArr.length; i++) {
@@ -332,21 +331,48 @@ app.post('/getuserbyid', requireAuth, function (req, res, next) {
   dbconnection.query('SELECT `name` FROM `users` WHERE `id` = ?', id, function (error, results, fields) {
     if (error) return next(error);
 
-    if (results.length == 0) return res.status(204).send('No user');
+    if (results.length == 0) return res.status(404).send('No user');
 
     res.json(results[0].name);
   });
 });
 
+//untested
 //return a gps pin obj based on pin id
 app.post('/getpinbyid', requireAuth, function (req, res, next) {
   var id = req.body.id;
   dbconnection.query('SELECT * FROM `gpsdata` WHERE `id` = ?', id, function (error, results, fields) {
     if (error) return next(error);
 
-    if (results.length == 0) return res.status(204).send('No pin');
+    if (results.length == 0) return res.status(404).send('No pin');
 
     res.json(rdpToObj(results[0]));
+  });
+});
+
+//determine current lot from gps data and lot polygons
+app.post('/findlotpoly', function (req, res, next) {
+  var pos = req.body;
+
+  var userVec = Vec2(pos.longitude, pos.latitude);
+  console.log("Finding lot for user at "+userVec);
+  var lot_id = "";
+
+  Object.keys(polygonsObj).some(function(key, index) {
+    if (polygonsObj[key].containsPoint(userVec)) {
+      lot_id = key;
+      return true;
+    } else return false;
+  });
+
+  dbconnection.query('SELECT * FROM `lots` WHERE `id` = ?', lot_id, function (error, results, fields) {
+    if (error) return next(error);
+
+    if (results.length == 0) return res.status(404).send('Not in a lot');
+
+    var lot = results[0];
+    console.log("---User parked in "+lot.lot_name);
+    return res.json(rdpToObj(lot));
   });
 });
 //end of routes
@@ -405,14 +431,13 @@ function createLotPolygons(university_id){
           p.insert(Vec2(results[k].longitude, results[k].latitude), k)
         }
 
-        console.log(p);
-        polygonsObj[row.lot_name] = p;
+        //console.log(p);
+        polygonsObj[row.id] = p;
         callback();
       });
 
     }, function () {
       console.log("Finished creating lot polygons");
-      //console.log(polygonsObj["P43"]);
     });
   });
 }
