@@ -8,6 +8,11 @@ const session = require('express-session');
 const passport = require('passport');
 const FileStore = require('session-file-store')(session);
 const LocalStrategy = require('passport-local').Strategy;
+//additional modules after 3/22
+const Polygon = require('polygon');
+const Vec2 = require('vec2');
+const async = require('async');
+
 //make main express instance
 const app = express();
 
@@ -25,6 +30,10 @@ var dbconnection = mysql.createConnection({
   database : config.database.db,
 });
 dbconnection.connect();
+
+//persistant server variables
+var polygonsObj = {};
+createLotPolygons(2); //updates polygonsObj
 
 //configuring passport...
 //configure passport.js to use the local strategy
@@ -342,6 +351,7 @@ app.post('/getpinbyid', requireAuth, function (req, res, next) {
 });
 //end of routes
 
+//functions
 //custom function for translating mysql's rowdatapacket results into standard js objects
 function rdpToObj(rowObject) {
   var result = {};
@@ -377,6 +387,34 @@ function previousCalendarWeek(){
 
   var dates = {"Sunday": d0, "Monday": d1, "Tuesday": d2, "Wednesday": d3, "Thursday": d4, "Friday": d5, "Saturday": d6};
   return dates;
+}
+
+function createLotPolygons(university_id){
+  dbconnection.query('SELECT * FROM `lots` WHERE `university_id` = ?', university_id, function (error, results, fields) {
+    if (error) return next(error);
+
+    async.each(results, function (row, callback) {
+
+      dbconnection.query('SELECT * FROM `lotcoords` WHERE `lot_id` = ?', row.id, function (error, results, fields) {
+        if (error) return next(error);
+
+        console.log("Creating polygon for " + row.lot_name);
+        var p = new Polygon();
+
+        for (var k = 0; k < results.length; k++) {
+          p.insert(Vec2(results[k].longitude, results[k].latitude), k)
+        }
+
+        console.log(p);
+        polygonsObj[row.lot_name] = p;
+        callback();
+      });
+
+    }, function () {
+      console.log("Finished creating lot polygons");
+      //console.log(polygonsObj["P43"]);
+    });
+  });
 }
 
 //finally, make our https server and listen for requests
