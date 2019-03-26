@@ -9,6 +9,7 @@
   "author": "OU Uni-Park Team",
   "license": "ISC",
   "dependencies": {
+    "@google/maps": "^0.5.5",
     "async": "^2.6.2",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
