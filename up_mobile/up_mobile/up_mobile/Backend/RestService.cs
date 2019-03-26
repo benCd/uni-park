@@ -457,6 +457,22 @@ namespace up_mobile.Backend
             return pin;
         }
 
+        public async Task<Dictionary<string, Polygon>> GetLotPolygons(int in_id, string serviceUri = "/getpolylots")
+        {
+            Dictionary<string, Polygon> dictionary = null;
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformGET(uri);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                dictionary = JsonConvert.DeserializeObject<Dictionary<string, Polygon>>(rescontent);
+            }
+
+            return dictionary;
+        }
+
 
         /// <summary>
         /// Generic method for performing an http post.
