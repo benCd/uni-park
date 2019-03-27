@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Android.Content;
 using Android.Gms.Maps;
-using Android.Widget;
 using up_mobile.Droid.DroidMapUtils;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
 using up_mobile.Map.Utils;
 using Android.Gms.Maps.Model;
-using up_mobile.Backend;
 using Rg.Plugins.Popup.Services;
+using System;
 
 [assembly: ExportRenderer(typeof(LotMap), typeof(DroidCustomMapRenderer))]
 namespace up_mobile.Droid.DroidMapUtils
@@ -21,6 +19,7 @@ namespace up_mobile.Droid.DroidMapUtils
     public class DroidCustomMapRenderer : MapRenderer//, GoogleMap.IInfoWindowAdapter
     {
         List<ParkingPin> parkingPins;
+        List<MapPolygon> mapPolygons;
 
         GoogleMap googleMap;
 
@@ -43,6 +42,7 @@ namespace up_mobile.Droid.DroidMapUtils
             {
                 formsMap = (LotMap)e.NewElement;
                 parkingPins = formsMap.ParkingPins;
+                mapPolygons = formsMap.MapPolygons;
                 Control.GetMapAsync(this);
             }
             System.Diagnostics.Debug.Write("Exiting OnElementChanged in DroidCustomMapRenderer");
@@ -51,14 +51,16 @@ namespace up_mobile.Droid.DroidMapUtils
         
         protected override void OnMapReady(GoogleMap map)
         {
-            base.OnMapReady(map);
+            System.Diagnostics.Debug.Write("Calling OnMapReady in DroidCustomMapRenderer");
 
+            base.OnMapReady(map);
 
             googleMap = map;
 
             googleMap.MarkerClick += OnMarkerClicked;
 
-            System.Diagnostics.Debug.Write("Calling OnMapReady in DroidCustomMapRenderer");
+            foreach (MapPolygon poly in mapPolygons)
+                NativeMap.AddPolygon(CreatePolygon(poly));
 
             System.Diagnostics.Debug.Write("Exiting OnMapReady in DroidCustomMapRenderer");
         }
@@ -78,6 +80,26 @@ namespace up_mobile.Droid.DroidMapUtils
             marker.SetSnippet(pp.Label);
             marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.pin));
             return marker;
+        }
+
+        /// <summary>
+        /// Method creating <see cref="PolygonOptions"/> to be added to the map
+        /// </summary>
+        /// <returns></returns>
+        protected PolygonOptions CreatePolygon(MapPolygon polygon)
+        {
+            var options = new PolygonOptions();
+
+            foreach (Position pos in polygon.Points)
+                options.Add(new LatLng(pos.Latitude, pos.Latitude));
+
+            var colour = ColorMapper.MapPercentageToRGB(polygon.Percentage);
+            var hex = String.Format("0X{0:X2}{1:X2}{2:X2}{3:X2}", 120, colour.R, colour.G, colour.B);
+
+            options.InvokeFillColor(Convert.ToInt32(hex, 16));
+            options.InvokeStrokeColor(0X000000);
+
+            return options;
         }
 
         /// <summary>

@@ -59,7 +59,8 @@ namespace up_mobile
                     HasScrollEnabled = false,
                     HasZoomEnabled = true,
                     MapType = MapType.Satellite,
-                    ParkingPins = new List<Map.Utils.ParkingPin>()
+                    ParkingPins = new List<Map.Utils.ParkingPin>(),
+                    MapPolygons = new List<MapPolygon>()
                 };
 
             Stack = new StackLayout { Spacing = 0 };
@@ -89,6 +90,9 @@ namespace up_mobile
                 );
         }
 
+        /// <summary>
+        /// Map initialiser
+        /// </summary>
         public async static void InitMap()
         {
             await EnsureLots().ContinueWith(t =>
@@ -99,6 +103,10 @@ namespace up_mobile
             
         }
 
+        /// <summary>
+        /// Ensures that all lots are loaded properly
+        /// </summary>
+        /// <returns>Task</returns>
         private static async Task EnsureLots()
         {
             Debug.Write("Entering ensureLots()!");
@@ -139,6 +147,15 @@ namespace up_mobile
                     
             });
             Debug.Write("Exiting SetPins!");
+        }
+
+        /// <summary>
+        /// Refreshes polygons currently displayed in the map
+        /// </summary>
+        /// <returns>Task</returns>
+        private static async Task RefreshPolys()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -186,6 +203,10 @@ namespace up_mobile
             await SetPins(CurrentLotID);
         }
 
+        /// <summary>
+        /// Opens the info page for a selected pin
+        /// </summary>
+        /// <param name="pin">Pin for which the info page is supposed to be loaded</param>
         public static async void BringUpPinInfo(Map.Utils.ParkingPin pin)
         {
             await PopupNavigation.Instance.PushAsync(new PinInfo(pin));
