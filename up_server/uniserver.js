@@ -12,9 +12,6 @@ const LocalStrategy = require('passport-local').Strategy;
 const Polygon = require('polygon');
 const Vec2 = require('vec2');
 const async = require('async');
-const googleMapsClient = require('@google/maps').createClient({
-  key: config.gkay
-});
 
 //make main express instance
 const app = express();
@@ -383,42 +380,6 @@ app.post('/findlotpoly', function (req, res, next) {
 app.get('/getpolylots', function (req, res, next) {
     res.json(polygonsObj);
 });
-
-//NEEDS TO NOT CONTAIN HARDCODED VARIABLES
-app.post('/walkingdistance', function (req, res, next) {
-	var destinationAddress = "";
-	var originCoords = "";
-
-  dbconnection.query('SELECT `address` FROM `destinations` WHERE `building_id` = 1', function (error, results, fields) {
-		if (error) return next(error);
-		destinationAddress = results[0];
-
-    console.log("Destination Address: " + destinationAddress);
-
-    dbconnection.query('SELECT * FROM `lots` WHERE `id` = 8', function (error, results, fields) {
-      if (error) return next(error);
-      originCoords += results[0].center_lat;
-      originCoords += ',';
-      originCoords += results[0].center_long;
-
-      console.log("Origin Point Coordinates: " + originCoords);
-
-      // Call to Google Maps API plugin for their Distance Matrix API
-      googleMapsClient.distanceMatrix
-      ({
-        origins: originCoords,
-        destinations: destinationAddress,
-        units: 'imperial',
-        mode: 'walking'
-      }, function(err, response){
-        if (!err) {
-          //console.log(JSON.stringify(response));
-          res.json(response);
-        }
-      });
-    });
-	});
-});
 //end of routes
 
 //functions
@@ -472,7 +433,7 @@ function createLotPolygons(university_id){
         var p = new Polygon();
 
         for (var k = 0; k < results.length; k++) {
-          p.insert(Vec2(results[k].longitude, results[k].latitude), k)
+          p.insert(Vec2(results[k].longitude, results[k].latitude), results[k].point_order);
         }
 
         //console.log(p);
