@@ -13,5 +13,16 @@ namespace up_mobile.Models
             public double X { get; set; }
             public double Y { get; set; }
         }
+
+        public string pointString()
+        {
+            string pointStr = "";
+            for(int i = 0; i < Points.Length; i++)
+            {
+                pointStr += "X"+i+": " + Points[i].X + " Y"+i+":" + Points[i].Y+" // ";
+            }
+
+            return pointStr;
+        }
     }
 }

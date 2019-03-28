@@ -457,9 +457,9 @@ namespace up_mobile.Backend
             return pin;
         }
 
-        public async Task<Dictionary<string, Polygon>> GetLotPolygons(int in_id, string serviceUri = "/getpolylots")
+        public async Task<Dictionary<int, Polygon>> GetLotPolygons(string serviceUri = "/getpolylots")
         {
-            Dictionary<string, Polygon> dictionary = null;
+            Dictionary<int, Polygon> dictionary = null;
 
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformGET(uri);
@@ -467,7 +467,7 @@ namespace up_mobile.Backend
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var rescontent = await response.Content.ReadAsStringAsync();
-                dictionary = JsonConvert.DeserializeObject<Dictionary<string, Polygon>>(rescontent);
+                dictionary = JsonConvert.DeserializeObject<Dictionary<int, Polygon>>(rescontent);
             }
 
             return dictionary;
