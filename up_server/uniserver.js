@@ -380,6 +380,13 @@ app.post('/findlotpoly', function (req, res, next) {
 app.get('/getpolylots', function (req, res, next) {
     res.json(polygonsObj);
 });
+
+app.post('/fcmtoken', function (req, res, next) {
+  var token = req.body.token;
+  console.log("Got an FCM instance id: ");
+  console.log(token);
+  res.send();
+});
 //end of routes
 
 //functions
