@@ -99,6 +99,8 @@ namespace up_mobile.Droid.DroidMapUtils
             options.InvokeFillColor(Convert.ToInt32(hex, 16));
             options.InvokeStrokeColor(0X000000);
 
+            options.Clickable(true);
+
             return options;
         }
 

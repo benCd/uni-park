@@ -69,6 +69,12 @@ namespace up_mobile
 
             Stack.Children.Add(map);
 
+            var buttonHolder = new StackLayout()
+            {
+                Orientation = StackOrientation.Horizontal,
+                
+            };
+
             var buttonToBringUpMapMenu = new Button()
             {
                 Text = "Select a lot!"
@@ -76,7 +82,19 @@ namespace up_mobile
 
             buttonToBringUpMapMenu.Clicked += BringUpLotMenu;
 
-            Stack.Children.Add(buttonToBringUpMapMenu);
+            buttonHolder.Children.Add(buttonToBringUpMapMenu);
+
+            var openLotInfo = new Button()
+            {
+                Text = "Info"
+            };
+
+            openLotInfo.Clicked += BringUpLotInfo;
+
+            buttonHolder.Children.Add(openLotInfo);
+
+            Stack.Children.Add(buttonHolder);
+
             Debug.Write("Added Map");
             Content = Stack;
 
@@ -192,6 +210,11 @@ namespace up_mobile
         public async void BringUpLotMenu(object sender, EventArgs args)
         {
             await PopupNavigation.Instance.PushAsync(MapM);
+        }
+
+        public async void BringUpLotInfo(object sender, EventArgs args)
+        {
+            await PopupNavigation.Instance.PushAsync(new LotInfo(CurrentLotID));
         }
 
         /// <summary>
