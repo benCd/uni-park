@@ -7,6 +7,8 @@ using System.Diagnostics;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using up_mobile.Backend;
+using up_mobile.Models;
 
 namespace up_mobile
 {
@@ -28,12 +30,38 @@ namespace up_mobile
         List<SurveyData> SubmissionData = new List<SurveyData>();
 
         /// <summary>
-        /// Loads SurveyPage  page
+        /// Holds all the university lot objects that will be used for the picker
         /// </summary>
+        static LotHolder pageLots;
+
+        Dictionary<String, int> lotValuePair = new Dictionary<string, int>();
+
+        /// <summary>
+        /// Loads SurveyPage  page
+        /// </summary
 		public SurveyPage (Queue<String> q, List<SurveyData> s)
 		{
             SurveyNavigationQueue = q;
             SubmissionData = s;
+
+            
+            getPageLots().ContinueWith(
+                t =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        var lotList = new List<string>();
+                        foreach (ParkingLot lot in pageLots.Lots)
+                        { 
+                            lotList.Add(lot.Lot_Name);
+                            lotValuePair.Add(lot.Lot_Name, lot.Id);
+                        }
+
+                        LotSelection.ItemsSource = lotList;
+                    });
+                }
+            );
+            
 
             /// <remarks>
             /// If something is still remaining in the Queue it sets the next thing 
@@ -46,6 +74,11 @@ namespace up_mobile
 
 			InitializeComponent ();
 		}
+
+        public async Task getPageLots()
+        {
+            pageLots = await RestService.service.GetMyUniLots();
+        }
 
         /// <summary>
         /// When the Submit button on SurveyPage page 
@@ -66,7 +99,7 @@ namespace up_mobile
                 if (SurveyNavigationQueue.Count() > 0)
                 {
                     // Adding the data submitted to the List of SurveyData objects
-                    SubmissionData.Add(new SurveyData(SurveyNavigationQueue.Peek(), LotSelection.SelectedItem.ToString(), StartTime.Time.ToString(), EndTime.Time.ToString(), (float)(StartVolumeSlider.Value)/100.00, (float)(EndVolumeSlider.Value) / 100.00));
+                    SubmissionData.Add(new SurveyData(SurveyNavigationQueue.Peek(), lotValuePair[LotSelection.SelectedItem.ToString()], StartTime.Time.ToString(), EndTime.Time.ToString(), (float)(StartVolumeSlider.Value)/100.00, (float)(EndVolumeSlider.Value) / 100.00));
 
                     // Removing the day just handled from the Queue
                     SurveyNavigationQueue.Dequeue();
@@ -88,12 +121,15 @@ namespace up_mobile
                     {
                         //Debug statements to make sure the data is being put into the SurveyData List correctly
                         Debug.WriteLine("Day: " + SubmissionData[i].Day);
-                        Debug.WriteLine("Lot: " + SubmissionData[i].ParkingLot);
+                        Debug.WriteLine("Lot: " + SubmissionData[i].Lot_id);
                         Debug.WriteLine("StartTime: " + SubmissionData[i].StartTime);
                         Debug.WriteLine("Start Volume: " + SubmissionData[i].StartVolume);
                         Debug.WriteLine("EndTime: " + SubmissionData[i].EndTime);                       
                         Debug.WriteLine("End Volume: " + SubmissionData[i].EndVolume);
                     }
+
+                    await RestService.service.PostSurveyResults(SubmissionData);
+                    await RestService.service.SetSurveyStatus();
 
                     await Navigation.PushAsync(new User());
                 }
