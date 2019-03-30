@@ -32,7 +32,6 @@ namespace up_mobile
         /// </summary>
         public static int CurrentLotID { set; get; } = 0;
 
-
         private static MapMenu MapM;
 
         private StackLayout Stack;
@@ -60,7 +59,8 @@ namespace up_mobile
                     HasScrollEnabled = false,
                     HasZoomEnabled = true,
                     MapType = MapType.Satellite,
-                    ParkingPins = new List<Map.Utils.ParkingPin>()
+                    ParkingPins = new List<Map.Utils.ParkingPin>(),
+                    MapPolygons = new List<MapPolygon>()
                 };
 
             Stack = new StackLayout { Spacing = 0 };
@@ -69,6 +69,12 @@ namespace up_mobile
 
             Stack.Children.Add(map);
 
+            var buttonHolder = new StackLayout()
+            {
+                Orientation = StackOrientation.Horizontal,
+                
+            };
+
             var buttonToBringUpMapMenu = new Button()
             {
                 Text = "Select a lot!"
@@ -76,7 +82,19 @@ namespace up_mobile
 
             buttonToBringUpMapMenu.Clicked += BringUpLotMenu;
 
-            Stack.Children.Add(buttonToBringUpMapMenu);
+            buttonHolder.Children.Add(buttonToBringUpMapMenu);
+
+            var openLotInfo = new Button()
+            {
+                Text = "Info"
+            };
+
+            openLotInfo.Clicked += BringUpLotInfo;
+
+            buttonHolder.Children.Add(openLotInfo);
+
+            Stack.Children.Add(buttonHolder);
+
             Debug.Write("Added Map");
             Content = Stack;
 
@@ -90,9 +108,12 @@ namespace up_mobile
                 );
         }
 
-        public static void InitMap()
+        /// <summary>
+        /// Map initialiser
+        /// </summary>
+        public async static void InitMap()
         {
-            EnsureLots().ContinueWith(t =>
+            await EnsureLots().ContinueWith(t =>
             {
                 MoveToLot(lotholder.Lots[0].Id);
                 MapM.Populate();
@@ -100,23 +121,26 @@ namespace up_mobile
             
         }
 
+        /// <summary>
+        /// Ensures that all lots are loaded properly
+        /// </summary>
+        /// <returns>Task</returns>
         private static async Task EnsureLots()
         {
             Debug.Write("Entering ensureLots()!");
+            /*
+            
             if (!Application.Current.Properties.ContainsKey("UniversityLots"))
                 Application.Current.Properties.Add("UniversityLots", await RestService.service.GetMyUniLots());
             else
             {
                 Debug.Write("Setting UniversityLots Property");
                 Application.Current.Properties["UniversityLots"] = await RestService.service.GetMyUniLots();
-
             }
-                
+            */    
+            
 
             lotholder = await RestService.service.GetMyUniLots();
-
-            foreach (ParkingLot lot in ((LotHolder)Application.Current.Properties["UniversityLots"]).Lots)
-                Debug.Write(lot.Lot_Name);
 
             Debug.Write("Finished Lot adding continuing!");
         }
@@ -135,9 +159,21 @@ namespace up_mobile
                 map.Pins.Clear();
                 map.ParkingPins = pins;
                 foreach (Map.Utils.ParkingPin pin in pins)
+                {
                     map.Pins.Add(pin);
+                }
+                    
             });
             Debug.Write("Exiting SetPins!");
+        }
+
+        /// <summary>
+        /// Refreshes polygons currently displayed in the map
+        /// </summary>
+        /// <returns>Task</returns>
+        private static async Task RefreshPolys()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -161,7 +197,7 @@ namespace up_mobile
                 var span = MapSpan.FromCenterAndRadius(position, radius);
                 Device.BeginInvokeOnMainThread(() => { map.MoveToRegion(span); });
                 CurrentLotID = IDVal;
-                SetPins(CurrentLotID);
+                await SetPins(CurrentLotID);
             }
         }
 
@@ -176,13 +212,27 @@ namespace up_mobile
             await PopupNavigation.Instance.PushAsync(MapM);
         }
 
+        public async void BringUpLotInfo(object sender, EventArgs args)
+        {
+            await PopupNavigation.Instance.PushAsync(new LotInfo(CurrentLotID));
+        }
+
         /// <summary>
         /// Updates the pins in the current parkinglot
         /// </summary>
         /// <returns>NOTHING!</returns>
         public static async Task UpdatePins()
         {
-            SetPins(CurrentLotID);
+            await SetPins(CurrentLotID);
+        }
+
+        /// <summary>
+        /// Opens the info page for a selected pin
+        /// </summary>
+        /// <param name="pin">Pin for which the info page is supposed to be loaded</param>
+        public static async void BringUpPinInfo(Map.Utils.ParkingPin pin)
+        {
+            await PopupNavigation.Instance.PushAsync(new PinInfo(pin));
         }
 
 	}

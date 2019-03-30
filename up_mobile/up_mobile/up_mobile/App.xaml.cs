@@ -82,32 +82,19 @@ namespace up_mobile
                 MessagingCenter.Send<Messages.ExecuteScheduleMessage>(message, "ExecuteScheduleMessage");
             }
 
-            // If user has not been online in one week clear the user_id
-            if(App.Current.Properties.ContainsKey("last_online") && App.Current.Properties.ContainsKey("last_opened"))
-                if (DateTime.Today.Subtract((DateTime)App.Current.Properties["last_online"]).TotalDays > 7 ||
-                    DateTime.Today.Subtract((DateTime)App.Current.Properties["last_opened"]).TotalDays > 21)
-                {
-                    App.Current.Properties["user_id"] = -1;
-                }
-
-            if (App.Current.Properties.ContainsKey("user_id") && (int)App.Current.Properties["user_id"] < 0)
-            {
-                //PROMPT TO LOGINZ
-            }
-
             if (App.Current.Properties.ContainsKey("Cookies"))
                 RestService.service.cookies = App.Current.Properties["Cookies"] as System.Net.CookieContainer;
 
-            if (App.Current.Properties.ContainsKey("UniversityLots"))
-                MapContentPage.lotholder = (Models.LotHolder)App.Current.Properties["UniversityLots"];
-
             //TaskScheduler.ExecuteSchedule();
 
-            MapContentPage.InitMap();
+            //MapContentPage.InitMap();
 
             if (!App.Current.Properties.ContainsKey("DenyPressed"))
                 App.Current.Properties.Add("DenyPressed", 0);
-           
+
+            //if (App.Current.Properties.ContainsKey("UniversityLots"))
+            //MapContentPage.lotholder = (Models.LotHolder)App.Current.Properties["UniversityLots"];
+
         }
     }
 }

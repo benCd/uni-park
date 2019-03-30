@@ -37,14 +37,16 @@ namespace up_mobile
                 foreach(ParkingPin Pin in RawPins.Pins)
                 {
                     Debug.Write("Adding new pin!");
+
                     Pins.Add(new Map.Utils.ParkingPin()
                     {
-                        Position = new Position(Pin.Latitude, Pin.Longitude),
-                        Label = Pin.User_id + "\n@" + Pin.Timestamp + "\n",
-                        Text = (Pin.Volume * 100).ToString() + "%",
-                        ID = Pin.Id,
-                        Downvotes = Pin.Downvotes,
-                        Upvotes = Pin.Upvotes
+                        Position    = new Position(Pin.Latitude, Pin.Longitude),
+                        Label       = Pin.Timestamp.ToLongDateString(),
+                        Volume      = (int)(Pin.Volume * 100.00),
+                        ID          = Pin.Id,
+                        Downvotes   = Pin.Downvotes,
+                        Upvotes     = Pin.Upvotes,
+                        OwnerId     = Pin.User_id
                     });
                 }
             Debug.Write("Exiting PinFactory!");
