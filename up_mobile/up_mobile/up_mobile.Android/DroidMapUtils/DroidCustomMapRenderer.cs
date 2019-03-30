@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Android.Content;
 using Android.Gms.Maps;
-using Android.Widget;
 using up_mobile.Droid.DroidMapUtils;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
 using up_mobile.Map.Utils;
 using Android.Gms.Maps.Model;
-using up_mobile.Backend;
+using Rg.Plugins.Popup.Services;
+using System;
 
 [assembly: ExportRenderer(typeof(LotMap), typeof(DroidCustomMapRenderer))]
 namespace up_mobile.Droid.DroidMapUtils
@@ -17,9 +16,10 @@ namespace up_mobile.Droid.DroidMapUtils
     /// <summary>
     /// <see cref="MapRenderer"/> for Android platform
     /// </summary>
-    public class DroidCustomMapRenderer : MapRenderer, GoogleMap.IInfoWindowAdapter
+    public class DroidCustomMapRenderer : MapRenderer//, GoogleMap.IInfoWindowAdapter
     {
         List<ParkingPin> parkingPins;
+        List<MapPolygon> mapPolygons;
 
         GoogleMap googleMap;
 
@@ -35,13 +35,14 @@ namespace up_mobile.Droid.DroidMapUtils
 
             if (e.OldElement != null)
             {
-                NativeMap.InfoWindowClick -= OnInfoWindowClick;
+                //NativeMap.InfoWindowClick -= OnInfoWindowClick;
             }
 
             if (e.NewElement != null)
             {
                 formsMap = (LotMap)e.NewElement;
                 parkingPins = formsMap.ParkingPins;
+                mapPolygons = formsMap.MapPolygons;
                 Control.GetMapAsync(this);
             }
             System.Diagnostics.Debug.Write("Exiting OnElementChanged in DroidCustomMapRenderer");
@@ -50,63 +51,25 @@ namespace up_mobile.Droid.DroidMapUtils
         
         protected override void OnMapReady(GoogleMap map)
         {
+            System.Diagnostics.Debug.Write("Calling OnMapReady in DroidCustomMapRenderer");
+
             base.OnMapReady(map);
 
-            //googleMap = map;
+            googleMap = map;
 
-            System.Diagnostics.Debug.Write("Calling OnMapReady in DroidCustomMapRenderer");
-            /*
-            if (googleMap != null)
-            {
-                UpdatePins();
-            }
-            */
-            NativeMap.InfoWindowClick += OnInfoWindowClick;
-            NativeMap.SetInfoWindowAdapter(this);
+            googleMap.MarkerClick += OnMarkerClicked;
+
+            foreach (MapPolygon poly in mapPolygons)
+                NativeMap.AddPolygon(CreatePolygon(poly));
 
             System.Diagnostics.Debug.Write("Exiting OnMapReady in DroidCustomMapRenderer");
         }
-        /*
-        private void UpdatePins(bool firstUpdate = true)
-        {
-            if (googleMap == null) return;
 
-            if (formsMap.ParkingPins != null)
-            {
-                foreach (var pin in formsMap.ParkingPins)
-                {
-                    AddPin(pin);
-                }
-
-                if (firstUpdate)
-                {
-                    var observable = formsMap.ParkingPins as INotifyCollectionChanged;
-                    if (observable != null)
-                    {
-                        observable.CollectionChanged += OnCustomPinsCollectionChanged;
-                    }
-                }
-            }
-        }
-
-        private void OnCustomPinsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            
-        }
-
-        private void AddPin(ParkingPin pin)
-        {
-            var marker = new MarkerOptions();
-
-            marker.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
-            marker.SetTitle(pin.Text);
-            marker.SetSnippet(pin.Label);
-            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.pin));
-
-            googleMap.AddMarker(marker);
-        }
-        */
-
+        /// <summary>
+        /// Creates <see cref="MarkerOptions"/> for in <see cref="GoogleMap"/> displayed <see cref="Android.Gms.Maps.Model.Marker"/>
+        /// </summary>
+        /// <param name="pin">The pin that the marker is based on</param>
+        /// <returns><see cref="MarkerOptions"/> for the passed <see cref="Pin"/></returns>
         protected override MarkerOptions CreateMarker(Pin pin)
         {
             var marker = new MarkerOptions();
@@ -119,57 +82,51 @@ namespace up_mobile.Droid.DroidMapUtils
             return marker;
         }
 
-
-
-        public Android.Views.View GetInfoContents(Marker marker)
+        /// <summary>
+        /// Method creating <see cref="PolygonOptions"/> to be added to the map
+        /// </summary>
+        /// <returns></returns>
+        protected PolygonOptions CreatePolygon(MapPolygon polygon)
         {
-            var inflater = Android.App.Application.Context.GetSystemService(Context.LayoutInflaterService) as Android.Views.LayoutInflater;
-            if (inflater != null)
-            {
-                Android.Views.View view;
+            var options = new PolygonOptions();
 
-                var parkingPin = GetParkingPin(marker);
-                if (parkingPin == null)
-                {
-                    return null;//throw new Exception("Custom pin not found");
-                }
+            foreach (Position pos in polygon.Points)
+                options.Add(new LatLng(pos.Latitude, pos.Latitude));
 
-                view = inflater.Inflate(Resource.Layout.DroidInfoWindow, null);
+            var colour = ColorMapper.MapPercentageToRGB(polygon.Percentage);
+            var hex = String.Format("0X{0:X2}{1:X2}{2:X2}{3:X2}", 120, colour.R, colour.G, colour.B);
 
-                var infoTitle = view.FindViewById<TextView>(Resource.Id.InfoWindowTitle);
-                var infoSubtitle = view.FindViewById<TextView>(Resource.Id.InfoWindowSubtitle);
-                var upvotes = view.FindViewById<TextView>(Resource.Id.UpvoteCount);
-                var downvotes = view.FindViewById<TextView>(Resource.Id.DownCount);
+            options.InvokeFillColor(Convert.ToInt32(hex, 16));
+            options.InvokeStrokeColor(0X000000);
 
-                if (infoTitle != null)
-                {
-                    infoTitle.Text = marker.Title;
-                }
-                if (infoSubtitle != null)
-                {
-                    infoSubtitle.Text = marker.Snippet;
-                }
-                if (downvotes != null)
-                    downvotes.Text = "v "+ parkingPin.Downvotes.ToString() + " " ;
-                if (upvotes != null)
-                    upvotes.Text =  "^ "+parkingPin.Upvotes.ToString() + " " ;
+            options.Clickable(true);
 
-                return view;
-            }
-            return null;
+            return options;
         }
 
-
-        public Android.Views.View GetInfoWindow(Marker marker)
+        /// <summary>
+        /// Handles the <see cref="GoogleMap.MarkerClick"/> event
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">Event arguments</param>
+        private async void OnMarkerClicked(object sender, GoogleMap.MarkerClickEventArgs e)
         {
-            return null;
+            await PopupNavigation.Instance.PushAsync(new PinInfo(GetParkingPin(e.Marker)));
+            e.Handled = true;
         }
 
+        /// <summary>
+        /// Finds the corresponding <see cref="ParkingPin"/> for a <see cref="Android.Gms.Maps.Model.Marker"/>
+        /// </summary>
+        /// <param name="marker">Marker object to find the pin for</param>
+        /// <returns>Corresponding <see cref="ParkingPin"/> object</returns>
         private ParkingPin GetParkingPin(Marker marker)
         {
+            /*!!!----DEBUG----!!!
             foreach (var pin in formsMap.ParkingPins)
-                System.Diagnostics.Debug.Write("Longitude: " + pin.Position.Latitude + "Latitude: " + pin.Position.Longitude);
+               System.Diagnostics.Debug.Write("Longitude: " + pin.Position.Latitude + "Latitude: " + pin.Position.Longitude);
             System.Diagnostics.Debug.Write("Marker: " + marker.Position.Latitude + " : " + marker.Position.Longitude);
+            */
 
             var position = new Position(marker.Position.Latitude, marker.Position.Longitude);
             //TODO MIGHT BE QUESTIONABLE CODE, REVIEW! using formsMap.ParkingPins vs. parkingPins
@@ -181,23 +138,6 @@ namespace up_mobile.Droid.DroidMapUtils
                 }
             }
             return null;
-        }
-
-        async void OnInfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
-        {
-            
-            var parkingPin = GetParkingPin(e.Marker);
-            if (parkingPin == null)
-            {
-                System.Diagnostics.Debug.Write("Pin not found!");
-            }
-
-            await RestService.service.VoteOnPin(parkingPin.ID, 1);
-            await MapContentPage.UpdatePins();
-
-            System.Diagnostics.Debug.Write("InfoWindowClicked!");
-
-            System.Diagnostics.Debug.Write(sender.GetType().ToString());
         }
     }
 }
