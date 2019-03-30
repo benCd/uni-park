@@ -25,6 +25,9 @@ namespace up_mobile
 		{
 			InitializeComponent ();
 
+            // Hides the navigation bar at the top of the page
+            NavigationPage.SetHasNavigationBar(this, false);
+
             // Suppresses the back button at the top of the page
             NavigationPage.SetHasBackButton(this, false);
 

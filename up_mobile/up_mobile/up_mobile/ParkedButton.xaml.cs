@@ -16,6 +16,7 @@ namespace up_mobile
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ParkedButton : ContentPage
     {
+     
         /// <summary>
         /// Loads ParkedButton page <see cref="ParkedButton.xaml"/>
         /// </summary>
@@ -65,7 +66,7 @@ namespace up_mobile
 
                 if (lot == null)
                 {//TODO implement spamming protection! see #40
-                    DisplayAlert("Oops, we hope you're not in the lake!", "You are not in a recognized parking lot, if this is a mistake, please try again!", "Gotcha!");
+                        DisplayAlert("Oops, we hope you're not in the lake!", "You are not in a recognized parking lot, if this is a mistake, please try again!", "Gotcha!");
                     ((Button)sender).IsEnabled = true;
                     Background.TaskScheduler.RemoveScheduledFunction("EnableButton");
                 }

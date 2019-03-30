@@ -89,6 +89,30 @@ namespace up_mobile
         /// <param name="args"></param>
         async void DenyPressed(object sender, EventArgs args)
         {
+            /// <remarks>
+            /// This block of code is part of an attempt to implement parking button spam prevention issue #40
+            /// </remarks>
+            /*
+            if (App.Current.Properties.ContainsKey("DenyPressed") && (int)App.Current.Properties["DenyPressed"] > 3)
+            {
+                Background.TaskScheduler.ScheduleFunctionForExecution("EnableButton1Min", 99, DateTime.Now.AddMinutes(1),
+                () => {
+                    Debug.Write("Enabling Button START!");
+
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        /// <remarks>
+                        /// Enables the button on <see cref="ParkedButton.xaml"/> page
+                        /// </remarks>
+                        PButton.IsEnabled = true;
+                    });
+                    Debug.Write("Enabling Button END!");
+                    return 0;
+                }
+                );
+            } 
+            */
+
             await Navigation.PopAsync();
         }
 
@@ -102,7 +126,7 @@ namespace up_mobile
         void SliderUpdated(object sender, ValueChangedEventArgs args)
         {
             int value = (int) args.NewValue;
-            displayLabel.Text = String.Format("Lot Fullness is {0} %", value);
+            ParkedDisplayLabel.Text = String.Format("Lot Fullness is {0} %", value);
         }
 
     }

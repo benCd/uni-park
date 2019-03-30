@@ -7,9 +7,7 @@
             BarBackgroundColor="#2196F3"
             BarTextColor="White"
             x:Class="up_mobile.User"
-            Title="Uni-Park"
-            android:TabbedPage.IsSwipePagingEnabled="False"
-             >
+            android:TabbedPage.IsSwipePagingEnabled="False">
     <!--the xmlns:local="clr-namespace:up_mobile" line is important to being a tabbed page which displays other pages-->
     <!--the 4 lines below it are for moving the Tabs to the bottom of the page and their styling-->
 

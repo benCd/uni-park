@@ -85,8 +85,16 @@ namespace up_mobile
             if (App.Current.Properties.ContainsKey("Cookies"))
                 RestService.service.cookies = App.Current.Properties["Cookies"] as System.Net.CookieContainer;
 
+            //TaskScheduler.ExecuteSchedule();
+
+            //MapContentPage.InitMap();
+
+            if (!App.Current.Properties.ContainsKey("DenyPressed"))
+                App.Current.Properties.Add("DenyPressed", 0);
+
             //if (App.Current.Properties.ContainsKey("UniversityLots"))
             //MapContentPage.lotholder = (Models.LotHolder)App.Current.Properties["UniversityLots"];
+
         }
     }
 }

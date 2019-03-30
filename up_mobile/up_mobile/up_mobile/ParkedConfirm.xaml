@@ -14,7 +14,7 @@
                     FontSize="24"
                     HorizontalOptions="Center"/>
 
-                <Label x:Name="displayLabel"
+                <Label x:Name="ParkedDisplayLabel"
                         Text="Lot Fullness:"
                         HorizontalOptions="Center"/>
 

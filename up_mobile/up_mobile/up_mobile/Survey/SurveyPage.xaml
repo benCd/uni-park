@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="up_mobile.SurveyPage">
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="10,10,10,10">
+
+                <!--Drop down list for the parking lot selection-->
+                <Picker x:Name="LotSelection" 
+                        Title="Select a parking lot"
+                        FontSize="14"
+                        VerticalOptions="Center">
+
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>P-1</x:String>
+                            <x:String>P-2</x:String>
+                            <!--Just add more lines with the exact same format to enlarge the list of selectable Universities-->
+                        </x:Array>
+                    </Picker.ItemsSource>
+
+                </Picker>
+
+                <Label Text="From" 
+                       FontSize="14" />
+
+                <!--Time picker for Start Time-->
+                <TimePicker x:Name="StartTime" 
+                            Time="{Binding SelectedTime}" 
+                            FontSize="16"/>
+
+                <Label x:Name="StartDisplayLabel" 
+                    Text="Lot Fullness Upon Arrival:"
+                        HorizontalOptions="Center"/>
+
+                <!---Slider for observation of Lot fullness-->
+                <Slider x:Name="StartVolumeSlider"
+                        Minimum="0"
+                        Maximum="100"
+                        Value="0"
+                        ValueChanged="StartSliderUpdated"
+                        BackgroundColor="#2196F3"
+                        ThumbColor="White"/>
+
+                <Label Text="To" 
+                       FontSize="14" />
+
+                <!--Time picker for End Time-->
+                <TimePicker x:Name="EndTime" 
+                            Time="{Binding SelectedTime}" 
+                            FontSize="16"/>
+
+                <Label x:Name="EndDisplayLabel" 
+                    Text="Lot Fullness Upon Leaving:"
+                        HorizontalOptions="Center"/>
+
+                <!---Slider for observation of Lot fullness-->
+                <Slider x:Name="EndVolumeSlider"
+                        Minimum="0"
+                        Maximum="100"
+                        Value="0"
+                        ValueChanged="EndSliderUpdated"
+                        BackgroundColor="#2196F3"
+                        ThumbColor="White"/>
+
+                <!--Button to go to the next page of their New User Survey information-->
+                <Button x:Name="NextSurveyPageButton"
+                        Text="Submit"
+                        HorizontalOptions="Center" 
+                        Clicked="NextSurveyPageButtonClicked"/>
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+
+</ContentPage>
