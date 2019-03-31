@@ -114,7 +114,17 @@ namespace up_mobile.Droid
             // the following call to the cross current activity plugin is required by the GPS plugin
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-            LoadApplication(new App());
+            //LoadApplication(new App());
+
+            if (Intent.Extras != null)
+            {
+                LoadApplication(new App());
+                Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new User());
+            }
+            else
+            {
+                LoadApplication(new App());
+            }
         }
 
         // GPS plugin requires the following call to the permissions plugin to run on Android

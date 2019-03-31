@@ -24,9 +24,10 @@ namespace FCMNotifications
         {
             Log.Debug(TAG, "From: " + message.From);
 
-            var body = message.Data.Keys.ToString();
-            Log.Debug(TAG, "Notification Message Body: " + body);
-            SendNotification(body, message.Data);
+            string msg = "default";
+            msg = message.Data["mykey"];
+        
+            SendNotification(msg, message.Data);
         }
 
         void SendNotification(string messageBody, IDictionary<string, string> data)
@@ -52,7 +53,7 @@ namespace FCMNotifications
             var notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Notify(MainActivity.NOTIFICATION_ID, notificationBuilder.Build());
 
-            RestService.service.SendFCMToken("USER GOT A NOTEY");
+            //RestService.service.SendFCMToken("USER GOT A NOTEY");
         }
 
 
