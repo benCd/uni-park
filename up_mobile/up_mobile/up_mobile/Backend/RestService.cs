@@ -473,6 +473,17 @@ namespace up_mobile.Backend
             return dictionary;
         }
 
+        public async Task SendFCMToken(string in_token, string serviceUri = "/fcmtoken")
+        {
+            string json = JsonConvert.SerializeObject(new
+            {
+                token = in_token
+            });
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+        }
+
 
         /// <summary>
         /// Generic method for performing an http post.

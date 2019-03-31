@@ -9,6 +9,7 @@ using Android.Gms.Common;
 using Firebase.Messaging;
 using Firebase.Iid;
 using Android.Util;
+using up_mobile.Backend;
 
 namespace up_mobile.Droid
 {
@@ -65,26 +66,6 @@ namespace up_mobile.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            //firebase
-            if (Intent.Extras != null)
-            {
-                foreach (var key in Intent.Extras.KeySet())
-                {
-                    var value = Intent.Extras.GetString(key);
-                    Log.Debug(TAG, "Key: {0} Value: {1}", key, value);
-                }
-            }
-
-            IsPlayServicesAvailable();
-
-            CreateNotificationChannel();
-
-            //subscribe to topic
-            FirebaseMessaging.Instance.SubscribeToTopic("news");
-
-            Log.Debug(TAG, "InstanceID token: " + FirebaseInstanceId.Instance.Token);
-            //end of firebase
-
             //Init for Rg.Plugins.Popup
             Rg.Plugins.Popup.Popup.Init(this, savedInstanceState);
 
@@ -109,6 +90,27 @@ namespace up_mobile.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(savedInstanceState);
+
+            //firebase ////
+            if (Intent.Extras != null)
+            {
+                foreach (var key in Intent.Extras.KeySet())
+                {
+                    var value = Intent.Extras.GetString(key);
+                    Log.Debug(TAG, "Key: {0} Value: {1}", key, value);
+                }
+            }
+
+            IsPlayServicesAvailable();
+
+            CreateNotificationChannel();
+
+            //subscribe to topic, DEBUG PURPOSES ONLY
+            //FirebaseMessaging.Instance.SubscribeToTopic("news");
+            //LOG INSTANCE ID, DEBUG PURPOSES ONLY
+            //Log.Debug(TAG, "InstanceID token: " + FirebaseInstanceId.Instance.Token);
+            //end of firebase ///
+
             // the following call to the cross current activity plugin is required by the GPS plugin
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);

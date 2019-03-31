@@ -2,6 +2,7 @@
 using Android.App;
 using Firebase.Iid;
 using Android.Util;
+using up_mobile.Backend;
 
 namespace FCMClient
 {
@@ -18,7 +19,7 @@ namespace FCMClient
         }
         void SendRegistrationToServer(string token)
         {
-            // Add custom implementation, as needed.
+            RestService.service.SendFCMToken(token);
         }
     }
 }
