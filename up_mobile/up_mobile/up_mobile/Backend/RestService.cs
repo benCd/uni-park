@@ -436,7 +436,7 @@ namespace up_mobile.Backend
         }
 
         //UNTESTED
-        public async Task<ParkingPin> GetPinById(int in_id, string serviceUri = "/getuserbyid")
+        public async Task<ParkingPin> GetPinById(int in_id, string serviceUri = "/getpinbyid")
         {
             ParkingPin pin = null;
 
@@ -493,7 +493,7 @@ namespace up_mobile.Backend
         /// <returns></returns>
         private static async Task<HttpResponseMessage> PerformPOST(Uri uri, string json)
         {
-            HttpResponseMessage response = null;
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
             try
             {
                 var reqcontent = new StringContent(json, Encoding.UTF8, "application/json");
@@ -513,7 +513,7 @@ namespace up_mobile.Backend
         /// <returns></returns>
         private static async Task<HttpResponseMessage> PerformGET(Uri uri)
         {
-            HttpResponseMessage response = null;
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
             try
             {
                 response = await client.GetAsync(uri);

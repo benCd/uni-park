@@ -68,6 +68,14 @@ namespace up_mobile
                 else
                     await Navigation.PushAsync(new NewUserSurvey());
             } else {
+                var permissionGranted = await Permissions.RequestStoragePermission(this);
+                if (!permissionGranted)
+                    return;
+                permissionGranted = await Permissions.RequestLocationPermission(this);
+                if (!permissionGranted)
+                    return;
+                var location = await GeoProvider.GetCurrentLocationAsync();
+                await DisplayAlert("Incorrect email and password combination", $"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}", "OK");
                 await DisplayAlert("Incorrect email and password combination", "Please try again", "OK");
             }
         }
