@@ -480,6 +480,189 @@ function createLotPolygons(university_id){
   });
 }
 
+const fs = require('fs');
+const readline = require('readline');
+const {google} = require('googleapis');
+const uuidv1 = require('uuid/v1');
+
+// If modifying these scopes, delete token.json.
+const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
+	        'https://www.googleapis.com/auth/calendar.events.readonly'];
+
+app.post('/calendar/authcal', function(req, res, next) {
+    //Getting user id
+    var userid = req.user.id;
+    
+    // Token file will store the user specific authentication data
+    var TOKEN_PATH = 'token' + userid + '.json';
+
+    // Load client secrets from a local file.
+    fs.readFile('credentials.json', (err, content) => {
+	if (err) return console.log('Error loading client secret file:', err);
+	// Authorize a client with credentials, then call the Google Calendar API.
+	authorize(JSON.parse(content), listEvents, TOKEN_PATH);
+    });
+});
+    
+/**
+ * Create an OAuth2 client with the given credentials, and then execute the
+ * given callback function.
+ * @param {Object} credentials The authorization client credentials.
+ * @param {function} callback The callback to call with the authorized client.
+ */
+function authorize(credentials, callback, TOKEN_PATH) {
+  const {client_secret, client_id, redirect_uris} = credentials.installed;
+  const oAuth2Client = new google.auth.OAuth2(
+      client_id, client_secret, redirect_uris[0]);
+
+  // Check if we have previously stored a token.
+  fs.readFile(TOKEN_PATH, (err, token) => {
+  if (err) return getAccessToken(oAuth2Client, callback, TOKEN_PATH);
+    oAuth2Client.setCredentials(JSON.parse(token));
+    callback(oAuth2Client);
+  });
+}
+
+/**
+ * Get and store new token after prompting for user authorization, and then
+ * execute the given callback with the authorized OAuth2 client.
+ * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
+ * @param {getEventsCallback} callback The callback for the authorized client.
+ */
+function getAccessToken(oAuth2Client, callback, TOKEN_PATH) {
+  const authUrl = oAuth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: SCOPES,
+  });
+  console.log('Authorize this app by visiting this url:', authUrl);
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  rl.question('Enter the code from that page here: ', (code) => {
+    rl.close();
+    oAuth2Client.getToken(code, (err, token) => {
+      if (err) return console.error('Error retrieving access token', err);
+      oAuth2Client.setCredentials(token);
+      // Store the token to disk for later program executions
+      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+        if (err) return console.error(err);
+        console.log('Token stored to', TOKEN_PATH);
+      });
+      callback(oAuth2Client);
+    });
+  });
+}
+
+
+app.post("/calendar/getnextevent", function(req, res, next){
+    var TOKEN_PATH = 'token' + req.user.id + '.json';
+    //Check if token is already stored
+    fs.readFile(TOKEN_PATH, (err, token) => {
+	    if (error) return next(error);
+      oAuth2Client.setCredentials(JSON.parse(token));
+      const calendar = google.calendar({version: 'v3', oAuth2Client});
+      calendar.events.list({
+          calendarId:'primary',
+          orderBy:'startTime',
+          singleEvents: true,
+          timeMin: (new Date()).toISOString(),
+          maxResults: 1,
+      },
+			(gErr, gRes) => {
+				 if(gErr) return next(gErr);
+         const eventRes = gRes.Data.items;
+         //TODO implement checking for proximity to university for events
+				 if(eventRes.length){
+				     const event = eventRes[0];
+				     dbconnection.query({sql: 'INSERT INTO `nextappointments`(user_id,datetime,location) VALUES(?,?,?)',
+							 values: [req.user.id, event.start.dateTime || event.start.date, event.location]}, function (error, results, fields) {
+                   if (error) return next(error);
+                   try{
+                    setupWatchChannel(auth, 'primary', req.user.id);
+                   }
+                   catch(ex)
+                   {
+                     console.log(ex);
+                   }
+                   res.json(event);
+							  });
+						       }
+				     else
+				     {
+					      res.send('No events found');
+				     }
+				 });
+    });
+}); 
+
+app.get("/calendar/isauthenticated", requireAuth, function(req, res, next)
+{
+  const TOKEN_PATH = 'token' + req.user.id + '.json';
+  res.send(fs.existsSync(TOKEN_PATH));
+});
+
+function setupWatchChannel(_auth, _calid, userid)
+{
+    //TODO IMPLEMENT THIS FUCKER
+    const uuid = uuidv1();
+
+    await dbconnection.query({sql: 'SELECT uuid FROM `user` WHERE id = ?', values:[userid]}, function(error, results, fields)
+    {
+      if(error) throw error; //REMEMBER TO CATCH ME!
+      if(results.length)
+      {
+        return;
+      }
+      else
+      {
+        await dbconnection.query({sql : 'UPDATE uuid IN `user` WHERE id=?', values:[userid]}, function(error, results, fields)
+        {
+          if(error) throw error; //REMEMBER TO CATCH ME!
+        }
+        );
+      }
+    }
+    );
+
+    const calendar = google.calendar({version : 'v3', _auth});
+    var data = 
+    {
+      id: uuid,
+      auth: _auth,
+      address: "unipark.space/calendar/notification",
+      type:'web_hook'
+    }
+    calendar.events.watch(_calid, data);
+}
+
+/**
+ * Lists the next 10 events on the user's primary calendar.
+ * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ */
+function listEvents(auth) {
+  const calendar = google.calendar({version: 'v3', auth});
+   calendar.events.list({
+    calendarId: 'primary',
+    timeMin: (new Date()).toISOString(),
+    maxResults: 10,
+    singleEvents: true,
+    orderBy: 'startTime',
+  }, (err, res) => {
+    if (err) return console.log('The API returned an error: ' + err);
+    const events = res.data.items;
+    if (events.length) {
+      console.log('Upcoming 10 events:');
+      events.map((event, i) => {
+        const start = event.start.dateTime || event.start.date;
+        console.log(`${start} - ${event.summary}`);
+      });
+    } else {
+      console.log('No upcoming events found.');
+    }
+  });
+}
+
 //finally, make our https server and listen for requests
 http.createServer(app).listen(port,() => {
   console.log(`Server running at http://${hostname}:${port}/`);
