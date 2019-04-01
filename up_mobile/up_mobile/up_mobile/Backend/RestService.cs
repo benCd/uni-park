@@ -232,7 +232,7 @@ namespace up_mobile.Backend
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <param name="baseUri">uri of main web api</param>
         /// <returns>The parking lot object corresponding to the lot the user is in, or null if no lot was found</returns>
-        public async Task<ParkingLot> FindLot(double in_latitude, double in_longtitude, double in_accuracy, string serviceUri = "/findlot")
+        public async Task<ParkingLot> FindLot(double in_latitude, double in_longtitude, double in_accuracy, string serviceUri = "/findlotpoly")
         {
             ParkingLot pl = null;
 
@@ -482,6 +482,22 @@ namespace up_mobile.Backend
 
             Uri uri = makeUri(serviceUri);
             HttpResponseMessage response = await PerformPOST(uri, json);
+        }
+
+        public async Task<Dictionary<int, double>> GetCurrentLotVolumes(string serviceUri = "/getcurrentvolumes")
+        {
+            Dictionary<int, double> dictionary = null;
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformGET(uri);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                dictionary = JsonConvert.DeserializeObject<Dictionary<int, double>>(rescontent);
+            }
+
+            return dictionary;
         }
 
 
