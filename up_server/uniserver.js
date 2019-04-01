@@ -1,7 +1,7 @@
 //config file for storing private connection info
 const config = require('./config');
 //node js housekeeping, getting modules
-const http = require('http');
+const https = require('https');
 const express = require('express');
 const uuid = require('uuid/v4');
 const session = require('express-session');
@@ -12,6 +12,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const Polygon = require('polygon');
 const Vec2 = require('vec2');
 const async = require('async');
+//4/1
+var fs = require('fs');
 
 //make main express instance
 const app = express();
@@ -30,6 +32,11 @@ var dbconnection = mysql.createConnection({
   database : config.database.db,
 });
 dbconnection.connect();
+
+var httpsOptions = {
+    key: fs.readFileSync(config.key),
+    cert: fs.readFileSync(config.cert)
+};
 
 //persistant server variables
 var polygonsObj = {};
@@ -480,7 +487,7 @@ function createLotPolygons(university_id){
   });
 }
 
-const fs = require('fs');
+//const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 const uuidv1 = require('uuid/v1');
@@ -491,7 +498,7 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
 
 app.get('/calendar/authcal', function(req, res, next) {
     //Getting user id
-    var userid = req.body.id;
+    var userid = req.query.id;
     
     // Token file will store the user specific authentication data
     var TOKEN_PATH = 'token' + userid + '.json';
@@ -500,7 +507,7 @@ app.get('/calendar/authcal', function(req, res, next) {
     fs.readFile('credentials.json', (err, content) => {
 	if (err) return console.log('Error loading client secret file:', err);
 	// Authorize a client with credentials, then call the Google Calendar API.
-	authorize(JSON.parse(content), listEvents, TOKEN_PATH);
+	authorize(JSON.parse(content), listEvents, TOKEN_PATH,res);
     });
 });
     
@@ -510,14 +517,14 @@ app.get('/calendar/authcal', function(req, res, next) {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback, TOKEN_PATH) {
+function authorize(credentials, callback, TOKEN_PATH,res) {
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
       client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
-  if (err) return getAccessToken(oAuth2Client, callback, TOKEN_PATH);
+  if (err) return getAccessToken(oAuth2Client, callback, TOKEN_PATH, res);
     oAuth2Client.setCredentials(JSON.parse(token));
     callback(oAuth2Client);
   });
@@ -529,18 +536,20 @@ function authorize(credentials, callback, TOKEN_PATH) {
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
  * @param {getEventsCallback} callback The callback for the authorized client.
  */
-function getAccessToken(oAuth2Client, callback, TOKEN_PATH) {
+function getAccessToken(oAuth2Client, callback, TOKEN_PATH, res) {
   const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
+    access_type: 'online',
     scope: SCOPES,
+    redirect_uri: 'https://unipark.space:8080/calendar/getauthinfo'
   });
-  console.log('Authorize this app by visiting this url:', authUrl);
+  console.log('Redirecting user to ', authUrl);
+  res.redirect(authUrl);
+/*
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
-  rl.question('Enter the code from that page here: ', (code) => {
-    rl.close();
+
     oAuth2Client.getToken(code, (err, token) => {
       if (err) return console.error('Error retrieving access token', err);
       oAuth2Client.setCredentials(token);
@@ -551,8 +560,24 @@ function getAccessToken(oAuth2Client, callback, TOKEN_PATH) {
       });
       callback(oAuth2Client);
     });
-  });
+*/
 }
+
+app.post('calendar/getauthinfo', function(req,res,next)
+{
+   console.log(req.query);
+   return res.send();
+
+   oAuth2Client.getToken(code, (err, token) => {
+      if (err) return console.error('Error retrieving access token', err);
+      oAuth2Client.setCredentials(token);
+      // Store the token to disk for later program executions
+      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+        if (err) return console.error(err);
+        console.log('Token stored to', TOKEN_PATH);
+      });
+    });
+});
 
 
 app.post("/calendar/getnextevent", function(req, res, next){
@@ -596,9 +621,9 @@ app.post("/calendar/getnextevent", function(req, res, next){
     });
 }); 
 
-app.get("/calendar/isauthenticated", requireAuth, function(req, res, next)
+app.get("/calendar/isauthenticated", function(req, res, next)
 {
-  const TOKEN_PATH = 'token' + req.user.id + '.json';
+  const TOKEN_PATH = 'token' + req.query.id + '.json';
   res.send(fs.existsSync(TOKEN_PATH));
 });
 
@@ -664,6 +689,6 @@ function listEvents(auth) {
 }
 
 //finally, make our https server and listen for requests
-http.createServer(app).listen(port,() => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+https.createServer(httpsOptions, app).listen(port,() => {
+  console.log(`Server running at https://${hostname}:${port}/`);
 });
