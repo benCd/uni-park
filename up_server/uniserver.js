@@ -387,6 +387,32 @@ app.post('/fcmtoken', function (req, res, next) {
   console.log(token);
   res.send();
 });
+
+app.get('/getcurrentvolumes', requireAuth, function (req, res, next) {
+
+  dbconnection.query('SELECT * FROM `lots` WHERE `university_id` = ?', req.user.university_id, function (error, results, fields) {
+    if (error) return next(error);
+    if (results.length == 0) return res.status(404).send('No lots for user university');
+
+    var resultObj = {};
+
+    for (var i = 0; i < results.length; i++) {
+      resultObj[results[i].id] = -1;
+    }
+
+    dbconnection.query('SELECT * FROM lotdata l1 WHERE timestamp = (SELECT MAX(timestamp) FROM lotdata l2 WHERE l2.lot_id = l1.lot_id)'
+    , function (error, results, fields) {
+      if (error) return next(error);
+      if (results.length == 0) return res.status(404).send('No lot data');
+
+      for (var i = 0; i < results.length; i++) {
+        resultObj[results[i].lot_id] = results[i].volume;
+      }
+
+      res.json(resultObj)
+    });
+  });
+});
 //end of routes
 
 //functions
@@ -429,12 +455,12 @@ function previousCalendarWeek(){
 
 function createLotPolygons(university_id){
   dbconnection.query('SELECT * FROM `lots` WHERE `university_id` = ?', university_id, function (error, results, fields) {
-    if (error) return next(error);
+    if (error) throw(error);
 
     async.each(results, function (row, callback) {
 
       dbconnection.query('SELECT * FROM `lotcoords` WHERE `lot_id` = ?', row.id, function (error, results, fields) {
-        if (error) return next(error);
+        if (error) throw(error);
 
         console.log("Creating polygon for " + row.lot_name);
         var p = new Polygon();
