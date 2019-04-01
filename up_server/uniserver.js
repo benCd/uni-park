@@ -489,9 +489,9 @@ const uuidv1 = require('uuid/v1');
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
 	        'https://www.googleapis.com/auth/calendar.events.readonly'];
 
-app.post('/calendar/authcal', function(req, res, next) {
+app.get('/calendar/authcal', function(req, res, next) {
     //Getting user id
-    var userid = req.user.id;
+    var userid = req.body.id;
     
     // Token file will store the user specific authentication data
     var TOKEN_PATH = 'token' + userid + '.json';
@@ -602,12 +602,12 @@ app.get("/calendar/isauthenticated", requireAuth, function(req, res, next)
   res.send(fs.existsSync(TOKEN_PATH));
 });
 
-function setupWatchChannel(_auth, _calid, userid)
+async function setupWatchChannel(_auth, _calid, userid)
 {
     //TODO IMPLEMENT THIS FUCKER
     const uuid = uuidv1();
 
-    await dbconnection.query({sql: 'SELECT uuid FROM `user` WHERE id = ?', values:[userid]}, function(error, results, fields)
+    await dbconnection.query({sql: 'SELECT uuid FROM `user` WHERE id = ?', values:[userid]}, async function(error, results, fields)
     {
       if(error) throw error; //REMEMBER TO CATCH ME!
       if(results.length)
