@@ -21,12 +21,13 @@ namespace up_mobile.Backend
     {
         public CookieContainer cookies { set; get; }
         static HttpClient client = new HttpClient();
-        const string defaultBaseUri = "http://35.207.3.28:8080"; 
+        const string defaultBaseUri = "https://unipark.space:8080"; 
 
         public static RestService service = new RestService();
 
         private RestService()
         {
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, ass) => true;
             if (Application.Current.Properties.ContainsKey("Cookies") && Application.Current.Properties["Cookies"] != null)
                 cookies = (CookieContainer)Application.Current.Properties["Cookies"];
             else if(!Application.Current.Properties.ContainsKey("Cookies"))
