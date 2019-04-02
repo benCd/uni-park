@@ -488,7 +488,7 @@ function createLotPolygons(university_id){
 }
 
 //const fs = require('fs');
-const readline = require('readline');
+//const readline = require('readline');
 const {google} = require('googleapis');
 const uuidv1 = require('uuid/v1');
 
@@ -518,9 +518,9 @@ app.get('/calendar/authcal', function(req, res, next) {
  * @param {function} callback The callback to call with the authorized client.
  */
 function authorize(credentials, callback, TOKEN_PATH,res) {
-  const {client_secret, client_id, redirect_uris} = credentials.installed;
+  const {client_secret, client_id, redirect_uris} = credentials.web;
   const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uris[0]);
+      client_id, client_secret, redirect_uris[1]);
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
@@ -540,43 +540,36 @@ function getAccessToken(oAuth2Client, callback, TOKEN_PATH, res) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'online',
     scope: SCOPES,
-    redirect_uri: 'https://unipark.space:8080/calendar/getauthinfo'
+    redirect_uri: 'https://unipark.space:8080/calendar/getauthinfo',
+    state: TOKEN_PATH
   });
   console.log('Redirecting user to ', authUrl);
   res.redirect(authUrl);
-/*
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error('Error retrieving access token', err);
-      oAuth2Client.setCredentials(token);
-      // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-        if (err) return console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
-      });
-      callback(oAuth2Client);
-    });
-*/
 }
 
-app.post('calendar/getauthinfo', function(req,res,next)
+app.get('/calendar/getauthinfo', function(req,res,next)
 {
+   console.log('\n\n');
    console.log(req.query);
-   return res.send();
-
-   oAuth2Client.getToken(code, (err, token) => {
+   var TOKEN_PATH=req.query.state;
+   fs.readFile('credentials.json', (err, content) => {
+        if (err) return console.log('Error loading client secret file:', err);
+        // Authorize a client with credentials, then call the Google Calendar API.
+       
+    const credentials = JSON.parse(content);
+    const {client_secret, client_id, redirect_uris} = credentials.web;
+    const oAuth2Client = new google.auth.OAuth2(
+      client_id, client_secret, redirect_uris[1]);
+    oAuth2Client.getToken(req.query.code, (err, token) => {
       if (err) return console.error('Error retrieving access token', err);
-      oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+      fs.writeFile(TOKEN_PATH, JSON.stringify(req.query.code), (err) => {
         if (err) return console.error(err);
         console.log('Token stored to', TOKEN_PATH);
       });
+     });
     });
+  res.send('THANK YOU KBI');
 });
 
 
