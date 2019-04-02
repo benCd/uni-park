@@ -116,14 +116,11 @@ namespace up_mobile.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             //LoadApplication(new App());
 
-            if (Intent.Extras != null)
+            LoadApplication(new App());
+
+            if (Intent.Extras != null && Helpers.Settings.IsLoggedIn == true)
             {
-                LoadApplication(new App());
                 Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new User());
-            }
-            else
-            {
-                LoadApplication(new App());
             }
         }
 
