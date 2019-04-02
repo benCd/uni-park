@@ -233,7 +233,7 @@ namespace up_mobile.Backend
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <param name="baseUri">uri of main web api</param>
         /// <returns>The parking lot object corresponding to the lot the user is in, or null if no lot was found</returns>
-        public async Task<ParkingLot> FindLot(double in_latitude, double in_longtitude, double in_accuracy, string serviceUri = "/findlot")
+        public async Task<ParkingLot> FindLot(double in_latitude, double in_longtitude, double in_accuracy, string serviceUri = "/findlotpoly")
         {
             ParkingLot pl = null;
 
@@ -437,7 +437,7 @@ namespace up_mobile.Backend
         }
 
         //UNTESTED
-        public async Task<ParkingPin> GetPinById(int in_id, string serviceUri = "/getuserbyid")
+        public async Task<ParkingPin> GetPinById(int in_id, string serviceUri = "/getpinbyid")
         {
             ParkingPin pin = null;
 
@@ -474,6 +474,33 @@ namespace up_mobile.Backend
             return dictionary;
         }
 
+        public async Task SendFCMToken(string in_token, string serviceUri = "/fcmtoken")
+        {
+            string json = JsonConvert.SerializeObject(new
+            {
+                token = in_token
+            });
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+        }
+
+        public async Task<Dictionary<int, double>> GetCurrentLotVolumes(string serviceUri = "/getcurrentvolumes")
+        {
+            Dictionary<int, double> dictionary = null;
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformGET(uri);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                dictionary = JsonConvert.DeserializeObject<Dictionary<int, double>>(rescontent);
+            }
+
+            return dictionary;
+        }
+
 
         /// <summary>
         /// Generic method for performing an http post.
@@ -483,7 +510,7 @@ namespace up_mobile.Backend
         /// <returns></returns>
         private static async Task<HttpResponseMessage> PerformPOST(Uri uri, string json)
         {
-            HttpResponseMessage response = null;
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
             try
             {
                 var reqcontent = new StringContent(json, Encoding.UTF8, "application/json");
@@ -503,7 +530,7 @@ namespace up_mobile.Backend
         /// <returns></returns>
         private static async Task<HttpResponseMessage> PerformGET(Uri uri)
         {
-            HttpResponseMessage response = null;
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
             try
             {
                 response = await client.GetAsync(uri);
