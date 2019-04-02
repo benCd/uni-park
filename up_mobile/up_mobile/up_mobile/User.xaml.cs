@@ -37,7 +37,7 @@ namespace up_mobile
 
         /// <summary>
         /// Override for OnBackButtonPressed - Preventing Android Hardware Back Button from 
-        /// going back to Guest page <see cref="Guest.xaml"/> after logging in
+        /// going back to Login page <see cref="Login.xaml"/> after logging in
         /// </summary>
         /// <returns></returns>
         protected override bool OnBackButtonPressed()
