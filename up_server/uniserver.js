@@ -420,6 +420,19 @@ app.get('/getcurrentvolumes', requireAuth, function (req, res, next) {
     });
   });
 });
+
+app.post('/currentlotvolume', requireAuth, function (req, res, next) {
+
+  var lot_id = req.body.lot_id;
+
+  dbconnection.query('SELECT * FROM lotdata WHERE timestamp = (SELECT MAX(timestamp) FROM lotdata WHERE lot_id = ?)'
+  , lot_id, function (error, results, fields) {
+    if (error) return next(error);
+    if (results.length == 0) return res.status(404).send('No volumes recorded for lot');
+
+    res.send(result[0].volume);
+  });
+});
 //end of routes
 
 //functions
@@ -499,7 +512,7 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
 app.get('/calendar/authcal', function(req, res, next) {
     //Getting user id
     var userid = req.query.id;
-    
+
     // Token file will store the user specific authentication data
     var TOKEN_PATH = 'token' + userid + '.json';
 
@@ -510,7 +523,7 @@ app.get('/calendar/authcal', function(req, res, next) {
 	authorize(JSON.parse(content), listEvents, TOKEN_PATH,res);
     });
 });
-    
+
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
@@ -555,7 +568,7 @@ app.get('/calendar/getauthinfo', function(req,res,next)
    fs.readFile('credentials.json', (err, content) => {
         if (err) return console.log('Error loading client secret file:', err);
         // Authorize a client with credentials, then call the Google Calendar API.
-       
+
     const credentials = JSON.parse(content);
     const {client_secret, client_id, redirect_uris} = credentials.web;
     const oAuth2Client = new google.auth.OAuth2(
@@ -612,7 +625,7 @@ app.post("/calendar/getnextevent", function(req, res, next){
 				     }
 				 });
     });
-}); 
+});
 
 app.get("/calendar/isauthenticated", function(req, res, next)
 {
@@ -644,7 +657,7 @@ async function setupWatchChannel(_auth, _calid, userid)
     );
 
     const calendar = google.calendar({version : 'v3', _auth});
-    var data = 
+    var data =
     {
       id: uuid,
       auth: _auth,
