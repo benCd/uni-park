@@ -458,6 +458,11 @@ namespace up_mobile.Backend
             return pin;
         }
 
+        /// <summary>
+        /// Grabs lots as polygons for the university of the server
+        /// </summary>
+        /// <param name="serviceUri"></param>
+        /// <returns>A dictionary of lot ids and their corresponding polygons</returns>
         public async Task<Dictionary<int, Polygon>> GetLotPolygons(string serviceUri = "/getpolylots")
         {
             Dictionary<int, Polygon> dictionary = null;
@@ -485,6 +490,13 @@ namespace up_mobile.Backend
             HttpResponseMessage response = await PerformPOST(uri, json);
         }
 
+
+        /// <summary>
+        /// Grabs volumes for all lots based on the university id of the currently
+        /// logged in user
+        /// </summary>
+        /// <param name="serviceUri"></param>
+        /// <returns>a dictionary of lot ids and volumes</returns>
         public async Task<Dictionary<int, double>> GetCurrentLotVolumes(string serviceUri = "/getcurrentvolumes")
         {
             Dictionary<int, double> dictionary = null;
@@ -499,6 +511,33 @@ namespace up_mobile.Backend
             }
 
             return dictionary;
+        }
+
+        /// <summary>
+        /// Grabs lot volume by lot id
+        /// </summary>
+        /// <param name="in_lot_id">input lot id</param>
+        /// <param name="serviceUri"></param>
+        /// <returns>Volume of desired lot</returns>
+        public async Task<double> GetVolumeByLotId(int in_lot_id, string serviceUri = "/currentlotvolume")
+        {
+            double volume = -1;
+
+            string json = JsonConvert.SerializeObject(new
+            {
+                lot_id = in_lot_id
+            });
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                volume = JsonConvert.DeserializeObject<double>(rescontent);
+            }
+
+            return volume;
         }
 
 
