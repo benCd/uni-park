@@ -10,8 +10,6 @@ namespace up_mobile.Droid
     [Activity(Label = "up_mobile", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
 
