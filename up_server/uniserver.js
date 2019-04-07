@@ -202,7 +202,6 @@ app.post('/newpin', requireAuth, function (req, res, next) {
 //determine current lot from gps data
 app.post('/findlot', function (req, res, next) {
   var pos = req.body;
-  var acc = req.body.accuracy;
   dbconnection.query('SELECT * FROM `lots` WHERE `min_lat` <= ? AND `max_lat` >= ? AND `min_long` <= ? AND `max_long` >= ?',
   [pos. latitude, pos.latitude, pos.longitude, pos.longitude], function (error, results, fields) {
     if (error) return next(error);
@@ -421,6 +420,7 @@ app.get('/getcurrentvolumes', requireAuth, function (req, res, next) {
   });
 });
 
+//get currrent lot volume
 app.post('/currentlotvolume', requireAuth, function (req, res, next) {
 
   var lot_id = req.body.lot_id;
@@ -433,6 +433,63 @@ app.post('/currentlotvolume', requireAuth, function (req, res, next) {
     res.send(result[0].volume);
   });
 });
+
+//get buildings by university id
+app.get('/getmyunibuildings', requireAuth, function (req, res, next) {
+  dbconnection.query('SELECT * FROM `destinations` WHERE `university_id` = ?', req.user.university_id, function (error, results, fields) {
+    if (error) return next(error);
+
+    var jsonobj = {
+      buildings: []
+    };
+
+    if (results.length == 0) return res.json(jsonobj);
+
+    for (var i = 0; i < results.length; i++) {
+      var building = rdpToObj(results[i]);
+      jsonobj.lots.push(building);
+    }
+
+    res.json(jsonobj);
+  });
+});
+
+app.post('/getbestlots', function (req, res, next) {
+  var building_id = req.body.building_id;
+  dbconnection.query('SELECT * FROM `lots` WHERE `university_id` = ?', req.user.university_id, function (error, results, fields) {
+    if (error) return next(error);
+    if (results.length == 0) return res.status(404).send('No lots for user university');
+
+    var resultObj = {};
+
+    for (var i = 0; i < results.length; i++) {
+      resultObj[results[i].id] = -1;
+    }
+
+    dbconnection.query('SELECT * FROM lotdata l1 WHERE timestamp = (SELECT MAX(timestamp) FROM lotdata l2 WHERE l2.lot_id = l1.lot_id)'
+    , function (error, results, fields) {
+      if (error) return next(error);
+      if (results.length == 0) return res.status(404).send('No lot data');
+
+      for (var i = 0; i < results.length; i++) {
+        resultObj[results[i].lot_id] = results[i].volume;
+      }
+
+      dbconnection.query('SELECT * FROM `distancematrix` WHERE `building_id` = ?', building_id, function (error, results, fields) {
+        if (error) return next(error);
+        if (results.length == 0) return res.status(404).send('Empty distance matrix');
+
+        for (var i = 0; i < results.length; i++) {
+          resultObj[results[i].lot_id] *= results[i].distance;
+        }
+
+        res.json(resultObj)
+      });
+    });
+  });
+});
+
+
 //end of routes
 
 //functions
