@@ -206,7 +206,6 @@ app.post('/newpin', requireAuth, function (req, res, next) {
 //determine current lot from gps data
 app.post('/findlot', function (req, res, next) {
   var pos = req.body;
-  var acc = req.body.accuracy;
   dbconnection.query('SELECT * FROM `lots` WHERE `min_lat` <= ? AND `max_lat` >= ? AND `min_long` <= ? AND `max_long` >= ?',
   [pos. latitude, pos.latitude, pos.longitude, pos.longitude], function (error, results, fields) {
     if (error) return next(error);
@@ -424,6 +423,77 @@ app.get('/getcurrentvolumes', requireAuth, function (req, res, next) {
     });
   });
 });
+
+//get currrent lot volume
+app.post('/currentlotvolume', requireAuth, function (req, res, next) {
+
+  var lot_id = req.body.lot_id;
+
+  dbconnection.query('SELECT * FROM lotdata WHERE timestamp = (SELECT MAX(timestamp) FROM lotdata WHERE lot_id = ?)'
+  , lot_id, function (error, results, fields) {
+    if (error) return next(error);
+    if (results.length == 0) return res.status(404).send('No volumes recorded for lot');
+
+    res.send(result[0].volume);
+  });
+});
+
+//get buildings by university id
+app.get('/getmyunibuildings', requireAuth, function (req, res, next) {
+  dbconnection.query('SELECT * FROM `destinations` WHERE `university_id` = ?', req.user.university_id, function (error, results, fields) {
+    if (error) return next(error);
+
+    var jsonobj = {
+      buildings: []
+    };
+
+    if (results.length == 0) return res.json(jsonobj);
+
+    for (var i = 0; i < results.length; i++) {
+      var building = rdpToObj(results[i]);
+      jsonobj.lots.push(building);
+    }
+
+    res.json(jsonobj);
+  });
+});
+
+app.post('/getbestlots', function (req, res, next) {
+  var building_id = req.body.building_id;
+  dbconnection.query('SELECT * FROM `lots` WHERE `university_id` = ?', req.user.university_id, function (error, results, fields) {
+    if (error) return next(error);
+    if (results.length == 0) return res.status(404).send('No lots for user university');
+
+    var resultObj = {};
+
+    for (var i = 0; i < results.length; i++) {
+      resultObj[results[i].id] = -1;
+    }
+
+    dbconnection.query('SELECT * FROM lotdata l1 WHERE timestamp = (SELECT MAX(timestamp) FROM lotdata l2 WHERE l2.lot_id = l1.lot_id)'
+    , function (error, results, fields) {
+      if (error) return next(error);
+      if (results.length == 0) return res.status(404).send('No lot data');
+
+      for (var i = 0; i < results.length; i++) {
+        resultObj[results[i].lot_id] = results[i].volume;
+      }
+
+      dbconnection.query('SELECT * FROM `distancematrix` WHERE `building_id` = ?', building_id, function (error, results, fields) {
+        if (error) return next(error);
+        if (results.length == 0) return res.status(404).send('Empty distance matrix');
+
+        for (var i = 0; i < results.length; i++) {
+          resultObj[results[i].lot_id] *= results[i].distance;
+        }
+
+        res.json(resultObj)
+      });
+    });
+  });
+});
+
+
 //end of routes
 
 //functions
@@ -503,7 +573,7 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
 app.get('/calendar/authcal', function(req, res, next) {
     //Getting user id
     var userid = req.query.id;
-    
+
     // Token file will store the user specific authentication data
     var TOKEN_PATH = 'token' + userid + '.json';
 
@@ -517,7 +587,7 @@ app.get('/calendar/authcal', function(req, res, next) {
 	    authorize(JSON.parse(content), listEvents, token_uuid,res);
     });
 });
-    
+
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
@@ -565,7 +635,7 @@ app.get('/calendar/getauthinfo', function(req,res,next)
    fs.readFile('credentials.json', (err, content) => {
         if (err) return console.log('Error loading client secret file:', err);
         // Authorize a client with credentials, then call the Google Calendar API.
-       
+
     const credentials = JSON.parse(content);
     const {client_secret, client_id, redirect_uris} = credentials.web;
     const oAuth2Client = new google.auth.OAuth2(
@@ -654,7 +724,7 @@ app.post("/calendar/getnextevent", function(req, res, next){
 				     }
 				 });
     });
-}); 
+});
 
 app.get("/calendar/isauthenticated", requireAuth, function(req, res, next)
 {
@@ -686,7 +756,7 @@ async function setupWatchChannel(_auth, _calid, userid)
     );
 
     const calendar = google.calendar({version : 'v3', _auth});
-    var data = 
+    var data =
     {
       id: uuid,
       auth: _auth,
