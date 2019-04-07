@@ -540,6 +540,22 @@ namespace up_mobile.Backend
             return volume;
         }
 
+        public async Task<BuildingHolder> GetMyUniBuildings(string serviceUri = "/getmyunibuildings")
+        {
+            BuildingHolder bh = new BuildingHolder();
+
+            Uri uri = makeUri(serviceUri);
+            HttpResponseMessage response = await PerformGET(uri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                bh = JsonConvert.DeserializeObject<BuildingHolder>(rescontent);
+            }
+
+            return bh;
+        }
+
 
         /// <summary>
         /// Generic method for performing an http post.
