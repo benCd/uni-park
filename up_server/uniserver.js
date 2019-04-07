@@ -12,8 +12,12 @@ const LocalStrategy = require('passport-local').Strategy;
 const Polygon = require('polygon');
 const Vec2 = require('vec2');
 const async = require('async');
+const schedule = require('node-schedule');
+const distance = require('google-distance')
 //4/1
 var fs = require('fs');
+
+const REQUEST_MAP = new Map();
 
 //make main express instance
 const app = express();
@@ -503,11 +507,14 @@ app.get('/calendar/authcal', function(req, res, next) {
     // Token file will store the user specific authentication data
     var TOKEN_PATH = 'token' + userid + '.json';
 
+    var tokenuuid = uuidv4();
+
+    REQUEST_MAP.set(token_uuid, TOKEN_PATH);
     // Load client secrets from a local file.
     fs.readFile('credentials.json', (err, content) => {
-	if (err) return console.log('Error loading client secret file:', err);
-	// Authorize a client with credentials, then call the Google Calendar API.
-	authorize(JSON.parse(content), listEvents, TOKEN_PATH,res);
+	    if (err) return console.log('Error loading client secret file:', err);
+	    // Authorize a client with credentials, then call the Google Calendar API.
+	    authorize(JSON.parse(content), listEvents, token_uuid,res);
     });
 });
     
@@ -516,15 +523,17 @@ app.get('/calendar/authcal', function(req, res, next) {
  * given callback function.
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
+ * @param {string} token_uuid The token uuid that will be used to maintain scope.
+ * @param {} res The response object to handle redirects for the callback
  */
-function authorize(credentials, callback, TOKEN_PATH,res) {
+function authorize(credentials, callback, token_uuid, res) {
   const {client_secret, client_id, redirect_uris} = credentials.web;
   const oAuth2Client = new google.auth.OAuth2(
       client_id, client_secret, redirect_uris[1]);
 
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
-  if (err) return getAccessToken(oAuth2Client, callback, TOKEN_PATH, res);
+  fs.readFile(REQUEST_MAP.get(token_uuid), (err, token) => {
+  if (err) return getAccessToken(oAuth2Client, callback, token_uuid, res);
     oAuth2Client.setCredentials(JSON.parse(token));
     callback(oAuth2Client);
   });
@@ -534,14 +543,15 @@ function authorize(credentials, callback, TOKEN_PATH,res) {
  * Get and store new token after prompting for user authorization, and then
  * execute the given callback with the authorized OAuth2 client.
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {getEventsCallback} callback The callback for the authorized client.
+ * @param {string} token_uuid The token_uuid that will be used to maintain scope.
+ * @param {} res The response object for handling redirects.
  */
-function getAccessToken(oAuth2Client, callback, TOKEN_PATH, res) {
+function getAccessToken(oAuth2Client, token_uuid, res) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'online',
     scope: SCOPES,
     redirect_uri: 'https://unipark.space:8080/calendar/getauthinfo',
-    state: TOKEN_PATH
+    state: token_uuid
   });
   console.log('Redirecting user to ', authUrl);
   res.redirect(authUrl);
@@ -551,7 +561,7 @@ app.get('/calendar/getauthinfo', function(req,res,next)
 {
    console.log('\n\n');
    console.log(req.query);
-   var TOKEN_PATH=req.query.state;
+   var TOKEN_PATH= REQUEST_MAP.get(req.query.state);
    fs.readFile('credentials.json', (err, content) => {
         if (err) return console.log('Error loading client secret file:', err);
         // Authorize a client with credentials, then call the Google Calendar API.
@@ -569,9 +579,25 @@ app.get('/calendar/getauthinfo', function(req,res,next)
       });
      });
     });
-  res.send('THANK YOU KBI');
+  res.redirect("https://unipark.space/redirect");
 });
 
+app.get('/calendar/mycalendars', reqireAuth, function(req, res, next) {
+  var TOKEN_PATH = 'token' + req.user.id + '.json';
+  //Check if token is already stored
+  fs.readFile(TOKEN_PATH, (err, token) => {
+    if (error) return next(error);
+    oAuth2Client.setCredentials(JSON.parse(token));
+    const calendar = google.calendar({version: 'v3', oAuth2Client});
+    calendar.list({
+      minAccessRole: "owner"
+    },
+    (gErr, gRes) => {
+      if(gErr) return next(gErr);
+      const eventRes = gRes.Data.items;
+      res.json(eventRes);
+  });
+});
 
 app.post("/calendar/getnextevent", function(req, res, next){
     var TOKEN_PATH = 'token' + req.user.id + '.json';
@@ -585,15 +611,31 @@ app.post("/calendar/getnextevent", function(req, res, next){
           orderBy:'startTime',
           singleEvents: true,
           timeMin: (new Date()).toISOString(),
-          maxResults: 1,
       },
 			(gErr, gRes) => {
 				 if(gErr) return next(gErr);
          const eventRes = gRes.Data.items;
          //TODO implement checking for proximity to university for events
 				 if(eventRes.length){
-				     const event = eventRes[0];
-				     dbconnection.query({sql: 'INSERT INTO `nextappointments`(user_id,datetime,location) VALUES(?,?,?)',
+          var event = eventRes[0];
+           foreach(e in event)
+           {
+             if(e.location && distance.get(
+               {
+                origin: e.location,
+                destination: 'Oakland University, MI'
+               },
+               function(err, data) {
+                if (err) return console.log(err);
+                console.log(data);
+              }
+             ).distanceValue < 3000)
+              {
+                event = e;
+                break;
+              }
+           }
+				     dbconnection.query({sql: 'REPLACE INTO `nextappointments`(user_id,datetime,location) VALUES(?,?,?)',
 							 values: [req.user.id, event.start.dateTime || event.start.date, event.location]}, function (error, results, fields) {
                    if (error) return next(error);
                    try{
@@ -614,9 +656,9 @@ app.post("/calendar/getnextevent", function(req, res, next){
     });
 }); 
 
-app.get("/calendar/isauthenticated", function(req, res, next)
+app.get("/calendar/isauthenticated", requireAuth, function(req, res, next)
 {
-  const TOKEN_PATH = 'token' + req.query.id + '.json';
+  const TOKEN_PATH = 'token' + req.user.id + '.json';
   res.send(fs.existsSync(TOKEN_PATH));
 });
 
@@ -652,6 +694,16 @@ async function setupWatchChannel(_auth, _calid, userid)
       type:'web_hook'
     }
     calendar.events.watch(_calid, data);
+}
+
+async function addToSchedule(_userID, _dtime)
+{
+  schedule.scheduleJob(dtime,notifyUser(_userID));
+}
+
+async function notifyUser(_userID)
+{
+
 }
 
 /**
