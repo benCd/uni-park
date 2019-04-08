@@ -184,7 +184,9 @@ namespace up_mobile
         /// <returns>Task</returns>
         private static async Task RefreshPolys()
         {
-            throw new NotImplementedException();
+            map.MapPolygons.Clear();
+            var polys = await MapPolyFactory.GetPolygons();
+            polys.ForEach(map.MapPolygons.Add); 
         }
 
         /// <summary>
