@@ -30,7 +30,7 @@ namespace up_mobile.Map.Utils
                 {
                     ID = p.Key,
                     Points = l,
-                    //TODO implement getPercentage();
+                    Percentage = await RestService.service.GetVolumeByLotId(p.Key)
                 });
             }
 
