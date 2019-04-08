@@ -139,8 +139,8 @@ app.post('/login', function (req, res, next) {
     if (!user) return res.status(401).send('Invalid credentials');
     req.login(user, (error) => {
       if (error) return next(error);
-      console.log(user.name+" logged in");
-      return res.send('Logged in as ' + user.name);
+      console.log(user.id+" logged in");
+      return authorizeCalendar(user.id, res);
     });
   })(req, res, next);
 });
@@ -451,7 +451,7 @@ app.get('/getmyunibuildings', requireAuth, function (req, res, next) {
 
     for (var i = 0; i < results.length; i++) {
       var building = rdpToObj(results[i]);
-      jsonobj.lots.push(building);
+      jsonobj.buildings.push(building);
     }
 
     res.json(jsonobj);
@@ -570,23 +570,19 @@ const uuidv1 = require('uuid/v1');
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
 	        'https://www.googleapis.com/auth/calendar.events.readonly'];
 
-app.get('/calendar/authcal', function(req, res, next) {
+function authorizeCalendar(id, res) {
     //Getting user id
-    var userid = req.query.id;
+    var userid = id;
 
-    // Token file will store the user specific authentication data
-    var TOKEN_PATH = 'token' + userid + '.json';
-
-    var tokenuuid = uuidv4();
-
-    REQUEST_MAP.set(token_uuid, TOKEN_PATH);
+    var token_uuid = uuid();
+    REQUEST_MAP.set(token_uuid, userid);
     // Load client secrets from a local file.
     fs.readFile('credentials.json', (err, content) => {
 	    if (err) return console.log('Error loading client secret file:', err);
 	    // Authorize a client with credentials, then call the Google Calendar API.
 	    authorize(JSON.parse(content), listEvents, token_uuid,res);
     });
-});
+}
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -600,12 +596,11 @@ function authorize(credentials, callback, token_uuid, res) {
   const {client_secret, client_id, redirect_uris} = credentials.web;
   const oAuth2Client = new google.auth.OAuth2(
       client_id, client_secret, redirect_uris[1]);
-
   // Check if we have previously stored a token.
   fs.readFile(REQUEST_MAP.get(token_uuid), (err, token) => {
-  if (err) return getAccessToken(oAuth2Client, callback, token_uuid, res);
+  if (err) return getAccessToken(oAuth2Client, token_uuid, res);
     oAuth2Client.setCredentials(JSON.parse(token));
-    callback(oAuth2Client);
+    res.send('ok');
   });
 }
 
@@ -614,24 +609,25 @@ function authorize(credentials, callback, token_uuid, res) {
  * execute the given callback with the authorized OAuth2 client.
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
  * @param {string} token_uuid The token_uuid that will be used to maintain scope.
- * @param {} res The response object for handling redirects.
+ * @param {Response} res The response object for handling redirects.
  */
-function getAccessToken(oAuth2Client, token_uuid, res) {
+function getAccessToken(oAuth2Client,token_uuid, res) {
   const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'online',
+    access_type: 'offline',
     scope: SCOPES,
     redirect_uri: 'https://unipark.space:8080/calendar/getauthinfo',
-    state: token_uuid
+    state: token_uuid,
+    prompt: 'consent'
   });
-  console.log('Redirecting user to ', authUrl);
-  res.redirect(authUrl);
+  res.send(authUrl);
 }
 
 app.get('/calendar/getauthinfo', function(req,res,next)
 {
    console.log('\n\n');
    console.log(req.query);
-   var TOKEN_PATH= REQUEST_MAP.get(req.query.state);
+   var TOKEN_PATH= 'token'+REQUEST_MAP.get(req.query.state)+'.json';
+   var REFRESH_PATH='refresh'+REQUEST_MAP.get(req.query.state)+'.json';
    fs.readFile('credentials.json', (err, content) => {
         if (err) return console.log('Error loading client secret file:', err);
         // Authorize a client with credentials, then call the Google Calendar API.
@@ -642,38 +638,58 @@ app.get('/calendar/getauthinfo', function(req,res,next)
       client_id, client_secret, redirect_uris[1]);
     oAuth2Client.getToken(req.query.code, (err, token) => {
       if (err) return console.error('Error retrieving access token', err);
+      console.log(token);
       // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(req.query.code), (err) => {
+      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
         if (err) return console.error(err);
         console.log('Token stored to', TOKEN_PATH);
       });
      });
     });
-  res.redirect("https://unipark.space/redirect");
+  res.redirect('https://unipark.space/redirect');
 });
 
-app.get('/calendar/mycalendars', reqireAuth, function(req, res, next) {
+app.get('/calendar/mycalendars', requireAuth, function(req, res, next) {
+  fs.readFile('credentials.json', (err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    const credentials = JSON.parse(content);
+  const {client_secret, client_id, redirect_uris} = credentials.web;
+  const oAuth2Client = new google.auth.OAuth2(
+      client_id, client_secret, redirect_uris[1]);
   var TOKEN_PATH = 'token' + req.user.id + '.json';
-  //Check if token is already stored
+
   fs.readFile(TOKEN_PATH, (err, token) => {
-    if (error) return next(error);
-    oAuth2Client.setCredentials(JSON.parse(token));
+    if (err) return next(err);
+    console.log(JSON.parse(token));
+    oAuth2Client.setCredentials(JSON.parse(token));  //change 1
+    listEvents(oAuth2Client);
     const calendar = google.calendar({version: 'v3', oAuth2Client});
-    calendar.list({
+    calendar.calendarList.list({
+      auth: oAuth2Client, //change 2
       minAccessRole: "owner"
     },
     (gErr, gRes) => {
       if(gErr) return next(gErr);
-      const eventRes = gRes.Data.items;
+      console.dir(gRes.data.items);
+      const eventRes = gRes.data.items; //change 3
       res.json(eventRes);
   });
 });
+});
+});
 
-app.post("/calendar/getnextevent", function(req, res, next){
+app.get("/calendar/getnextevent", function(req, res, next){
+  fs.readFile('credentials.json', (err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    const credentials = JSON.parse(content);
+
+    const {client_secret, client_id, redirect_uris} = credentials.web;
+    const oAuth2Client = new google.auth.OAuth2(
+      client_id, client_secret, redirect_uris[1]);
     var TOKEN_PATH = 'token' + req.user.id + '.json';
-    //Check if token is already stored
+     //Check if token is already stored
     fs.readFile(TOKEN_PATH, (err, token) => {
-	    if (error) return next(error);
+	if (error) return next(error);
       oAuth2Client.setCredentials(JSON.parse(token));
       const calendar = google.calendar({version: 'v3', oAuth2Client});
       calendar.events.list({
@@ -682,48 +698,49 @@ app.post("/calendar/getnextevent", function(req, res, next){
           singleEvents: true,
           timeMin: (new Date()).toISOString(),
       },
-			(gErr, gRes) => {
-				 if(gErr) return next(gErr);
-         const eventRes = gRes.Data.items;
-         //TODO implement checking for proximity to university for events
-				 if(eventRes.length){
-          var event = eventRes[0];
-           foreach(e in event)
-           {
-             if(e.location && distance.get(
-               {
-                origin: e.location,
-                destination: 'Oakland University, MI'
-               },
-               function(err, data) {
-                if (err) return console.log(err);
-                console.log(data);
+	(gErr, gRes) => {
+		 if(gErr) return next(gErr);
+               	 const eventRes = gRes.Data.items;
+		 if(eventRes.length){
+         	 var event = eventRes[0];
+          	 eventRes.some(function(e)
+           	  {
+             		if(e.location && distance.get(
+               		  {
+                		origin: e.location,
+                		destination: 'Oakland University, Rochester, MI'
+               	          },
+               		  function(err, data) {
+                		if (err) return console.log(err);
+                		console.log(data);
+              			}
+              		  ).distanceValue < 3000)
+              		{
+                	  event = e;
+                	  return true;
+              		}
+                	else if(e == eventRes[eventRes.length-1])
+              		{
+                    	  res.send('No events found');
+              		}
+     	        });
+   		   	dbconnection.query({sql: 'REPLACE INTO `nextappointments`(user_id,datetime,location) VALUES(?,?,?)',
+		                       values: [req.user.id, event.start.dateTime || event.start.date, event.location]},
+				       function (error, results, fields) {
+                   			if (error) return next(error);
+                   			try{
+                    				setupWatchChannel(auth, 'primary', req.user.id);
+                   			}
+                   			catch(ex)
+                   			{
+                  	   			console.log(ex);
+                   			}
+                   			res.json(event);
+			});
               }
-             ).distanceValue < 3000)
-              {
-                event = e;
-                break;
-              }
-           }
-				     dbconnection.query({sql: 'REPLACE INTO `nextappointments`(user_id,datetime,location) VALUES(?,?,?)',
-							 values: [req.user.id, event.start.dateTime || event.start.date, event.location]}, function (error, results, fields) {
-                   if (error) return next(error);
-                   try{
-                    setupWatchChannel(auth, 'primary', req.user.id);
-                   }
-                   catch(ex)
-                   {
-                     console.log(ex);
-                   }
-                   res.json(event);
-							  });
-						       }
-				     else
-				     {
-					      res.send('No events found');
-				     }
-				 });
+         });
     });
+});
 });
 
 app.get("/calendar/isauthenticated", requireAuth, function(req, res, next)
