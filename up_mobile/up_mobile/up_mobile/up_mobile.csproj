@@ -33,9 +33,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Background\Background.csproj" />
-    <Compile Update="GoogleCalendarAuthorization.xaml.cs">
-      <DependentUpon>GoogleCalendarAuthorization.xaml</DependentUpon>
-    </Compile>
     <Compile Update="Guest.xaml.cs">
       <DependentUpon>Guest.xaml</DependentUpon>
     </Compile>
