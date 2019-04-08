@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "up_mobile.iOS", "up_mobile\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "up_mobile", "up_mobile\up_mobile\up_mobile.csproj", "{26CE8FD7-8386-4060-8F40-D6E658791141}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Background", "Background\Background.csproj", "{84AC24F2-098C-4A19-8514-05157BD44A0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Background", "Background\Background.csproj", "{84AC24F2-098C-4A19-8514-05157BD44A0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

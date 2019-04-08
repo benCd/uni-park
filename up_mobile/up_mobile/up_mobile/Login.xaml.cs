@@ -58,7 +58,6 @@ namespace up_mobile
                 permissionGranted = await Permissions.RequestLocationPermission(this);
                 if (!permissionGranted)
                     return;
-                //
 
                 Helpers.Settings.TookNewUserSurvey = await surveyTaken;
                 Helpers.Settings.IsLoggedIn = true;

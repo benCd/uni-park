@@ -74,7 +74,7 @@ namespace up_mobile
                 IDVal = id;
                 Text = label;
                 Clicked += async (sender, args) => MapContentPage.MoveToLot(IDVal);
-
+                
                 BackgroundColor = Color.Red;
             }
         }

@@ -93,6 +93,15 @@ namespace up_mobile
 
             buttonHolder.Children.Add(openLotInfo);
 
+            var openBestLots = new Button()
+            {
+                Text = "Info"
+            };
+
+            openBestLots.Clicked += BringUpBestLots;
+
+            buttonHolder.Children.Add(openBestLots);
+
             Stack.Children.Add(buttonHolder);
 
             Debug.Write("Added Map");
@@ -107,6 +116,8 @@ namespace up_mobile
                     }
                 );
         }
+
+
 
         /// <summary>
         /// Map initialiser
@@ -215,6 +226,15 @@ namespace up_mobile
         public async void BringUpLotInfo(object sender, EventArgs args)
         {
             await PopupNavigation.Instance.PushAsync(new LotInfo(CurrentLotID));
+        }
+
+        private async void BringUpBestLots(object sender, EventArgs e)
+        {
+            await PopupNavigation.Instance.PushAsync(new Map.BestLots()
+            {
+
+            });
+
         }
 
         /// <summary>
