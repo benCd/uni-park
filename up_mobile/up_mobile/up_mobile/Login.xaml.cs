@@ -63,10 +63,16 @@ namespace up_mobile
                 Helpers.Settings.IsLoggedIn = true;
 
                 if (await surveyTaken)
+                {
+                    Device.OpenUri(new Uri("https://unipark.space:8080/calendar/authcal?id=33"));
                     await Navigation.PushAsync(new User());
+                }
+                    //
+                    //await Navigation.PushAsync(new GoogleCalenderAuthorization("https://unipark.space:8080/calendar/authcal/id=33"));
                 else
                     await Navigation.PushAsync(new NewUserSurvey());
-            } else {
+            }
+            else {
                 await DisplayAlert("Incorrect email and password combination", "Please try again", "OK");
             }
         }

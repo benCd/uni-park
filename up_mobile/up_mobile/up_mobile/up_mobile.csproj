@@ -10,7 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Calendar.v3" Version="1.38.0.1543" />
+    <Compile Remove="HybridWebView\**" />
+    <EmbeddedResource Remove="HybridWebView\**" />
+    <None Remove="HybridWebView\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="HybridWebView.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="Plugin.Permissions" Version="3.0.0.12" />
     <PackageReference Include="Rg.Plugins.Popup" Version="1.1.5.188" />
@@ -18,11 +27,15 @@
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
     <PackageReference Include="Xamarin.Essentials" Version="1.0.1" />
     <PackageReference Include="Xamarin.Forms" Version="3.5.0.169047" />
-    <PackageReference Include="Xamarin.Forms.Maps" Version="3.5.0.169047" />
+    <PackageReference Include="Xamarin.Forms.Maps" Version="3.5.0.169047" />    
+    <PackageReference Include="Google.Apis.Calendar.v3" Version="1.38.0.1543" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Background\Background.csproj" />
+    <Compile Update="GoogleCalendarAuthorization.xaml.cs">
+      <DependentUpon>GoogleCalendarAuthorization.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Guest.xaml.cs">
       <DependentUpon>Guest.xaml</DependentUpon>
     </Compile>
