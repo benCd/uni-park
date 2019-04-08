@@ -20,10 +20,34 @@ namespace up_mobile
         {
             InitializeComponent();
 
+            // Creates a WebView
+            var CalendarAuthWebView = new WebView();
+            CalendarAuthWebView.HorizontalOptions = LayoutOptions.FillAndExpand;
+            CalendarAuthWebView.VerticalOptions = LayoutOptions.FillAndExpand;
+
+            // Creates a Stack Layout for the WebView
+            var WebViewStackLayout = new StackLayout();
+            this.Content = WebViewStackLayout;
+            WebViewStackLayout.Children.Add(CalendarAuthWebView);
+            WebViewStackLayout.HorizontalOptions = LayoutOptions.FillAndExpand;
+            WebViewStackLayout.VerticalOptions = LayoutOptions.FillAndExpand;
+
+            // Sets the URL of the WebView
+            CalendarAuthWebView.Source = URL;
+
             // Suppresses the back button at the top of the page
             NavigationPage.SetHasBackButton(this, false);
-           
-            CalendarAuthWebView.Source = URL;         
+
+            // Navigates to the User page when the WebView reaches a specific url
+            CalendarAuthWebView.Navigating += (object sender, WebNavigatingEventArgs e) =>
+            {
+                var url = e.Url;
+                if (url == "https://unipark.space/redirect")
+                {
+                    //System.Diagnostics.Debug.WriteLine("Adam's WebView debug statement worked");
+                    Navigation.PushAsync(new User());
+                }
+            };
         }
 
         /// <summary>
@@ -35,7 +59,6 @@ namespace up_mobile
         {
             return true;
         }
-
 
     }
 }

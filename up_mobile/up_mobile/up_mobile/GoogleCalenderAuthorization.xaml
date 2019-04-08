@@ -6,13 +6,8 @@
     
     <ContentPage.Content>
 
-        <StackLayout Margin="10">
-            
-            <StackLayout Orientation="Horizontal">
-            </StackLayout>
-            <!-- WebView needs to be given height and width request within layouts to render. -->
-            <WebView x:Name="CalendarAuthWebView" WidthRequest="1000" HeightRequest="1000" />
-            
+        <StackLayout Margin="10" Orientation="Horizontal">
+
         </StackLayout>
 
     </ContentPage.Content>
