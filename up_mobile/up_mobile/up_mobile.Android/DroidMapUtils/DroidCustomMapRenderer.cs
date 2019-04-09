@@ -58,9 +58,9 @@ namespace up_mobile.Droid.DroidMapUtils
             googleMap = map;
 
             googleMap.MarkerClick += OnMarkerClicked;
-
+            
             foreach (MapPolygon poly in mapPolygons)
-                NativeMap.AddPolygon(CreatePolygon(poly));
+                googleMap.AddPolygon(CreatePolygon(poly));
 
             System.Diagnostics.Debug.Write("Exiting OnMapReady in DroidCustomMapRenderer");
         }

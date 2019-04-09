@@ -50,6 +50,8 @@ namespace up_mobile
         /// </summary>
         async void Setup()
         {
+            if (Application.Current.Properties.ContainsKey("FCMToken"))
+                RestService.service.SendFCMToken((string)Application.Current.Properties["FCMToken"]);
         }
 
     }

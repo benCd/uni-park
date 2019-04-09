@@ -26,7 +26,7 @@ namespace up_mobile.Map
         /// <summary>
         /// Holds the map "name" -> "building_id"
         /// </summary>
-        private Dictionary<string, int> BuildingMap = new Dictionary<string, int>();
+        private Dictionary<string, int> BuildingMap;
 
         //private static List<Models.Building> Buildings;
 
@@ -35,13 +35,16 @@ namespace up_mobile.Map
         /// </summary>
         public BestLots()
         {
+            BuildingMap = new Dictionary<string, int>();
+
             InitializeComponent();
 
             Debug.Write("Initialising BestLots");
 
             Task task = new Task(
                 new Action(
-                    async () => {
+                    async () =>
+                    {
                         Models.BuildingHolder buildings = await RestService.service.GetMyUniBuildings();
                         Debug.Write("Got buildings!");
                         if (buildings == null)
@@ -50,17 +53,16 @@ namespace up_mobile.Map
                             return;
                         }
                         Debug.Write("Buildings:");
-                        foreach (var b in buildings.Buildings)
-                        {
-                            Debug.Write(b.Building_name + " " + b.Building_id);
-                        }
-
-                        foreach (var b in buildings.Buildings)
-                        {
-                            Debug.Write(b.Building_name + " " + b.Building_id);
-                            BuildingMap.Add(b.Building_name, b.Building_id);
-                        }
+                        if(buildings.Buildings != null)
+                            foreach (var b in buildings.Buildings)
+                                {
+                                    if(b != null && b.Building_name != null)
+                                        BuildingMap.Add(b.Building_name, b.Building_id);
+                                }
+                        Debug.Write("Buildings:");
                         BuildingNamePicker.ItemsSource = BuildingMap.Keys.ToList();
+                        BuildingNamePicker.SelectedIndexChanged += Reload;
+                        AtTime.PropertyChanged += Reload;
                     }
                     )
                     );
@@ -77,13 +79,15 @@ namespace up_mobile.Map
             Debug.Write("Reloading");
             CurrentTime = AtTime.Time;
             var o = 0;
-            if ((string)BuildingNamePicker.SelectedItem != null)
+            if (BuildingNamePicker != null && BuildingNamePicker.SelectedItem != null)
                 BuildingMap.TryGetValue((string)BuildingNamePicker.SelectedItem, out o);
             BuildingID = o;
 
-            if(e is PropertyChangedEventArgs || sender is Picker)
-                if((sender is Picker) || (e as PropertyChangedEventArgs).PropertyName == "Time"  )
+            if (e is PropertyChangedEventArgs || sender is Picker)
+                if ((sender is Picker) || (e as PropertyChangedEventArgs).PropertyName == "Time")
                 {
+                    var occs = await RestService.service.GetCurrentLotVolumes();
+
                     Debug.Write("Reload\n");
                     Lot1.Text = "Lot1";
                     Lot2.Text = "Lot2";
@@ -91,9 +95,9 @@ namespace up_mobile.Map
 
                     Device.BeginInvokeOnMainThread(() =>
                     {
-                        Lot1.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(0.5);
-                        Lot2.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(0.9);
-                        Lot3.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(0.2);
+                        Lot1.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(0.9);
+                        Lot2.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(0.5);
+                        Lot3.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(0.0);
                     });
 
                     Lot1.Clicked += async (object s, EventArgs ev) => { await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo()); };

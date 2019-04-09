@@ -5,6 +5,7 @@ using Xamarin.Essentials;
 using System.Diagnostics;
 using up_mobile.Backend;
 using up_mobile.Models;
+using up_mobile.Map.Utils;
 
 namespace up_mobile
 {
@@ -40,18 +41,22 @@ namespace up_mobile
             foreach (ParkingLot lot in lotholder.Lots)
                 Debug.Write("Lotholder swallowed: " + lot.Lot_Name + " with STD " + lot.Id);
 
+            var p = await RestService.service.GetCurrentLotVolumes();
 
-                //Debug.Write("------------> CHECKPOINT 2");
-                foreach (ParkingLot lot in lotholder.Lots)
+            foreach (ParkingLot lot in lotholder.Lots)
+            {
+                
+            Debug.Write("Adding Button for: " + lot.Lot_Name);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                var i = 0.0;
+                p.TryGetValue(lot.Id, out i);
+                Stack.Children.Add(new RememberButton(lot.Lot_Name, lot.Id)
                 {
-                Debug.Write("Adding Button for: " + lot.Lot_Name);
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    Stack.Children.Add(new RememberButton(lot.Lot_Name, lot.Id));
+                    BackgroundColor = ColorMapper.MapPercentageToRGB(i)
                 });
-                }
-
-            //Debug.Write("------------> CHECKPOINT 3");
+            });
+            }
 
             foreach (RememberButton button in Stack.Children)
                 Debug.Write(button.Text + " :::: " + button.IDVal);

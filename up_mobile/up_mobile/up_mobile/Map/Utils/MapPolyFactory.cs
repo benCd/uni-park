@@ -15,12 +15,14 @@ namespace up_mobile.Map.Utils
     {
         public static async Task<List<MapPolygon>> GetPolygons()
         {
+            Debug.Write("Entered GetPolygons");
             var polys = await RestService.service.GetLotPolygons();
+            Debug.Write("Got Polygons");
             var o = new List<MapPolygon>();
 
             if (polys == null)
                 Debug.Write("Alert"); //TODO display alert
-
+            Debug.Write("Beginning to set polygons");
             foreach (var p in polys)
             {
                 var l = new List<Position>();
@@ -33,7 +35,7 @@ namespace up_mobile.Map.Utils
                     Percentage = await RestService.service.GetVolumeByLotId(p.Key)
                 });
             }
-
+            Debug.Write("Finished setting polygons");
             return o;
         }
     }

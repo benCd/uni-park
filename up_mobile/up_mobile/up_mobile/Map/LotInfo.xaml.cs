@@ -47,8 +47,12 @@ namespace up_mobile
         private async Task LoadComponents()
         {
             //Lot = await RestService.service.
-            var parkingLot = RestService.service.GetLotInfo(LotId);
+            Lot = await RestService.service.GetLotInfo(LotId);
 
+            Header.Text = Lot.Lot_Name;
+            Description.Text = Lot.Description;
+
+            Occupancy.Text = (await RestService.service.GetVolumeByLotId(LotId)).ToString();
         }
 
         /// <summary>

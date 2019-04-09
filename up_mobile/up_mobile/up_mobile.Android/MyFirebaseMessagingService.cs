@@ -24,8 +24,8 @@ namespace FCMNotifications
         {
             Log.Debug(TAG, "From: " + message.From);
 
-            string msg = "default";
-            msg = message.Data["mykey"];
+            string msg = "";
+            msg = message.Data["message"];
         
             SendNotification(msg, message.Data);
         }

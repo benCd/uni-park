@@ -3,6 +3,7 @@ using Android.App;
 using Firebase.Iid;
 using Android.Util;
 using up_mobile.Backend;
+using Xamarin.Forms;
 
 namespace FCMClient
 {
@@ -14,8 +15,13 @@ namespace FCMClient
         public override void OnTokenRefresh()
         {
             var refreshedToken = FirebaseInstanceId.Instance.Token;
+            if (!Xamarin.Forms.Application.Current.Properties.ContainsKey("FCMToken"))
+                Xamarin.Forms.Application.Current.Properties.Add("FCMToken", refreshedToken);
+            else
+                Xamarin.Forms.Application.Current.Properties["FCMToken"] = refreshedToken;
+
             Log.Debug(TAG, "Refreshed token: " + refreshedToken);
-            SendRegistrationToServer(refreshedToken);
+            //SendRegistrationToServer(refreshedToken);
         }
         void SendRegistrationToServer(string token)
         {

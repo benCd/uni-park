@@ -266,9 +266,9 @@ namespace up_mobile.Backend
         /// <param name="in_lot_id">id of the lot where reports are wanted</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>a reportholder object</returns>
-        public async Task<ReportHolder> GetLotInfo(int in_lot_id, string serviceUri = "/getlotinfo")
+        public async Task<ParkingLot> GetLotInfo(int in_lot_id, string serviceUri = "/getlotinfo")
         {
-            ReportHolder rh = null;
+            ParkingLot rh = null;
 
             string json = JsonConvert.SerializeObject(new
             {
@@ -281,7 +281,7 @@ namespace up_mobile.Backend
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var rescontent = await response.Content.ReadAsStringAsync();
-                rh = JsonConvert.DeserializeObject<ReportHolder>(rescontent);
+                rh = JsonConvert.DeserializeObject<ParkingLot>(rescontent);
             }
 
             return rh;
@@ -521,7 +521,7 @@ namespace up_mobile.Backend
         /// <returns>Volume of desired lot</returns>
         public async Task<double> GetVolumeByLotId(int in_lot_id, string serviceUri = "/currentlotvolume")
         {
-            double volume = -1;
+            double volume = 0;
 
             string json = JsonConvert.SerializeObject(new
             {
