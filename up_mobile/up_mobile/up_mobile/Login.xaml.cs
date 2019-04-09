@@ -71,12 +71,9 @@ namespace up_mobile
                     }
                     else
                     {
-                        await Navigation.PushAsync(new GoogleCalendarAuth(response.Item2));
+                        Device.OpenUri(new Uri(response.Item2));
+                        await Navigation.PushAsync(new User());
                     }
-                    
-
-                    //Device.OpenUri(new Uri("https://unipark.space:8080/calendar/authcal?id=33"));
-                    //await Navigation.PushAsync(new User());
                 }
                 else
                     await Navigation.PushAsync(new NewUserSurvey());
