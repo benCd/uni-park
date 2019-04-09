@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,7 +51,7 @@ namespace up_mobile
             Lot = await RestService.service.GetLotInfo(LotId);
 
             Header.Text = Lot.Lot_Name;
-            Description.Text = Lot.Description;
+            Description.Text = Lot.Directions;
 
             Occupancy.Text = (await RestService.service.GetVolumeByLotId(LotId)).ToString();
         }

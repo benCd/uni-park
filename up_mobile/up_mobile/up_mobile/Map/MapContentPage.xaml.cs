@@ -234,11 +234,16 @@ namespace up_mobile
 
         private async void BringUpBestLots(object sender, EventArgs e)
         {
-            await PopupNavigation.Instance.PushAsync(new Map.BestLots()
+            try
             {
+                await PopupNavigation.Instance.PushAsync(new Map.BestLots()
+                {
 
-            });
-
+                });
+            }catch(Exception ex)
+            {
+                Debug.Write(ex.StackTrace);
+            }
         }
 
         /// <summary>

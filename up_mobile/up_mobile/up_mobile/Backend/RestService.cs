@@ -540,6 +540,37 @@ namespace up_mobile.Backend
             return volume;
         }
 
+        public async Task<Dictionary<int, double>> GetBestLots(int _building_id, string _time, string serviceUri = "/getbestlots")
+        {
+            Dictionary<int, object> dictionary = new Dictionary<int, object>();
+            Dictionary<int, double> output = new Dictionary<int, double>();
+
+            Uri uri = makeUri(serviceUri);
+
+            string json = JsonConvert.SerializeObject(new
+            {
+                building_id = _building_id,
+                time = _time
+            });
+
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                dictionary = JsonConvert.DeserializeObject<Dictionary<int, object>>(rescontent);
+            }
+
+            foreach(var key in dictionary.Keys)
+            {
+                object n;
+                if (dictionary.TryGetValue(key, out n) && n != null && n is double)
+                    output.Add(key, (double)n);
+            }
+
+            return output;
+        }
+
         public async Task<BuildingHolder> GetMyUniBuildings(string serviceUri = "/getmyunibuildings")
         {
             BuildingHolder bh = new BuildingHolder();

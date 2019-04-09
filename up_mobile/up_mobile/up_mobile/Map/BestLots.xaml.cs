@@ -53,16 +53,22 @@ namespace up_mobile.Map
                             return;
                         }
                         Debug.Write("Buildings:");
-                        if(buildings.Buildings != null)
+                        if (buildings.Buildings != null)
                             foreach (var b in buildings.Buildings)
-                                {
-                                    if(b != null && b.Building_name != null)
-                                        BuildingMap.Add(b.Building_name, b.Building_id);
-                                }
+                            {
+                                if (b != null && b.Building_name != null)
+                                    BuildingMap.Add(b.Building_name, b.Building_id);
+                            }
                         Debug.Write("Buildings:");
-                        BuildingNamePicker.ItemsSource = BuildingMap.Keys.ToList();
-                        BuildingNamePicker.SelectedIndexChanged += Reload;
-                        AtTime.PropertyChanged += Reload;
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            BuildingNamePicker.ItemsSource = BuildingMap.Keys.ToList();
+                            Debug.Write("Buildings:");
+                            BuildingNamePicker.SelectedIndexChanged += Reload;
+                            Debug.Write("Buildings:");
+                            AtTime.PropertyChanged += Reload;
+                        });
+                        
                     }
                     )
                     );
@@ -87,22 +93,55 @@ namespace up_mobile.Map
                 if ((sender is Picker) || (e as PropertyChangedEventArgs).PropertyName == "Time")
                 {
                     var occs = await RestService.service.GetCurrentLotVolumes();
+                    var map = await RestService.service.GetBestLots(BuildingMap[(string)BuildingNamePicker.SelectedItem], AtTime.Time.ToString());
 
-                    Debug.Write("Reload\n");
-                    Lot1.Text = "Lot1";
-                    Lot2.Text = "Lot2";
-                    Lot3.Text = "Lot3";
+                    Dictionary<double, int> invMap = new Dictionary<double, int>();
+
+                    int smallest, medium, largest;
+
+                    Debug.Write("Inverting map!");
+                    foreach (var key in map.Keys)
+                    {
+                        invMap.Add(map[key], key);
+                    }
+
+                    var l = invMap.Keys.ToList();
+                    l.Sort();
+                   
+                    if(l.Count > 0)
+                    {
+                        Debug.Write("Getting lot IDs!");
+                        smallest = invMap[l[0]];
+                        medium = invMap[l[(l.Count-1) / 2]];
+                        largest = invMap[l[l.Count - 1]];
+                    }
+                    else
+                    {
+                        Debug.Write("There are not enough lots!");
+                        return;
+                    }
+
+                    var l1 = await RestService.service.GetLotInfo(smallest);
+                    var l2 = await RestService.service.GetLotInfo(medium);
+                    var l3 = await RestService.service.GetLotInfo(largest);
 
                     Device.BeginInvokeOnMainThread(() =>
-                    {
-                        Lot1.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(0.9);
-                        Lot2.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(0.5);
-                        Lot3.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(0.0);
-                    });
+                     {
+                         
+                        Debug.Write("Reload\n");
+                        Lot1.Text = l1.Lot_Name;
+                        Lot2.Text = l2.Lot_Name;
+                        Lot3.Text = l3.Lot_Name;
+                    
+                        Lot1.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(occs[l1.Id]);
+                        Lot2.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(occs[l2.Id]);
+                        Lot3.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(occs[l3.Id]);
 
-                    Lot1.Clicked += async (object s, EventArgs ev) => { await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo()); };
-                    Lot2.Clicked += async (object s, EventArgs ev) => { await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo()); };
-                    Lot3.Clicked += async (object s, EventArgs ev) => { await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo()); };
+                        Lot1.Clicked += async (object s, EventArgs ev) => { await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo(l1.Id)); };
+                        Lot2.Clicked += async (object s, EventArgs ev) => { await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo(l2.Id)); };
+                        Lot3.Clicked += async (object s, EventArgs ev) => { await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo(l3.Id)); };
+                     });
+
                 }
 
         }
