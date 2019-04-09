@@ -93,8 +93,10 @@ namespace up_mobile.Backend
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>bool indicating registration success</returns>
         /// 
-        public async Task<bool> LoginUser(string in_email, string in_password, string serviceUri = "/login")
+        public async Task<(bool, string)> LoginUser(string in_email, string in_password, string serviceUri = "/login")
         {
+            var returnString = "";
+
             Cookie myCookie = null;
 
             string json = JsonConvert.SerializeObject(new
@@ -107,6 +109,7 @@ namespace up_mobile.Backend
             HttpResponseMessage response = await PerformPOST(uri, json);
 
             if (response.IsSuccessStatusCode) {
+                returnString = await response.Content.ReadAsStringAsync();
                 //get cookies
                 IEnumerable<Cookie> resCookies = cookies.GetCookies(uri).Cast<Cookie>();
                 //save cookie
@@ -121,9 +124,9 @@ namespace up_mobile.Backend
                     Debug.Write(c.Name + " -> " + c.Value);
                 */
                 if (myCookie != null)
-                    return true;
+                    return (true, returnString);
             }
-            return false;
+            return (false, returnString);
         }
 
         /// <summary>

@@ -10,13 +10,13 @@ using Xamarin.Forms.Xaml;
 namespace up_mobile
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class GoogleCalenderAuth : ContentPage
+    public partial class GoogleCalendarAuth : ContentPage
     {
         /// <summary>
         /// GoogleCalenderAuth page constructor - needs to be passed the desired URL as a String when it is called for navigation
         /// </summary>
         /// <param name="URL"></param>
-        public GoogleCalenderAuth(string URL)
+        public GoogleCalendarAuth(string URL)
         {
             InitializeComponent();
 
