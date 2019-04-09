@@ -68,34 +68,35 @@ namespace up_mobile
             MapM = new MapMenu();
 
             Stack.Children.Add(map);
+            Stack.BackgroundColor = Color.Transparent;
 
             var buttonHolder = new StackLayout()
             {
                 Orientation = StackOrientation.Horizontal,
-                
+                HorizontalOptions = LayoutOptions.CenterAndExpand
             };
 
-            var buttonToBringUpMapMenu = new Button()
+            var buttonToBringUpMapMenu = new ImageButton()
             {
-                Text = "Select a lot!"
+                Source = "LotChangeIcon.png"
             };
 
             buttonToBringUpMapMenu.Clicked += BringUpLotMenu;
 
             buttonHolder.Children.Add(buttonToBringUpMapMenu);
 
-            var openLotInfo = new Button()
+            var openLotInfo = new ImageButton()
             {
-                Text = "Info"
+                Source = "InfoIcon.png"
             };
 
             openLotInfo.Clicked += BringUpLotInfo;
 
             buttonHolder.Children.Add(openLotInfo);
 
-            var openBestLots = new Button()
+            var openBestLots = new ImageButton()
             {
-                Text = "Info"
+                Source = "ThreeBestLotsIcon.png"
             };
 
             openBestLots.Clicked += BringUpBestLots;
@@ -108,7 +109,7 @@ namespace up_mobile
             Content = Stack;
 
             EnsureLots().ContinueWith(
-                    t => 
+                    t =>
                     {
                         Debug.Write("-----> Lots Ensured, Moving Map NOW");
                         MoveToLot(lotholder.Lots[0].Id);
@@ -186,7 +187,8 @@ namespace up_mobile
         {
             map.MapPolygons.Clear();
             var polys = await MapPolyFactory.GetPolygons();
-            polys.ForEach(map.MapPolygons.Add); 
+            polys.ForEach(map.MapPolygons.Add);
+            //polys.ForEach()
         }
 
         /// <summary>
@@ -232,11 +234,16 @@ namespace up_mobile
 
         private async void BringUpBestLots(object sender, EventArgs e)
         {
-            await PopupNavigation.Instance.PushAsync(new Map.BestLots()
+            try
             {
+                await PopupNavigation.Instance.PushAsync(new Map.BestLots()
+                {
 
-            });
-
+                });
+            }catch(Exception ex)
+            {
+                Debug.Write(ex.StackTrace);
+            }
         }
 
         /// <summary>

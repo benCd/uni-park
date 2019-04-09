@@ -42,7 +42,6 @@
             <Picker
                 x:Name="BuildingNamePicker"
                 FontSize="Medium"
-                SelectedIndexChanged="Reload"
                 Title="Destination"
             />
             <Label
@@ -53,7 +52,6 @@
             <TimePicker
                 x:Name="AtTime"
                 FontSize="Medium"
-                PropertyChanged="Reload"
             />
         </StackLayout>
 

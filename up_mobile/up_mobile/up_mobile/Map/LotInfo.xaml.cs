@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,8 +48,12 @@ namespace up_mobile
         private async Task LoadComponents()
         {
             //Lot = await RestService.service.
-            var parkingLot = RestService.service.GetLotInfo(LotId);
+            Lot = await RestService.service.GetLotInfo(LotId);
 
+            Header.Text = Lot.Lot_Name;
+            Description.Text = Lot.Directions;
+
+            Occupancy.Text = (await RestService.service.GetVolumeByLotId(LotId)).ToString();
         }
 
         /// <summary>

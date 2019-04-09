@@ -13,7 +13,7 @@ namespace up_mobile.Models
         public double Min_Long { get; set; }
         public double Min_Lat { get; set; }
         public string Lot_Name { get; set; }
-
+        public string Directions { get; set; }
 
         public string GetPrettyFormat()
         {

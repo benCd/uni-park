@@ -45,9 +45,9 @@ namespace up_mobile
             Helpers.Settings.Username = LoginEmail.Text;
             Helpers.Settings.Password = LoginPassword.Text;
 
-            var loginSuccess = RestService.service.LoginUser(LoginEmail.Text, LoginPassword.Text);
+            var response = await RestService.service.LoginUser(LoginEmail.Text, LoginPassword.Text);
 
-            if (await loginSuccess)
+            if (response.Item1)
             {
                 var surveyTaken = RestService.service.SeeSurveyStatus();
 
@@ -64,16 +64,17 @@ namespace up_mobile
 
                 if (await surveyTaken)
                 {
-                    // Worked -v
-                    //await Navigation.PushAsync(new GoogleCalenderAuth("https://unipark.space"));
-                    // Didn't Work -v
-                    //await Navigation.PushAsync(new GoogleCalendarAuth("https://unipark.space:8080/calendar/authcal/id=33"));
-
-                    Device.OpenUri(new Uri("https://unipark.space:8080/calendar/authcal?id=33"));
-                    await Navigation.PushAsync(new User());
+                    // Based on string response we get from RestService LoginUser
+                    if (response.Item2 == "ok")
+                    {
+                        await Navigation.PushAsync(new User());
+                    }
+                    else
+                    {
+                        Device.OpenUri(new Uri(response.Item2));
+                        await Navigation.PushAsync(new User());
+                    }
                 }
-                    //
-                    //await Navigation.PushAsync(new GoogleCalendarAuth("https://unipark.space:8080/calendar/authcal/id=33"));
                 else
                     await Navigation.PushAsync(new NewUserSurvey());
             }

@@ -93,8 +93,10 @@ namespace up_mobile.Backend
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>bool indicating registration success</returns>
         /// 
-        public async Task<bool> LoginUser(string in_email, string in_password, string serviceUri = "/login")
+        public async Task<(bool, string)> LoginUser(string in_email, string in_password, string serviceUri = "/login")
         {
+            var returnString = "";
+
             Cookie myCookie = null;
 
             string json = JsonConvert.SerializeObject(new
@@ -107,6 +109,7 @@ namespace up_mobile.Backend
             HttpResponseMessage response = await PerformPOST(uri, json);
 
             if (response.IsSuccessStatusCode) {
+                returnString = await response.Content.ReadAsStringAsync();
                 //get cookies
                 IEnumerable<Cookie> resCookies = cookies.GetCookies(uri).Cast<Cookie>();
                 //save cookie
@@ -121,9 +124,9 @@ namespace up_mobile.Backend
                     Debug.Write(c.Name + " -> " + c.Value);
                 */
                 if (myCookie != null)
-                    return true;
+                    return (true, returnString);
             }
-            return false;
+            return (false, returnString);
         }
 
         /// <summary>
@@ -266,9 +269,9 @@ namespace up_mobile.Backend
         /// <param name="in_lot_id">id of the lot where reports are wanted</param>
         /// <param name="serviceUri">uri fragment indicating a particular service</param>
         /// <returns>a reportholder object</returns>
-        public async Task<ReportHolder> GetLotInfo(int in_lot_id, string serviceUri = "/getlotinfo")
+        public async Task<ParkingLot> GetLotInfo(int in_lot_id, string serviceUri = "/getlotinfo")
         {
-            ReportHolder rh = null;
+            ParkingLot rh = null;
 
             string json = JsonConvert.SerializeObject(new
             {
@@ -281,7 +284,7 @@ namespace up_mobile.Backend
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var rescontent = await response.Content.ReadAsStringAsync();
-                rh = JsonConvert.DeserializeObject<ReportHolder>(rescontent);
+                rh = JsonConvert.DeserializeObject<ParkingLot>(rescontent);
             }
 
             return rh;
@@ -521,7 +524,7 @@ namespace up_mobile.Backend
         /// <returns>Volume of desired lot</returns>
         public async Task<double> GetVolumeByLotId(int in_lot_id, string serviceUri = "/currentlotvolume")
         {
-            double volume = -1;
+            double volume = 0;
 
             string json = JsonConvert.SerializeObject(new
             {
@@ -538,6 +541,37 @@ namespace up_mobile.Backend
             }
 
             return volume;
+        }
+
+        public async Task<Dictionary<int, double>> GetBestLots(int _building_id, string _time, string serviceUri = "/getbestlots")
+        {
+            Dictionary<int, object> dictionary = new Dictionary<int, object>();
+            Dictionary<int, double> output = new Dictionary<int, double>();
+
+            Uri uri = makeUri(serviceUri);
+
+            string json = JsonConvert.SerializeObject(new
+            {
+                building_id = _building_id,
+                time = _time
+            });
+
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                dictionary = JsonConvert.DeserializeObject<Dictionary<int, object>>(rescontent);
+            }
+
+            foreach(var key in dictionary.Keys)
+            {
+                object n;
+                if (dictionary.TryGetValue(key, out n) && n != null && n is double)
+                    output.Add(key, (double)n);
+            }
+
+            return output;
         }
 
         public async Task<BuildingHolder> GetMyUniBuildings(string serviceUri = "/getmyunibuildings")
