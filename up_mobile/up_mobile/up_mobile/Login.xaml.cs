@@ -64,11 +64,16 @@ namespace up_mobile
 
                 if (await surveyTaken)
                 {
+                    // Worked -v
+                    //await Navigation.PushAsync(new GoogleCalenderAuth("https://unipark.space"));
+                    // Didn't Work -v
+                    //await Navigation.PushAsync(new GoogleCalendarAuth("https://unipark.space:8080/calendar/authcal/id=33"));
+
                     Device.OpenUri(new Uri("https://unipark.space:8080/calendar/authcal?id=33"));
                     await Navigation.PushAsync(new User());
                 }
                     //
-                    //await Navigation.PushAsync(new GoogleCalenderAuthorization("https://unipark.space:8080/calendar/authcal/id=33"));
+                    //await Navigation.PushAsync(new GoogleCalendarAuth("https://unipark.space:8080/calendar/authcal/id=33"));
                 else
                     await Navigation.PushAsync(new NewUserSurvey());
             }
