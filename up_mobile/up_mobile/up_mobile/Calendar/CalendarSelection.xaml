@@ -7,8 +7,16 @@
             <Label
                 Text="Please select the calendar you want us to use!"
                 />
-            <ListView
+            <Label
+                x:Name="NotHereLabel"
+                Text="If you calendars are not shown here, they are potentially not loaded. Please make sure that you have finished the registration with Google!"
+                />
+            <StackLayout
                 x:Name="CalendarList"/>
+            <Button
+                Text="Refresh!"
+                Clicked="RefreshHandler"
+                />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

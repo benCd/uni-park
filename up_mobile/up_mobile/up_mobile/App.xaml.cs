@@ -3,6 +3,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Background;
 using up_mobile.Backend;
+using System.Net;
+using System.Diagnostics;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace up_mobile
@@ -46,12 +48,14 @@ namespace up_mobile
 
             //Sleep properties
             //Save university lots
-            if (App.Current.Properties.ContainsKey("UniversityLots"))
-                App.Current.Properties["UniversityLots"] = MapContentPage.lotholder;
-            
+            //if (App.Current.Properties.ContainsKey("UniversityLots"))
+            //App.Current.Properties["UniversityLots"] = MapContentPage.lotholder;
+
             //Save current cookie
-            if (App.Current.Properties.ContainsKey("Cookies"))
-                App.Current.Properties["Cookies"] = RestService.service.cookies;
+            if (App.Current.Properties.ContainsKey("CookieName") && RestService.service.cookies.GetCookies(new Uri("https://unipark.space:8080")) != null)
+                App.Current.Properties["CookieName"] = RestService.service.cookies.GetCookies(new Uri("https://unipark.space:8080"))[0].Name;
+            if (App.Current.Properties.ContainsKey("CookieValue") && RestService.service.cookies.GetCookies(new Uri("https://unipark.space:8080")) != null)
+                App.Current.Properties["CookieValue"] = RestService.service.cookies.GetCookies(new Uri("https://unipark.space:8080"))[0].Value;
 
             App.Current.SavePropertiesAsync();
         }
@@ -82,8 +86,18 @@ namespace up_mobile
                 MessagingCenter.Send<Messages.ExecuteScheduleMessage>(message, "ExecuteScheduleMessage");
             }
 
-            if (App.Current.Properties.ContainsKey("Cookies"))
-                RestService.service.cookies = App.Current.Properties["Cookies"] as System.Net.CookieContainer;
+            /*if (App.Current.Properties.ContainsKey("CookieName") && App.Current.Properties.ContainsKey("CookieValue"))
+            {
+                Debug.Write("COOKIE " + (string)App.Current.Properties["CookieName"] + " " + (string)App.Current.Properties["CookieValue"]);
+
+                var cookies = new CookieContainer();
+                if(!((string)App.Current.Properties["CookieName"] == "" || (string)App.Current.Properties["CookieValue"] == ""))
+                    cookies.Add(new Cookie((string)App.Current.Properties["CookieName"], (string)App.Current.Properties["CookieValue"], "/", "https://unipark.space:8080"));
+
+                RestService.service.cookies = cookies;
+            }*/
+                
+            //RestService.service.cookies.Add(new System.Net.Cookie())
 
             //TaskScheduler.ExecuteSchedule();
 
@@ -94,6 +108,9 @@ namespace up_mobile
 
             //if (App.Current.Properties.ContainsKey("UniversityLots"))
             //MapContentPage.lotholder = (Models.LotHolder)App.Current.Properties["UniversityLots"];
+
+            //if (Helpers.Settings.IsLoggedIn)
+                //MapContentPage.InitMap();
 
         }
     }

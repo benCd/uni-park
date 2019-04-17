@@ -127,10 +127,22 @@ namespace up_mobile
         {
             await EnsureLots().ContinueWith(t =>
             {
-                MoveToLot(lotholder.Lots[0].Id);
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    map = new LotMap()
+                    {
+                        IsShowingUser = true,
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HasScrollEnabled = false,
+                        HasZoomEnabled = true,
+                        MapType = MapType.Satellite,
+                        ParkingPins = new List<Map.Utils.ParkingPin>(),
+                        MapPolygons = new List<MapPolygon>()
+                    };
+                });
                 MapM.Populate();
             });
-            
+            MoveToLot(lotholder.Lots[0].Id);
         }
 
         /// <summary>
@@ -149,8 +161,7 @@ namespace up_mobile
                 Debug.Write("Setting UniversityLots Property");
                 Application.Current.Properties["UniversityLots"] = await RestService.service.GetMyUniLots();
             }
-            */    
-            
+            */
 
             lotholder = await RestService.service.GetMyUniLots();
 

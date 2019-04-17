@@ -47,6 +47,8 @@ namespace up_mobile
 
             var response = await RestService.service.LoginUser(LoginEmail.Text, LoginPassword.Text);
 
+            Debug.Write("Response: " + response.Item1);
+
             if (response.Item1)
             {
                 var surveyTaken = RestService.service.SeeSurveyStatus();
@@ -65,21 +67,21 @@ namespace up_mobile
                 if (await surveyTaken)
                 {
                     // Based on string response we get from RestService LoginUser
-                    if (response.Item2 == "ok")
+                    if (response.Item2 == "ok" && await RestService.service.HasGoogleAuth())
                     {
                         await Navigation.PushAsync(new User());
                     }
                     else
                     {
                         Device.OpenUri(new Uri(response.Item2));
-                        await Navigation.PushAsync(new User());
+                        await Navigation.PushAsync(new Calendar.CalendarSelection());
                     }
                 }
                 else
                     await Navigation.PushAsync(new NewUserSurvey());
             }
             else {
-                await DisplayAlert("Incorrect email and password combination", "Please try again", "OK");
+                await DisplayAlert("Something went wrong", "Please try again", "OK");
             }
         }
     }

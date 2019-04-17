@@ -28,24 +28,36 @@ namespace up_mobile.Backend
         private RestService()
         {
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, ass) => true;
-            if (Application.Current.Properties.ContainsKey("Cookies") && Application.Current.Properties["Cookies"] != null)
-                cookies = (CookieContainer)Application.Current.Properties["Cookies"];
-            else if(!Application.Current.Properties.ContainsKey("Cookies"))
+            if (Application.Current.Properties.ContainsKey("CookieName") && Application.Current.Properties.ContainsKey("CookieValue") && 
+                Application.Current.Properties["CookieName"] != null && Application.Current.Properties["CookieValue"] != null)
+            {
+                Debug.Write("Superif");
+                cookies = new CookieContainer();
+                if (!((string)App.Current.Properties["CookieName"] == "" || (string)App.Current.Properties["CookieValue"] == ""))
+                    cookies.Add(new Cookie((string)App.Current.Properties["CookieName"], (string)App.Current.Properties["CookieValue"], "/", "https://unipark.space:8080"));
+            }
+            else if(!Application.Current.Properties.ContainsKey("CookieName") || !Application.Current.Properties.ContainsKey("CookieValue"))
+            {
+                Debug.Write("Second If");
+                cookies = new CookieContainer();
+                Application.Current.Properties.Add("CookieName", "");
+                Application.Current.Properties.Add("CookieValue", "");
+            }
+            else if (Application.Current.Properties["CookieName"] == null || Application.Current.Properties["CookieValue"] == null)
+            {
+                Debug.Write("Third if");
+                cookies = new CookieContainer();
+                Application.Current.Properties["CookieName"] = "";
+                Application.Current.Properties["CookieValue"] = "";
+            }
+            else
             {
                 cookies = new CookieContainer();
-                Application.Current.Properties.Add("Cookies", cookies);
-            }
-            else if (Application.Current.Properties["Cookies"] == null)
-            {
-                cookies = new CookieContainer();
-                Application.Current.Properties["Cookies"] = cookies;
-            }
-
-            //DEBUG ------------------------------------------------
-            foreach (Cookie c in ((CookieContainer)Application.Current.Properties["Cookies"]).GetCookies(new Uri(defaultBaseUri)))
-                Debug.Write(c.Name + " -> " + c.Value);
+            } 
+            cookies = new CookieContainer();
+            //DEBUG -------------------------------------------------
             //!DEBUG ------------------------------------------------
-
+            //cookies = new CookieContainer();
             HttpClientHandler handler = new HttpClientHandler();
             handler.CookieContainer = cookies;
             client = new HttpClient(handler);
@@ -95,6 +107,7 @@ namespace up_mobile.Backend
         /// 
         public async Task<(bool, string)> LoginUser(string in_email, string in_password, string serviceUri = "/login")
         {
+            //cookies = new CookieContainer();
             var returnString = "";
 
             Cookie myCookie = null;
@@ -115,14 +128,14 @@ namespace up_mobile.Backend
                 //save cookie
                 if (resCookies.Any()) {
                     myCookie = resCookies.First();
+                    Debug.Write("Have response + " + myCookie);
                     cookies.Add(myCookie);
                 }
 
                 Debug.Write("Cookie:");
-                //Debug.Write(myCookie.Value);
-                /*foreach (Cookie c in ((CookieContainer)Application.Current.Properties["Cookies"]).GetCookies(new Uri(defaultBaseUri)))
+                foreach (Cookie c in cookies.GetCookies(new Uri(defaultBaseUri)))
                     Debug.Write(c.Name + " -> " + c.Value);
-                */
+
                 if (myCookie != null)
                     return (true, returnString);
             }
@@ -539,11 +552,11 @@ namespace up_mobile.Backend
                 var rescontent = await response.Content.ReadAsStringAsync();
                 volume = JsonConvert.DeserializeObject<double>(rescontent);
             }
-
+               
             return volume;
         }
 
-        public async Task<Dictionary<int, double>> GetBestLots(int _building_id, string _time, string serviceUri = "/getbestlots")
+        public async Task<Dictionary<int, double>> GetBestLots(int _building_id, string _time, string serviceUri = "/getbestlots1")
         {
             Dictionary<int, object> dictionary = new Dictionary<int, object>();
             Dictionary<int, double> output = new Dictionary<int, double>();
@@ -569,6 +582,56 @@ namespace up_mobile.Backend
                 object n;
                 if (dictionary.TryGetValue(key, out n) && n != null && n is double)
                     output.Add(key, (double)n);
+            }
+
+            return output;
+        }
+
+        public async Task<List<Models.Calendar>> GetCalendars(string serviceUri = "/calendar/mycalendars")
+        {
+            List<Models.Calendar> output = new List<Models.Calendar>();
+
+            Uri uri = makeUri(serviceUri);
+
+            HttpResponseMessage response = await PerformGET(uri);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                output = JsonConvert.DeserializeObject<List<Models.Calendar>>(rescontent);
+            }
+
+            return output;
+        }
+
+
+        public async Task<bool> PostCalendar(string calendar_id, string serviceUri = "/calendar/setcalendar")
+        {
+            Dictionary<int, object> dictionary = new Dictionary<int, object>();
+            Dictionary<int, double> output = new Dictionary<int, double>();
+
+            Uri uri = makeUri(serviceUri);
+
+            string json = JsonConvert.SerializeObject(new
+            {
+                calendar_id
+            });
+
+            HttpResponseMessage response = await PerformPOST(uri, json);
+
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+
+        public async Task<bool> HasGoogleAuth(string serviceUri = "/calendar/isauthenticated")
+        {
+            Boolean output = false;
+            HttpResponseMessage response = await PerformGET(makeUri(serviceUri));
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var rescontent = await response.Content.ReadAsStringAsync();
+                output = JsonConvert.DeserializeObject<Boolean>(rescontent);
             }
 
             return output;

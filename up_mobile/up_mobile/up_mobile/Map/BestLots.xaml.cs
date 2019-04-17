@@ -39,6 +39,8 @@ namespace up_mobile.Map
 
             InitializeComponent();
 
+            AtTime.Time = DateTime.Now.TimeOfDay;
+
             Debug.Write("Initialising BestLots");
 
             Task task = new Task(
@@ -75,6 +77,10 @@ namespace up_mobile.Map
             task.Start();
         }
 
+
+        private Models.ParkingLot l1, l2, l3;
+
+
         /// <summary>
         /// EventHandler to hanlde changes in both <see cref="AtTime"/> and <see cref="BuildingNamePicker"/>
         /// </summary>
@@ -82,6 +88,11 @@ namespace up_mobile.Map
         /// <param name="e"></param>
         public async void Reload(object sender, EventArgs e)
         {
+
+            Lot1.Clicked -= HandleLotClicks;
+            Lot2.Clicked -= HandleLotClicks;
+            Lot3.Clicked -= HandleLotClicks;
+
             Debug.Write("Reloading");
             CurrentTime = AtTime.Time;
             var o = 0;
@@ -102,7 +113,8 @@ namespace up_mobile.Map
                     Debug.Write("Inverting map!");
                     foreach (var key in map.Keys)
                     {
-                        invMap.Add(map[key], key);
+                        if(!invMap.ContainsKey(map[key]))
+                            invMap.Add(map[key], key);
                     }
 
                     var l = invMap.Keys.ToList();
@@ -112,8 +124,8 @@ namespace up_mobile.Map
                     {
                         Debug.Write("Getting lot IDs!");
                         smallest = invMap[l[0]];
-                        medium = invMap[l[(l.Count-1) / 2]];
-                        largest = invMap[l[l.Count - 1]];
+                        medium = invMap[l[1]];
+                        largest = invMap[l[2]];
                     }
                     else
                     {
@@ -121,9 +133,9 @@ namespace up_mobile.Map
                         return;
                     }
 
-                    var l1 = await RestService.service.GetLotInfo(smallest);
-                    var l2 = await RestService.service.GetLotInfo(medium);
-                    var l3 = await RestService.service.GetLotInfo(largest);
+                    l1 = await RestService.service.GetLotInfo(smallest);
+                    l2 = await RestService.service.GetLotInfo(medium);
+                    l3 = await RestService.service.GetLotInfo(largest);
 
                     Device.BeginInvokeOnMainThread(() =>
                      {
@@ -137,12 +149,29 @@ namespace up_mobile.Map
                         Lot2.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(occs[l2.Id]);
                         Lot3.BackgroundColor = Utils.ColorMapper.MapPercentageToRGB(occs[l3.Id]);
 
-                        Lot1.Clicked += async (object s, EventArgs ev) => { await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo(l1.Id)); };
-                        Lot2.Clicked += async (object s, EventArgs ev) => { await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo(l2.Id)); };
-                        Lot3.Clicked += async (object s, EventArgs ev) => { await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo(l3.Id)); };
+                        Lot1.Clicked += HandleLotClicks;
+                        Lot2.Clicked += HandleLotClicks;
+                        Lot3.Clicked += HandleLotClicks;
                      });
 
                 }
+
+        }
+
+        private async void HandleLotClicks(object sender, EventArgs args)
+        {
+            if((Button)sender == Lot1)
+            {
+                await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo(l1.Id));
+            }
+            else if ((Button)sender == Lot2)
+            {
+                await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo(l2.Id));
+            }
+            else if ((Button)sender == Lot3)
+            {
+                await Rg.Plugins.Popup.Services.PopupNavigation.Instance.PushAsync(new LotInfo(l3.Id));
+            }
 
         }
     }
